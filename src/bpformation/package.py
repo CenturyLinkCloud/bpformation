@@ -3,6 +3,8 @@
 Manage Blueprint packages.
 """
 
+import bpformation
+
 
 
 class Package():

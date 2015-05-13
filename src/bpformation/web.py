@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """Private class that executes Web calls calls."""
 
-import requests
-import xml.etree.ElementTree
 import os
 import sys
+import requests
+import xml.etree.ElementTree
+
+import bpformation
 
 
 class Web():

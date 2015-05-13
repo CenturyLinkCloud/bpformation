@@ -3,6 +3,8 @@
 Manage Blueprint workflows.
 """
 
+import bpformation
+
 
 
 class Blueprint():

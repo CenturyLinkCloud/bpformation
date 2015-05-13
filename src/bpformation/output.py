@@ -8,16 +8,17 @@ import time
 import terminal_size
 import prettytable
 from clint.textui import colored, puts, indent, progress
-import clc
+
+import bpformation
 
 
-def sec_to_time(secs):
-    hrs = secs / 3600
-    secs -= 3600*hrs
-    mins = secs / 60
-    secs -= 60*mins
-
-    return("%d:%02d:%02d" % (hrs,mins,secs))
+#def sec_to_time(secs):
+#    hrs = secs / 3600
+#    secs -= 3600*hrs
+#    mins = secs / 60
+#    secs -= 60*mins
+#
+#    return("%d:%02d:%02d" % (hrs,mins,secs))
 
 
 def Table(data_arr,keys,opts={}):
@@ -112,7 +113,7 @@ def Json(data_arr,keys,opts={}):
 
 
 def Status(status,level,message):
-	if clc.args.GetArgs().quiet<level:
+	if bpformation.args.GetArgs().quiet<level:
 		if os.name=='posix':
 			success_mark = '✔ '
 			error_mark = '✖  '
@@ -123,45 +124,4 @@ def Status(status,level,message):
 		if status == 'SUCCESS':  puts("%s %s" % (colored.green(success_mark),message.encode('utf-8')))
 		elif status == 'ERROR' and level<3:  puts("%s%s" % (colored.red(error_mark),message.encode('utf-8')))
 		elif status == 'ERROR':  puts("%s" % (colored.red(error_mark+message.encode('utf-8'))))
-
-
-def RequestQueueProgress(request_id):
-	request_details = clc.Queue.GetStatus(request_id,silent=True)
-	p = progress.Bar(label="%s  " % (request_details['RequestTitle']), expected_size=100)
-	while True:
-		p.show(request_details['PercentComplete'])
-		if request_details['CurrentStatus'] in ('Succeeded','Failed'): break
-		time.sleep(2)
-		request_details = clc.v1.Queue.GetStatus(request_id,silent=True)
-	p.done()
-	if request_details['CurrentStatus'] == 'Succeeded':  Status('SUCCESS',1,"%s - %s" % (request_details['RequestTitle'],request_details['ProgressDesc']))
-	elif request_details['CurrentStatus'] == 'Failed':  Status('ERROR',3,"%s - %s" % (request_details['RequestTitle'],request_details['ProgressDesc']))
-
-
-def RequestBlueprintProgress(request_id,location,alias,quiet=False):
-	time_start = time.time()
-	time_task_start = time_start
-	request_details = clc.v1.Blueprint.GetStatus(request_id,location,alias,silent=True)
-	description = request_details['Description']
-	Status('SUCCESS',1,request_details['Description'])
-	if not quiet:  p = progress.Bar(expected_size=100)
-	while True:
-		if description != request_details['Description']:
-			description = request_details['Description']
-			if not quiet:  sys.stdout.write("\033[K")	# clear line
-			Status('SUCCESS',1,"%s - %s" % (request_details['Description'],sec_to_time(int(time.time()-time_task_start))))
-			time_task_start = time.time()
-		if not quiet:  p.show(request_details['PercentComplete'])
-		if request_details['CurrentStatus'] in ('Succeeded','Failed'): break
-		time.sleep(2)
-		request_details = clc.v1.Blueprint.GetStatus(request_id,location,alias,silent=True)
-	#p.done()
-	if not quiet:  sys.stdout.write("\033[K")	# clear line
-	duration_secs = int(time.time()-time_start)
-	if request_details['CurrentStatus'] == 'Succeeded':  Status('SUCCESS',1,"%s - %s" % (request_details['Description'],sec_to_time(duration_secs)))
-	elif request_details['CurrentStatus'] == 'Failed':  Status('ERROR',3,"%s - %s" % (request_details['Description'],sec_to_time(duration_secs)))
-
-	servers = []
-	for server in request_details['Servers']:  servers.append({'Server': server})
-	return(servers)
 
