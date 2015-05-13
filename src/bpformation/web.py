@@ -69,16 +69,22 @@ class Web():
 						  verify=Web._ResourcePath('bpformation/cacert.pem')
 						  data={"UserName": bpformation.CONTROL_USER, "Password": bpformation.CONTROL_PASSWORD})
 		bpformation._control_cookies = r.cookies
-		print "\tLogging into control as %s" % config.get("clc","control_eco_user")
 
 		if r.status_code == 200:
-			clc._LOGIN_TOKEN_V2 = r.json()['bearerToken']
-			clc.ALIAS = r.json()['accountAlias']
-			clc.LOCATION = r.json()['locationAlias']
+			# TODO - capture and assign alias.
+			#clc.ALIAS = r.json()['accountAlias']
+			clc.v1.output.Status('SUCCESS',1,'Logged into v1 API')
 		elif r.status_code == 400:
 			raise(Exception("Invalid V2 API login.  %s" % (r.json()['message'])))
 		else:
 			raise(Exception("Error logging into V2 API.  Response code %s. message %s" % (r.status_code,r.json()['message'])))
+
+
+	# TODO
+	@staticmethod
+	def Alias(alias):
+		# TODO
+		pass
 
 
 	# TODO
