@@ -83,7 +83,6 @@ class Package():
 		return(oss_retain.keys())
 
 	
-	# TODO
 	@staticmethod
 	def Publish(files,type,visibility,os):
 		task_queue = []
@@ -99,5 +98,16 @@ class Package():
 			bpformation.output.Status('SUCCESS',3,"%s publish job submitted" % file)
 
 		bpformation.queue.WaitForQueue(task_queue)
+
+	
+	@staticmethod
+	def Delete(uuids):
+		for uuid in uuids:
+			r = bpformation.web.CallScrape("POST","/blueprints/packages/DeletePackage/",
+							               payload={"id": uuid, "classification": "Script", })
+			if r.status_code<400 and r.status_code>=200:
+				bpformation.output.Status('SUCCESS',3,"%s package deleted" % uuid)
+			else:
+				bpformation.output.Status('ERROR',3,"%s package deletion error (status code %s)" % (uuid,r.status_code))
 
 
