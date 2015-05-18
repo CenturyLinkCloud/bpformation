@@ -68,7 +68,7 @@ class Web():
 			
 		r = requests.post("https://control.ctl.io/auth/Login", 
 						  allow_redirects=False,
-						  verify=Web._ResourcePath('bpformation/cacert.pem')
+						  verify=Web._ResourcePath('bpformation/cacert.pem'),
 						  data={"UserName": bpformation.CONTROL_USER, "Password": bpformation.CONTROL_PASSWORD})
 		bpformation._control_cookies = r.cookies
 

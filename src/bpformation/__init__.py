@@ -7,10 +7,11 @@ Package Github page: https://github.com/CenturyLinkCloud/bp-formation
 
 """
 
-import Package as package
-import Blueprint as blueprint
-import Web as web
-import Output as output
+from bpformation.shell import Args, ExecCommand
+from bpformation.package import Package as package
+from bpformation.blueprint import Blueprint as blueprint
+from bpformation.web import Web as web
+import bpformation.output
 import defaults
 
 

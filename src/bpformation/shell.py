@@ -11,7 +11,7 @@ import bpformation
 class Args:
 
 	def __init__(self):
-		bpformatio.args = self
+		bpformation.args = self
 		self.ParseArgs()
 		self.ImportIni()
 		self.MergeEnvironment()
@@ -37,7 +37,7 @@ class Args:
 		#
 
 		parser_package = parser_sp1.add_parser('package', help='Package level activities (list, package, upload, publish, etc.)')
-		parser_sp2 = parser_account.add_subparsers(dest='sub_command')
+		parser_sp2 = parser_package.add_subparsers(dest='sub_command')
 
 		## List unpublished
 		parser_account_get = parser_sp2.add_parser('list-unpublished', help='List all upublished packages in specified sub-account')
