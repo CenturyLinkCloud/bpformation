@@ -179,11 +179,8 @@ class ExecCommand():
 
 
 	def PackagePublish(self):
-		#parser_package_publish.add_argument('--file', required=True, help='Uploaded filename to process')
-		#parser_package_publish.add_argument('--type', required=True, choices=['Windows','Linux'], help='Operating system')
-		#parser_package_publish.add_argument('--visibility', required=True, choices=['Public','Private','Shared'], help='Package visibility')
-		#parser_package_publish.add_argument('--os', nargs='*', required=True, help='Operating system list (regex supported)')
-		self.Exec('bpformation.package.Publish', {'file': bpformation.args.args.file}, cols=[])
+		self.Exec('bpformation.package.Publish', {'files': bpformation.args.args.file, 'type': bpformation.args.args.type,
+		                                          'visibility': bpformation.args.args.visibility, 'os': bpformation.args.args.os}, cols=[])
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):

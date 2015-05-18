@@ -70,15 +70,16 @@ class Package():
 	
 	# TODO
 	@staticmethod
-	def PublishPackageScrape(files):
-		bpformation.CallScrape("POST","/Blueprints/Packages/Properties",
-						  payload={"packageName": "%s_%s.zip" % (package_ini.get("package","package"),package_ini.get("package","os")),
-								   "Type": 2,
-								   "OS": package_ini.get("package","os").title(),
-								   "Permissions": 1,
-								   "OS_Version": ["on",6,7,13,14,19,20,21,22,25,29,30,31,32,33,34,35,36,37,3839,41,42]})
-		# TODO - call status with each callback.  
-		#time.sleep(15) # wait for package publishing task to complete or it won't register with a new blueprint
-		print "\tPackage published via screen scrape"
+	def PublishPackageScrape(files,type,visibility,os):
+		for file in files:
+			bpformation.CallScrape("POST","/Blueprints/Packages/Properties",
+							  payload={"packageName": "%s_%s.zip" % (package_ini.get("package","package"),package_ini.get("package","os")),
+									   "Type": 2,
+									   "OS": package_ini.get("package","os").title(),
+									   "Permissions": 1,
+									   "OS_Version": ["on",6,7,13,14,19,20,21,22,25,29,30,31,32,33,34,35,36,37,3839,41,42]})
+			# TODO - call status with each callback.  
+			#time.sleep(15) # wait for package publishing task to complete or it won't register with a new blueprint
+			print "\tPackage published via screen scrape"
 
 
