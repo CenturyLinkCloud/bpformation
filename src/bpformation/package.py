@@ -139,7 +139,20 @@ class Package():
 	def List(filters):
 		r = bpformation.web.CallScrape("GET","/Blueprints/packages/Library").text
 		table = re.search('id="PackageLibrary">.*?<table class="table">.*?<tbody>(.*)</tbody>',r,re.DOTALL).group(1)
-		print table
+
+		print filters
+		packages = []
+		for package_html in table.split("</tr>"):
+			m = re.search('<td>\s*(.+?)\s*<input id="package_UUID".*?value="(.+?)".*?<td>(.*?)</td>.*?<td>.*(.+?)</td>.*?<td>\s*(.+?)\s*</td>',package_html,re.DOTALL)
+			print m
+			print m.group(1)
+			print m.groups()
+
+			if filters: 
+				for filter in filters:
+					if re.search(filter,package_html):
+						packages
+			pass
 
 
 
