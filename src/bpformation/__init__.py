@@ -27,6 +27,7 @@ args = False
 
 _SSL_VERIFY = True
 
+_ALIAS = False
 _LOGINS = 0
 _CONTROL_COOKIES = False
 _BLUEPRINT_FTP_URL = False

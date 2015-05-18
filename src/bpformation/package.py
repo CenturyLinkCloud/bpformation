@@ -32,11 +32,8 @@ class Package():
 		# TODO - alert on failure to locate.  Maybe add scrape POST call to create if missing?
 
 		text = bpformation.web.CallScrape("GET","/Blueprints/ftpuser").text
-		print text
 
-		m = re.search("%s_BlueprintUser</td>.*?<td>(.*?)</td>.*?<td>(.*?)</td>",text,re.DOTALL)
-		print m
-		print m.group
+		m = re.search("%s_BlueprintUser</td>.*?<td>(.*?)</td>.*?<td>(.*?)</td>" % bpformation.web.Alias(),text,re.DOTALL)
 			
 		bpformation.FTP_ENDPOINT = {'user': "test", 'passwd': "secrit", 'endpoint': "127.0.0.1"}
 		bpformation.output.Status('SUCCESS',1,"FTP endpoint %s@%s cached" % (bpformation.FTP_ENDPOINT['user'],bpformation.FTP_ENDPOINT['endpoint']))

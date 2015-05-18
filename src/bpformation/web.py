@@ -2,6 +2,7 @@
 """Private class that executes Web calls calls."""
 
 import os
+import re
 import sys
 import requests
 import xml.etree.ElementTree
@@ -84,9 +85,13 @@ class Web():
 
 	# TODO
 	@staticmethod
-	def Alias(alias):
-		# TODO
-		pass
+	def Alias(alias=None):
+		# TODO if alias is not None then set it
+		if bpformation._ALIAS!=alias:
+			bpformation._ALIAS = re.search("<title>\s+Account\s+([^\s]+)\s*</title>",Web.CallScrape("GET","/Organization/account/details").text).group(1)
+			bpformation.output.Status('SUCCESS',1,'Alias set to %s' % bpformation._ALIAS)
+
+		return(bpformation._ALIAS)
 
 
 	# TODO
@@ -143,7 +148,7 @@ class Web():
 				#                         (r.status_code,r.text,method,"%s%s" % (bpformation/defaults.ENDPOINT_URL_V2,url)))
 				#e.response_status_code = r.status_code
 				#e.response_json = {}	# or should this be None?
-				e.response_text = r.text
-				raise(e)
+				#e.response_text = r.text
+				raise
 
 
