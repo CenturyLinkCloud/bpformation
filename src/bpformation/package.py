@@ -144,15 +144,13 @@ class Package():
 		packages = []
 		for package_html in table.split("</tr>"):
 			m = re.search('<td>\s*(.+?)\s*<input id="package_UUID".*?value="(.+?)".*?<td>(.*?)</td>.*?<td>.*(.+?)</td>.*?<td>\s*(.+?)\s*</td>',package_html,re.DOTALL)
-			print m
-			print m.group(1)
-			print m.groups()
+			if m:  packages.append({'name': m.group(1), 'uuid': m.group(2), 'owner': m.group(3), 'visibility': m.group(4)})
 
-			if filters: 
-				for filter in filters:
-					if re.search(filter,package_html):
-						packages
-			pass
+		print packages
+		#if filters: 
+		#	for filter in filters:
+		#		if re.search(filter,package_html):
+		#			packages
 
 
 
