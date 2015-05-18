@@ -31,6 +31,8 @@ _BLUEPRINT_FTP_URL = False
 
 class BPFormationExeption(Exception):
 	pass
+class BPFormationFatalExeption(Exception):
+	pass
 class BPFormationLoginException(BPFormationExeption):
 	pass
 

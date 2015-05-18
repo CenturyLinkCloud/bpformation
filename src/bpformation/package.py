@@ -11,6 +11,9 @@ import bpformation
 
 #
 # TODO vCur:
+#  o Create new ftp endpoint if none exists
+#  o Retrieve OS list.  Shortcut for "All Linux", "All Windows"
+#  o Retrive list of existing packages.  Filter by metadata
 #
 
 
@@ -26,28 +29,35 @@ class Package():
 		# TODO - scrape ftp page and option user, password, and ftp endpoint associated with specified alias
 		#        store data in bpformation.FTP_ENDPOINT object { user, passwd, endpoint} and cache for later use
 		# TODO - alert on failure to locate.  Maybe add scrape POST call to create if missing?
-		pass
+		
+		bpformation.FTP_ENDPOINT = {'user': "test", 'passwd': "secrit", 'endpoint': "127.0.0.1"}
+		bpformation.output.Status('SUCCESS',1,"FTP endpoint %s@%s cached" % (bpformation.FTP_ENDPOINT['user'],bpformation.FTP_ENDPOINT['endpoint']))
+		#bpformation.output.Status('ERROR',3,"Unable to retrieve FTP endpoint")
 
 
 	@staticmethod
-	def UploadPackage(filename):
-		if not bpformation.FTP_ENDPOINT:  Package._GetFtpEndpoint()
+	def Upload(files):
+		for file in files:
+			if not os.path.isfile(file):
+				bpformation.output.Status('ERROR',3,"Package file '%s' not found" % file)
+				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
-		if not os.path.isfile(filename):
-			bpformation.output.Status('ERROR',3,"Package file '%s' not found" % filename)
+		if not bpformation.FTP_ENDPOINT:  Package._GetFtpEndpoint()
 
 		# TODO - alert nicely on login failure
 		# TODO - output xfer stats if verbose
-		time_start = time.time()
 		ftp = ftplib.FTP(bpformation.FTP_ENDPOINT['endpoint'],bpformation.FTP_ENDPOINT['user'],bpformation.FTP_ENDPOINT['passwd'])
-		with open(filename,'rb') as fh:
-			file = re.sub(".*/","",filename)
-			ftp.storbinary("STOR %s" % (file),fh)
+		for file in files:
+			time_start = time.time()
+			with open(filename,'rb') as fh:
+				file_name = re.sub(".*/","",filename)
+				ftp.storbinary("STOR %s" % (file_name),fh)
+			bpformation.output.Status('SUCCESS',3,"%s successfully uploaded in %s seconds" % (file,int(time.time()-time_start)))
 		ftp.quit()
 
-		bpformation.output.Status('SUCCESS',3,"Package successfully uploaded in %s seconds" % (int(time.time()-time_start)))
 	
 	
+	# TODO
 	@staticmethod
 	def PublishPackageScrape(config,package_ini,filename):
 		global control_cookies

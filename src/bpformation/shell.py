@@ -39,10 +39,14 @@ class Args:
 		parser_package = parser_sp1.add_parser('package', help='Package level activities (list, package, upload, publish, etc.)')
 		parser_sp2 = parser_package.add_subparsers(dest='sub_command')
 
-		## List unpublished
+		## Upload
+		parser_package_upload = parser_sp2.add_parser('upload', help='Uploaded package to specified alias')
+		parser_package_upload.add_argument('--files', nargs='*', metavar="FILE", required=True, help='Files to upload')
+
+		## TODO List unpublished
 		parser_account_get = parser_sp2.add_parser('list-unpublished', help='List all upublished packages in specified sub-account')
 
-		## List published
+		## TODO List published
 		parser_account_get = parser_sp2.add_parser('list', help='List all available packages Get details on root or specified sub-account')
 		parser_account_get.add_argument('--alias', help='Operate on specific account alias')
 		#parser_sp9.add_parser('list-system', help='List all system packages of any visibility')
@@ -142,6 +146,7 @@ class ExecCommand():
 	def Package(self):
 		if bpformation.args.GetArgs().sub_command == 'list-unpublished':  self.PackageListUnpublished()
 		elif bpformation.args.GetArgs().sub_command == 'list':  self.PackageList()
+		elif bpformation.args.GetArgs().sub_command == 'upload':  self.PackageUpload()
 
 
 	def Blueprint(self):
@@ -157,9 +162,16 @@ class ExecCommand():
 	#		return(alias)
 
 
-	def PackageListUnpublished(self):
+	#def PackageListUnpublished(self):
+	#	# TODO
+	#	self.Exec('bpformation.package.ListUnpublished', {'alias': self._GetAlias()}, cols=['AccountAlias', 'Status', 'City', 'Fax', 'Address1', 'Address2', 'ShareParentNetworks', 'Telephone', 'Country', 'Location', 'BusinessName', 'PostalCode', 'TimeZone', 'StateProvince', 'ParentAlias'])
+
+
+
+	def PackageUpload(self):
 		# TODO
-		self.Exec('bpformation.package.ListUnpublished', {'alias': self._GetAlias()}, cols=['AccountAlias', 'Status', 'City', 'Fax', 'Address1', 'Address2', 'ShareParentNetworks', 'Telephone', 'Country', 'Location', 'BusinessName', 'PostalCode', 'TimeZone', 'StateProvince', 'ParentAlias'])
+		print bpformation.args.args.files
+		self.Exec('bpformation.package.Upload', {'files': bpformation.args.args.files}, cols=[])
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):
@@ -172,17 +184,17 @@ class ExecCommand():
 
 			# Output results
 			# TODO - how do we differentiate blueprints vs. queue RequestIDs?
-			if r is not None and 'RequestID' in r and not bpformation.args.args.async:  
-				r = bpformation.output.RequestBlueprintProgress(r['RequestID'],self._GetLocation(),self._GetAlias(),bpformation.args.args.quiet)
-				cols = ['Server']
+			#if r is not None and 'RequestID' in r and not bpformation.args.args.async:  
+			#	r = bpformation.output.RequestBlueprintProgress(r['RequestID'],self._GetLocation(),self._GetAlias(),bpformation.args.args.quiet)
+			#	cols = ['Server']
 
-			if not isinstance(r, list):  r = [r]
-			if not supress_output and bpformation.args.args.format == 'json':  print bpformation.output.Json(r,cols)
-			elif not supress_output and bpformation.args.args.format == 'table':  print bpformation.output.Table(r,cols)
-			elif not supress_output and bpformation.args.args.format == 'text':  print bpformation.output.Text(r,cols)
-			elif not supress_output and bpformation.args.args.format == 'csv':  print bpformation.output.Csv(r,cols)
+			#if not isinstance(r, list):  r = [r]
+			#if not supress_output and bpformation.args.args.format == 'json':  print bpformation.output.Json(r,cols)
+			#elif not supress_output and bpformation.args.args.format == 'table':  print bpformation.output.Table(r,cols)
+			#elif not supress_output and bpformation.args.args.format == 'text':  print bpformation.output.Text(r,cols)
+			#elif not supress_output and bpformation.args.args.format == 'csv':  print bpformation.output.Csv(r,cols)
 
-			return(r)
+			#return(r)
 		except:
 			raise
 
