@@ -45,8 +45,9 @@ class Args:
 
 		## Publish
 		parser_package_publish = parser_sp2.add_parser('publish', help='Uploaded package to specified alias')
-		parser_package_publish.add_argument('--file', required=True, help='Uploaded filename to process')
-		parser_package_publish.add_argument('--type', required=True, '--visibility', choices=['Windows','Linux'], help='Operating System')
+		parser_package_publish.add_argument('--file', nargs='*', required=True, help='Uploaded filename to process')
+		parser_package_publish.add_argument('--type', required=True, choices=['Windows','Linux'], help='Operating system')
+		parser_package_publish.add_argument('--visibility', required=True, choices=['Public','Private','Shared'], help='Package visibility')
 		parser_package_publish.add_argument('--os', nargs='*', required=True, help='Operating system list (regex supported)')
 
 		## TODO List unpublished
@@ -150,9 +151,8 @@ class ExecCommand():
 
 
 	def Package(self):
-		if bpformation.args.GetArgs().sub_command == 'list-unpublished':  self.PackageListUnpublished()
-		elif bpformation.args.GetArgs().sub_command == 'list':  self.PackageList()
-		elif bpformation.args.GetArgs().sub_command == 'upload':  self.PackageUpload()
+		if bpformation.args.GetArgs().sub_command == 'upload':  self.PackageUpload()
+		elif bpformation.args.GetArgs().sub_command == 'publish':  self.PackagePublish()
 
 
 	def Blueprint(self):
@@ -175,8 +175,15 @@ class ExecCommand():
 
 
 	def PackageUpload(self):
-		# TODO
 		self.Exec('bpformation.package.Upload', {'files': bpformation.args.args.file}, cols=[])
+
+
+	def PackagePublish(self):
+		#parser_package_publish.add_argument('--file', required=True, help='Uploaded filename to process')
+		#parser_package_publish.add_argument('--type', required=True, choices=['Windows','Linux'], help='Operating system')
+		#parser_package_publish.add_argument('--visibility', required=True, choices=['Public','Private','Shared'], help='Package visibility')
+		#parser_package_publish.add_argument('--os', nargs='*', required=True, help='Operating system list (regex supported)')
+		self.Exec('bpformation.package.Publish', {'file': bpformation.args.args.file}, cols=[])
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):
