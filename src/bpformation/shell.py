@@ -27,10 +27,10 @@ class Args:
 		# TODO vCur:
 		#  o list (optional filter against metadata)
 		#  o package (zip given file manifest or directory.  Gen UUID.  Multiple options based on publish target)
-		#  o upload
 		#  o publish
 		#  o delete
 		#  o download
+		#  o upload and publish
 		#
 		# TODO vNext:
 		#  o dependencies tree
@@ -41,7 +41,13 @@ class Args:
 
 		## Upload
 		parser_package_upload = parser_sp2.add_parser('upload', help='Uploaded package to specified alias')
-		parser_package_upload.add_argument('--files', nargs='*', metavar="FILE", required=True, help='Files to upload')
+		parser_package_upload.add_argument('--file', nargs='*', metavar="FILE", required=True, help='Files to upload')
+
+		## Publish
+		parser_package_publish = parser_sp2.add_parser('publish', help='Uploaded package to specified alias')
+		parser_package_publish.add_argument('--file', required=True, help='Uploaded filename to process')
+		parser_package_publish.add_argument('--type', required=True, '--visibility', choices=['Windows','Linux'], help='Operating System')
+		parser_package_publish.add_argument('--os', nargs='*', required=True, help='Operating system list (regex supported)')
 
 		## TODO List unpublished
 		parser_account_get = parser_sp2.add_parser('list-unpublished', help='List all upublished packages in specified sub-account')
@@ -170,7 +176,7 @@ class ExecCommand():
 
 	def PackageUpload(self):
 		# TODO
-		self.Exec('bpformation.package.Upload', {'files': bpformation.args.args.files}, cols=[])
+		self.Exec('bpformation.package.Upload', {'files': bpformation.args.args.file}, cols=[])
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):
