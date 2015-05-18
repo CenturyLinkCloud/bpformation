@@ -19,6 +19,7 @@ import defaults
 CONTROL_USER = False
 CONTROL_PASSWORD = False
 ALIAS = False
+FTP_ENDPOINT = False
 
 
 args = False

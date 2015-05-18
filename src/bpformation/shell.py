@@ -78,7 +78,7 @@ class Args:
 		parser.add_argument('--control-password', metavar='PASS', help='Control password')
 		parser.add_argument('--quiet', '-q', action='count', help='Supress status output (repeat up to 2 times)')
 		parser.add_argument('--verbose', '-v', action='count', help='Increase verbosity')
-		parser.add_argument('--format', '-f', choices=['json','table','text','csv'], default='table', help='Output result format (table is default)')
+		#parser.add_argument('--format', '-f', choices=['json','table','text','csv'], default='table', help='Output result format (table is default)')
 		self.args = parser.parse_args()
 
 
@@ -92,7 +92,7 @@ class Args:
 		if self.args.config:
 			config_file = self.args.config
 			if self.args.config and not os.path.isfile(self.args.config):
-				clc.v1.output.Status('ERROR',3,"Config file %s not found" % (self.args.config))
+				bpformation.output.Status('ERROR',3,"Config file %s not found" % (self.args.config))
 				sys.exit(1)
 		elif os.name=='nt':
 			if os.path.isfile("%s/bpformation/bpformation.ini" % (os.getenv("PROGRAMDATA"))):
@@ -135,13 +135,13 @@ class ExecCommand():
 
 
 	def Bootstrap(self):
-		if clc.args.GetCommand() == 'package':  self.Package()
-		elif clc.args.GetCommand() == 'blueprint':  self.Blueprint()
+		if bpformation.args.GetCommand() == 'package':  self.Package()
+		elif bpformation.args.GetCommand() == 'blueprint':  self.Blueprint()
 
 
 	def Package(self):
-		if clc.args.GetArgs().sub_command == 'list-unpublished':  self.PackageListUnpublished()
-		elif clc.args.GetArgs().sub_command == 'list':  self.PackageList()
+		if bpformation.args.GetArgs().sub_command == 'list-unpublished':  self.PackageListUnpublished()
+		elif bpformation.args.GetArgs().sub_command == 'list':  self.PackageList()
 
 
 	def Blueprint(self):
@@ -149,10 +149,10 @@ class ExecCommand():
 
 
 	#def _GetAlias(self):
-	#	if clc.args.args.alias:  return(clc.args.args.alias)
+	#	if bpformation.args.args.alias:  return(bpformation.args.args.alias)
 	#	else:
-	#		self.Exec('clc.v1.Account.GetAlias','',supress_output=True)
-	#		alias = clc.ALIAS
+	#		self.Exec('bpformation.Account.GetAlias','',supress_output=True)
+	#		alias = bpformation.ALIAS
 
 	#		return(alias)
 
@@ -168,24 +168,22 @@ class ExecCommand():
 			else:  r = eval("%s()" % (function))
 
 			#  Filter results
-			if clc.args.args.cols:  cols = clc.args.args.cols
+			if bpformation.args.args.cols:  cols = bpformation.args.args.cols
 
 			# Output results
 			# TODO - how do we differentiate blueprints vs. queue RequestIDs?
-			if r is not None and 'RequestID' in r and not clc.args.args.async:  
-				r = clc.v1.output.RequestBlueprintProgress(r['RequestID'],self._GetLocation(),self._GetAlias(),clc.args.args.quiet)
+			if r is not None and 'RequestID' in r and not bpformation.args.args.async:  
+				r = bpformation.output.RequestBlueprintProgress(r['RequestID'],self._GetLocation(),self._GetAlias(),bpformation.args.args.quiet)
 				cols = ['Server']
 
 			if not isinstance(r, list):  r = [r]
-			if not supress_output and clc.args.args.format == 'json':  print clc.v1.output.Json(r,cols)
-			elif not supress_output and clc.args.args.format == 'table':  print clc.v1.output.Table(r,cols)
-			elif not supress_output and clc.args.args.format == 'text':  print clc.v1.output.Text(r,cols)
-			elif not supress_output and clc.args.args.format == 'csv':  print clc.v1.output.Csv(r,cols)
+			if not supress_output and bpformation.args.args.format == 'json':  print bpformation.output.Json(r,cols)
+			elif not supress_output and bpformation.args.args.format == 'table':  print bpformation.output.Table(r,cols)
+			elif not supress_output and bpformation.args.args.format == 'text':  print bpformation.output.Text(r,cols)
+			elif not supress_output and bpformation.args.args.format == 'csv':  print bpformation.output.Csv(r,cols)
 
 			return(r)
-		except clc.AccountDeletedException:
-			clc.v1.output.Status('ERROR',2,'Unable to process, account in deleted state')
-		except clc.AccountLoginException:
-			clc.v1.output.Status('ERROR',2,'Transient login error.  Please retry')
+		except:
+			raise
 
 
