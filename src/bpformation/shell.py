@@ -28,10 +28,7 @@ class Args:
 		# TODO vCur:
 		#  o list (optional filter against metadata)
 		#  o package (zip given file manifest or directory.  Gen UUID.  Multiple options based on publish target)
-		#  o publish
-		#  o delete
 		#  o download
-		#  o upload and publish
 		#
 		# TODO vNext:
 		#  o dependencies tree
@@ -57,6 +54,10 @@ class Args:
 		parser_package_uploadpublish.add_argument('--type', required=True, choices=['Windows','Linux'], help='Operating system')
 		parser_package_uploadpublish.add_argument('--visibility', required=True, choices=['Public','Private','Shared'], help='Package visibility')
 		parser_package_uploadpublish.add_argument('--os', nargs='*', required=True, help='Operating system list (regex supported)')
+
+		## Delete
+		parser_package_upload = parser_sp2.add_parser('delete', help='Delete published package')
+		parser_package_upload.add_argument('--uuid', nargs='*', required=True, help='UUID for packages to delete')
 
 		## TODO List unpublished
 		parser_account_get = parser_sp2.add_parser('list-unpublished', help='List all upublished packages in specified sub-account')
@@ -162,6 +163,7 @@ class ExecCommand():
 		if bpformation.args.GetArgs().sub_command == 'upload':  self.PackageUpload()
 		elif bpformation.args.GetArgs().sub_command == 'publish':  self.PackagePublish()
 		elif bpformation.args.GetArgs().sub_command == 'upload-and-publish':  self.PackageUploadAndPublish()
+		elif bpformation.args.GetArgs().sub_command == 'delete':  self.PackageDelete()
 
 
 	def Blueprint(self):
@@ -199,6 +201,10 @@ class ExecCommand():
 		# Publish
 		bpformation.args.args.file = [re.sub(".*/","", o) for o in bpformation.args.args.file ]
 		self.PackagePublish()
+
+
+	def PackageDelete(self):
+		self.Exec('bpformation.package.Delete', {'uuids': bpformation.args.args.uuid }, cols=[])
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):
