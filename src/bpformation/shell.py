@@ -66,16 +66,6 @@ class Args:
 		parser_package_download = parser_sp2.add_parser('download', help='Download published package')
 		parser_package_download.add_argument('--uuid', nargs='*', required=True, help='UUID for packages')
 
-		## TODO List unpublished
-		parser_account_get = parser_sp2.add_parser('list-unpublished', help='List all upublished packages in specified sub-account')
-
-		## TODO List published
-		parser_account_get = parser_sp2.add_parser('list', help='List all available packages Get details on root or specified sub-account')
-		parser_account_get.add_argument('--alias', help='Operate on specific account alias')
-		#parser_sp9.add_parser('list-system', help='List all system packages of any visibility')
-		#parser_sp9.add_parser('list-scripts', help='List all script packages of any visibility')
-		#parser_sp9.add_parser('list-software', help='List all software packages of any visibility')
-
 
 
 		########## Blueprint ###########

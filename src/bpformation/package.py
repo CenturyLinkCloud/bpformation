@@ -134,4 +134,14 @@ class Package():
 						f.flush()
 			bpformation.output.Status('SUCCESS',3,"%s package downloaded" % uuid)
 
+	
+	@staticmethod
+	def List(filters):
+		r = bpformation.web.CallScrape("GET","/Blueprints/packages/Library").text
+		table = re.search('id="PackageLibrary">.*?<table class="table">.*?<tbody>(.*)</tbody>',r,re.DOTALL).group(1)
+		print table
+
+
+
+
 
