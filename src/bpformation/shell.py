@@ -27,15 +27,18 @@ class Args:
 		#
 		# TODO vCur:
 		#  o list (optional filter against metadata)
-		#  o package (zip given file manifest or directory.  Gen UUID.  Multiple options based on publish target)
-		#  o download
 		#
 		# TODO vNext:
 		#  o dependencies tree
+		#  o package (zip given file manifest or directory.  Gen UUID.  Multiple options based on publish target)
 		#
 
 		parser_package = parser_sp1.add_parser('package', help='Package level activities (list, package, upload, publish, etc.)')
 		parser_sp2 = parser_package.add_subparsers(dest='sub_command')
+
+		## List
+		parser_package_list = parser_sp2.add_parser('list', help='List package inventory')
+		parser_package_list.add_argument('--filter', nargs='*', required=False, help='Regex filter Results by name, author, status, visibility')
 
 		## Upload
 		parser_package_upload = parser_sp2.add_parser('upload', help='Uploaded package to specified alias')
@@ -169,6 +172,7 @@ class ExecCommand():
 		elif bpformation.args.GetArgs().sub_command == 'upload-and-publish':  self.PackageUploadAndPublish()
 		elif bpformation.args.GetArgs().sub_command == 'delete':  self.PackageDelete()
 		elif bpformation.args.GetArgs().sub_command == 'download':  self.PackageDownload()
+		elif bpformation.args.GetArgs().sub_command == 'list':  self.PackageList()
 
 
 	def Blueprint(self):
@@ -214,6 +218,10 @@ class ExecCommand():
 
 	def PackageDownload(self):
 		self.Exec('bpformation.package.Download', {'uuids': bpformation.args.args.uuid }, cols=[])
+
+
+	def PackageList(self):
+		self.Exec('bpformation.package.List', {'filters': bpformation.args.args.filter }, cols=[])
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):
