@@ -5,6 +5,7 @@ Manage Blueprint workflows.
 
 import re
 import sys
+import time
 
 import bpformation
 
@@ -13,12 +14,17 @@ import bpformation
 class Queue():
 
 	@staticmethod
-	def WaitForQueue(hrefs):
+	def WaitForQueue(queues):
 		# Param is list of work queue hrefs - these include the work queue ID and the in-scope datacenter
 
-		for href in hrefs:
-			r = bpformation.web.CallScrape("GET",href
-		# TODO foreach item wait for terminal status
-		# Once all items are terminal output status
+		for queue in queues:
+			while True:
+				r = bpformation.web.CallScrape("GET",
+				                               "/blueprints/queue/BlueprintProgress/?requestID=%s&location=%s&ts=%s" % 
+											   		(queue['id'],queue['location'],int(time.time()))).text
+				if re.search('<input id="blueprint-percent-complete" name="blueprint-percent-complete" type="hidden" value="100" /',r):
+					bpformation.output.Status('SUCCESS',3,"%s publish job complete" % queue['description'])
+					break
+				else:  time.sleep(1)
 
 

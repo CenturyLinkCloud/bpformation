@@ -88,14 +88,14 @@ class Package():
 	def Publish(files,type,visibility,os):
 		task_queue = []
 		for file in files:
-			r = bpformation.web.CallScrape("GET","/Blueprints/Packages/Properties",
+			r = bpformation.web.CallScrape("POST","/Blueprints/Packages/Properties",
 							               payload={"packageName": file,
 									                "Type": 2,
 									                "OS": type,
 									                "Permissions": Package.visibility_stoi[visibility],
 									                "OS_Version": Package._PackageOSAtoI(type,os)}).text
 			m = re.search("<a href=\"/Blueprints/Queue/RequestDetails/(\d+)\?location=(.+)\"",r)
-			task_queue.append({'id': int(m.group(1)), 'location': m.group(2))
+			task_queue.append({'id': int(m.group(1)), 'location': m.group(2), 'description': file})
 			bpformation.output.Status('SUCCESS',3,"%s publish job submitted" % file)
 
 		bpformation.queue.WaitForQueue(task_queue)
