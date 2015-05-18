@@ -25,6 +25,9 @@ import bpformation
 
 class Package():
 
+	visibility_stoi = { 'Public': 1, 'Private': 2, 'Shared': 3}
+
+
 	@staticmethod
 	def _GetFtpEndpoint():
 		# TODO - alert on failure to locate.  Maybe add scrape POST call to create if missing?
@@ -67,17 +70,27 @@ class Package():
 		ftp.quit()
 
 	
+	@staticmethod
+	def _PackageOSAtoI(type,oss):
+		# TODO - d/l list
+		# foreach oss check regex against each list item
+		# return list of all oss that match
+		r = bpformation.web.CallScrape("POST","/blueprints/packages/GetOSList", {'osType': type}).json()
+		print r
+		sys.exit(0)
+
 	
 	# TODO
 	@staticmethod
-	def PublishPackageScrape(files,type,visibility,os):
+	def Publish(files,type,visibility,os):
 		for file in files:
-			bpformation.CallScrape("POST","/Blueprints/Packages/Properties",
-							  payload={"packageName": "%s_%s.zip" % (package_ini.get("package","package"),package_ini.get("package","os")),
+			bpformation.web.CallScrape("POST","/Blueprints/Packages/Properties",
+							  debug=True,
+							  payload={"packageName": file,
 									   "Type": 2,
-									   "OS": package_ini.get("package","os").title(),
-									   "Permissions": 1,
-									   "OS_Version": ["on",6,7,13,14,19,20,21,22,25,29,30,31,32,33,34,35,36,37,3839,41,42]})
+									   "OS": type,
+									   "Permissions": Package.visibility_stoi[visibility],
+									   "OS_Version": Package._PackageOSAtoI(type,os)})
 			# TODO - call status with each callback.  
 			#time.sleep(15) # wait for package publishing task to complete or it won't register with a new blueprint
 			print "\tPackage published via screen scrape"
