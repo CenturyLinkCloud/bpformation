@@ -179,7 +179,7 @@ class ExecCommand():
 			else:  r = eval("%s()" % (function))
 
 			#  Filter results
-			if bpformation.args.args.cols:  cols = bpformation.args.args.cols
+			#if bpformation.args.args.cols:  cols = bpformation.args.args.cols
 
 			# Output results
 			# TODO - how do we differentiate blueprints vs. queue RequestIDs?
