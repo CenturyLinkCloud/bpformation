@@ -56,8 +56,12 @@ class Args:
 		parser_package_uploadpublish.add_argument('--os', nargs='*', required=True, help='Operating system list (regex supported)')
 
 		## Delete
-		parser_package_upload = parser_sp2.add_parser('delete', help='Delete published package')
-		parser_package_upload.add_argument('--uuid', nargs='*', required=True, help='UUID for packages to delete')
+		parser_package_delete = parser_sp2.add_parser('delete', help='Delete published package')
+		parser_package_delete.add_argument('--uuid', nargs='*', required=True, help='UUID for packages')
+
+		## Download
+		parser_package_download = parser_sp2.add_parser('download', help='Download published package')
+		parser_package_download.add_argument('--uuid', nargs='*', required=True, help='UUID for packages')
 
 		## TODO List unpublished
 		parser_account_get = parser_sp2.add_parser('list-unpublished', help='List all upublished packages in specified sub-account')
@@ -164,6 +168,7 @@ class ExecCommand():
 		elif bpformation.args.GetArgs().sub_command == 'publish':  self.PackagePublish()
 		elif bpformation.args.GetArgs().sub_command == 'upload-and-publish':  self.PackageUploadAndPublish()
 		elif bpformation.args.GetArgs().sub_command == 'delete':  self.PackageDelete()
+		elif bpformation.args.GetArgs().sub_command == 'download':  self.PackageDownload()
 
 
 	def Blueprint(self):
@@ -205,6 +210,10 @@ class ExecCommand():
 
 	def PackageDelete(self):
 		self.Exec('bpformation.package.Delete', {'uuids': bpformation.args.args.uuid }, cols=[])
+
+
+	def PackageDwownload(self):
+		self.Exec('bpformation.package.Download', {'uuids': bpformation.args.args.uuid }, cols=[])
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):

@@ -137,27 +137,6 @@ class Web():
 			Web._DebugRequest(request=requests.Request(method,fq_url,data=payload,headers=headers).prepare(),
 			                  response=r)
 
-		if r.status_code>=200 and r.status_code<300:
-			try:
-				return(r)
-			except:
-				return(None)
-		else:
-			try:
-				#e = bpformation/APIFailedResponse("Response code %s.  %s %s %s" % 
-				#                          (r.status_code,r.json()['message'],method,"%s%s" % (bpformation/defaults.ENDPOINT_URL_V2,url)))
-				#e.response_status_code = r.status_code
-				e.response_json = r.json()
-				e.response_text = r.text
-				raise(e)
-			except FailedResponse:
-				raise
-			except:
-				#e = APIFailedResponse("Response code %s. %s. %s %s" % 
-				#                         (r.status_code,r.text,method,"%s%s" % (bpformation/defaults.ENDPOINT_URL_V2,url)))
-				#e.response_status_code = r.status_code
-				#e.response_json = {}	# or should this be None?
-				#e.response_text = r.text
-				raise
+		return(r)
 
 

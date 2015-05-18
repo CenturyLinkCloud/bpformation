@@ -7,6 +7,7 @@ import os
 import re
 import time
 import ftplib
+import requests
 import bpformation
 
 
@@ -92,10 +93,16 @@ class Package():
 									                "Type": 2,
 									                "OS": type,
 									                "Permissions": Package.visibility_stoi[visibility],
-									                "OS_Version": Package._PackageOSAtoI(type,os)}).text
-			m = re.search("<a href=\"/Blueprints/Queue/RequestDetails/(\d+)\?location=(.+)\"",r)
-			task_queue.append({'id': int(m.group(1)), 'location': m.group(2), 'description': file})
-			bpformation.output.Status('SUCCESS',3,"%s publish job submitted" % file)
+									                "OS_Version": Package._PackageOSAtoI(type,os)})
+			if r.status_code>=200 and r.status_code<400:
+				m = re.search("<a href=\"/Blueprints/Queue/RequestDetails/(\d+)\?location=(.+)\"",r.text)
+				task_queue.append({'id': int(m.group(1)), 'location': m.group(2), 'description': file, 'date_added': time.time()})
+				bpformation.output.Status('SUCCESS',3,"%s publish job submitted" % file)
+			elif re.search("Unable to publish software package. .*A new UUID is required",r.text):
+				bpformation.output.Status('ERROR',3,"Unable to publish %s. A new UUID is required" % file)
+			else:
+				bpformation.output.Status('ERROR',3,"Unknown error publishing %s (http response code %s)" % (file,r.status_code))
+				
 
 		bpformation.queue.WaitForQueue(task_queue)
 
@@ -109,5 +116,17 @@ class Package():
 				bpformation.output.Status('SUCCESS',3,"%s package deleted" % uuid)
 			else:
 				bpformation.output.Status('ERROR',3,"%s package deletion error (status code %s)" % (uuid,r.status_code))
+
+	
+	@staticmethod
+	def Download(uuids):
+		for uuid in uuids:
+			r = requests.get(url, stream=True)
+			with open("%s.zip" % uuid, 'wb') as f:
+				for chunk in r.iter_content(chunk_size=1024):
+					if chunk: # filter out keep-alive new chunks
+						f.write(chunk)
+						f.flush()
+			bpformation.output.Status('SUCCESS',3,"%s package downloaded" % uuid)
 
 
