@@ -102,7 +102,6 @@ def Csv(data_arr,keys,opts={'no_header': False}):
 
 
 def Json(data_arr,keys,opts={}):
-	print keys
 	new_data_arr = []
 	for data_dict in data_arr:
 		for key in data_dict.keys():

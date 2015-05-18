@@ -71,28 +71,33 @@ class Package():
 
 	
 	@staticmethod
-	def _PackageOSAtoI(type,oss):
-		# TODO - d/l list
-		# foreach oss check regex against each list item
-		# return list of all oss that match
-		r = bpformation.web.CallScrape("POST","/blueprints/packages/GetOSList", {'osType': type}).json()
-		print r
-		sys.exit(0)
+	def _PackageOSAtoI(type,os_regexs):
+		# TODO - catch error
+		oss = bpformation.web.CallScrape("POST","/blueprints/packages/GetOSList", {'osType': type}).json()['Result']
+
+		oss_retain = {}
+		for os_regex in os_regexs:  
+			for os in oss:  
+				if re.search(os_regex,os['Name']):  oss_retain[os['ID']] = True
+
+		return(oss_retain.keys())
 
 	
 	# TODO
 	@staticmethod
 	def Publish(files,type,visibility,os):
+		task_queue = []
 		for file in files:
-			bpformation.web.CallScrape("POST","/Blueprints/Packages/Properties",
-							  debug=True,
-							  payload={"packageName": file,
-									   "Type": 2,
-									   "OS": type,
-									   "Permissions": Package.visibility_stoi[visibility],
-									   "OS_Version": Package._PackageOSAtoI(type,os)})
-			# TODO - call status with each callback.  
-			#time.sleep(15) # wait for package publishing task to complete or it won't register with a new blueprint
-			print "\tPackage published via screen scrape"
+			r = bpformation.web.CallScrape("GET","/Blueprints/Packages/Properties",
+							               payload={"packageName": file,
+									                "Type": 2,
+									                "OS": type,
+									                "Permissions": Package.visibility_stoi[visibility],
+									                "OS_Version": Package._PackageOSAtoI(type,os)}).text
+			m = re.search("<a href=\"/Blueprints/Queue/RequestDetails/(\d+)\?location=(.+)\"",r)
+			task_queue.append({'id': int(m.group(1)), 'location': m.group(2))
+			bpformation.output.Status('SUCCESS',3,"%s publish job submitted" % file)
+
+		bpformation.queue.WaitForQueue(task_queue)
 
 
