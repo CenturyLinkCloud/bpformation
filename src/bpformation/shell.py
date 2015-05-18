@@ -170,7 +170,6 @@ class ExecCommand():
 
 	def PackageUpload(self):
 		# TODO
-		print bpformation.args.args.files
 		self.Exec('bpformation.package.Upload', {'files': bpformation.args.args.files}, cols=[])
 
 

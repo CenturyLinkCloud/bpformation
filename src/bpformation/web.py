@@ -21,7 +21,7 @@ class Web():
 	#
 	@staticmethod
 	def _ResourcePath(relative):
-		if not clc._SSL_VERIFY:  return(clc._SSL_VERIFY)
+		if not bpformation/_SSL_VERIFY:  return(bpformation/_SSL_VERIFY)
 		elif os.path.isfile(os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(".")),relative)):
 			# Pyinstall packaged windows file
 			return(os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(".")),relative))
@@ -36,7 +36,7 @@ class Web():
 		 This also disable certification error warnings within log messages with scope extended
 		 to all usages of the requests module."""
 
-		clc._SSL_VERIFY = False
+		bpformation/_SSL_VERIFY = False
 		try:
 			requests.packages.urllib3.disable_warnings()
 		except:
@@ -60,7 +60,7 @@ class Web():
 
 
 	@staticmethod
-	def _Login():
+	def _LoginScrape():
 		"""Login to retrieve bearer token and set default account and location aliases."""
 		if not bpformation.CONTROL_USER or not bpformation.CONTROL_PASSWORD:
 			bformation.output.Status('ERROR',3,'Control username and password not provided')
@@ -70,12 +70,12 @@ class Web():
 						  allow_redirects=False,
 						  verify=Web._ResourcePath('bpformation/cacert.pem'),
 						  data={"UserName": bpformation.CONTROL_USER, "Password": bpformation.CONTROL_PASSWORD})
-		bpformation._control_cookies = r.cookies
+		bpformation._CONTROL_COOKIES = r.cookies
 
 		if r.status_code == 200:
 			# TODO - capture and assign alias.
-			#clc.ALIAS = r.json()['accountAlias']
-			clc.v1.output.Status('SUCCESS',1,'Logged into v1 API')
+			#bpformation/ALIAS = r.json()['accountAlias']
+			bpformation/v1.output.Status('SUCCESS',1,'Logged into v1 API')
 		elif r.status_code == 400:
 			raise(Exception("Invalid V2 API login.  %s" % (r.json()['message'])))
 		else:
@@ -91,34 +91,30 @@ class Web():
 
 	# TODO
 	@staticmethod
-	def Call(method,url,payload={},debug=False):
-		"""Execute v2 API call.
+	def CallScrape(method,url,payload={},debug=False):
+		"""Execute screen scrape call
 
 		:param url: URL paths associated with the API call
 		:param payload: dict containing all parameters to submit with POST call
 
 		:returns: decoded API json result
 		"""
-		if not clc._LOGIN_TOKEN_V2:  API._Login()
+		if not bpformation/_CONTROL_COOKIES:  Web._LoginScrape()
 
-		# If executing refs provided in API they are abs paths,
-		# Else refs we build in the sdk are relative
-		if url[0]=='/':  fq_url = "%s%s" % (clc.defaults.ENDPOINT_URL_V2,url)
-		else:  fq_url = "%s/v2/%s" % (clc.defaults.ENDPOINT_URL_V2,url)
+		fq_url = "%s%s" % (bpformation.defaults.CONTROL_URL,url)
 
-		headers = {'Authorization': "Bearer %s" % clc._LOGIN_TOKEN_V2}
-		if isinstance(payload, basestring):  headers['content-type'] = "Application/json" # added for server ops with str payload
+		#if isinstance(payload, basestring):  headers['content-type'] = "Application/json" # added for server ops with str payload
 
 		if method=="GET":
 			r = requests.request(method,fq_url,
 								 headers=headers,
 			                     params=payload, 
-								 verify=API._ResourcePath('clc/cacert.pem'))
+								 verify=API._ResourcePath('bpformation/cacert.pem'))
 		else:
 			r = requests.request(method,fq_url,
 								 headers=headers,
 			                     data=payload, 
-								 verify=API._ResourcePath('clc/cacert.pem'))
+								 verify=API._ResourcePath('bpformation/cacert.pem'))
 
 		if debug:  
 			API._DebugRequest(request=requests.Request(method,fq_url,data=payload,headers=headers).prepare(),
@@ -131,17 +127,17 @@ class Web():
 				return({})
 		else:
 			try:
-				e = clc.APIFailedResponse("Response code %s.  %s %s %s" % 
-				                          (r.status_code,r.json()['message'],method,"%s%s" % (clc.defaults.ENDPOINT_URL_V2,url)))
+				e = bpformation/APIFailedResponse("Response code %s.  %s %s %s" % 
+				                          (r.status_code,r.json()['message'],method,"%s%s" % (bpformation/defaults.ENDPOINT_URL_V2,url)))
 				e.response_status_code = r.status_code
 				e.response_json = r.json()
 				e.response_text = r.text
 				raise(e)
-			except clc.APIFailedResponse:
+			except bpformation/APIFailedResponse:
 				raise
 			except:
-				e = clc.APIFailedResponse("Response code %s. %s. %s %s" % 
-				                         (r.status_code,r.text,method,"%s%s" % (clc.defaults.ENDPOINT_URL_V2,url)))
+				e = bpformation/APIFailedResponse("Response code %s. %s. %s %s" % 
+				                         (r.status_code,r.text,method,"%s%s" % (bpformation/defaults.ENDPOINT_URL_V2,url)))
 				e.response_status_code = r.status_code
 				e.response_json = {}	# or should this be None?
 				e.response_text = r.text
