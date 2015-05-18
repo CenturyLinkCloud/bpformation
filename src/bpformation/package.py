@@ -29,7 +29,10 @@ class Package():
 		# TODO - scrape ftp page and option user, password, and ftp endpoint associated with specified alias
 		#        store data in bpformation.FTP_ENDPOINT object { user, passwd, endpoint} and cache for later use
 		# TODO - alert on failure to locate.  Maybe add scrape POST call to create if missing?
-		
+
+		text = bpformation.web.CallScrape("GET","/Blueprints/ftpuser").text
+		print text
+			
 		bpformation.FTP_ENDPOINT = {'user': "test", 'passwd': "secrit", 'endpoint': "127.0.0.1"}
 		bpformation.output.Status('SUCCESS',1,"FTP endpoint %s@%s cached" % (bpformation.FTP_ENDPOINT['user'],bpformation.FTP_ENDPOINT['endpoint']))
 		#bpformation.output.Status('ERROR',3,"Unable to retrieve FTP endpoint")

@@ -104,8 +104,8 @@ class Args:
 			elif os.path.isfile("bpformation.ini"):
 				config_file = "bpformation.ini"
 		else:
-			if os.path.isfile("%s/.bpformatio" % (os.environ['HOME'])):
-				config_file = "%s/.bpformatio" % (os.environ['HOME'])
+			if os.path.isfile("%s/.bpformation" % (os.environ['HOME'])):
+				config_file = "%s/.bpformation" % (os.environ['HOME'])
 			elif os.path.isfile("/usr/local/etc/bpformation_config"):
 				config_file = "/usr/local/etc/bpformation_config"
 		if config_file:  
@@ -114,7 +114,7 @@ class Args:
 			config.read(config_file)
 
 			if config.has_option('global','control_user'):  bpformation.CONTROL_USER = config.get('global','control_user')
-			if config.has_option('global','control_password'):  bpformation.CONTROL_USER = config.get('global','control_password')
+			if config.has_option('global','control_password'):  bpformation.CONTROL_PASSWORD = config.get('global','control_password')
 
 
 	def MergeEnvironment(self):

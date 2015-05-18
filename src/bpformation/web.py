@@ -21,7 +21,7 @@ class Web():
 	#
 	@staticmethod
 	def _ResourcePath(relative):
-		if not bpformation/_SSL_VERIFY:  return(bpformation/_SSL_VERIFY)
+		if not bpformation._SSL_VERIFY:  return(bpformation._SSL_VERIFY)
 		elif os.path.isfile(os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(".")),relative)):
 			# Pyinstall packaged windows file
 			return(os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(".")),relative))
@@ -36,7 +36,6 @@ class Web():
 		 This also disable certification error warnings within log messages with scope extended
 		 to all usages of the requests module."""
 
-		bpformation/_SSL_VERIFY = False
 		try:
 			requests.packages.urllib3.disable_warnings()
 		except:
@@ -63,7 +62,7 @@ class Web():
 	def _LoginScrape():
 		"""Login to retrieve bearer token and set default account and location aliases."""
 		if not bpformation.CONTROL_USER or not bpformation.CONTROL_PASSWORD:
-			bformation.output.Status('ERROR',3,'Control username and password not provided')
+			bpformation.output.Status('ERROR',3,'Control username and password not provided')
 			raise(bpformation.BPFormationLoginException)
 			
 		r = requests.post("https://control.ctl.io/auth/Login", 
@@ -72,11 +71,12 @@ class Web():
 						  data={"UserName": bpformation.CONTROL_USER, "Password": bpformation.CONTROL_PASSWORD})
 		bpformation._CONTROL_COOKIES = r.cookies
 
-		if r.status_code == 200:
+		if r.status_code>=200 and r.status_code<400:
 			# TODO - capture and assign alias.
 			#bpformation/ALIAS = r.json()['accountAlias']
-			bpformation/v1.output.Status('SUCCESS',1,'Logged into v1 API')
+			bpformation.output.Status('SUCCESS',1,'Logged into control portal')
 		elif r.status_code == 400:
+			print "x"
 			raise(Exception("Invalid V2 API login.  %s" % (r.json()['message'])))
 		else:
 			raise(Exception("Error logging into V2 API.  Response code %s. message %s" % (r.status_code,r.json()['message'])))
@@ -99,47 +99,50 @@ class Web():
 
 		:returns: decoded API json result
 		"""
-		if not bpformation/_CONTROL_COOKIES:  Web._LoginScrape()
+		if not bpformation._CONTROL_COOKIES:  Web._LoginScrape()
 
 		fq_url = "%s%s" % (bpformation.defaults.CONTROL_URL,url)
 
 		#if isinstance(payload, basestring):  headers['content-type'] = "Application/json" # added for server ops with str payload
+		headers = None	# Placeholder for future use
 
 		if method=="GET":
 			r = requests.request(method,fq_url,
 								 headers=headers,
+								 cookies=bpformation._CONTROL_COOKIES,
 			                     params=payload, 
-								 verify=API._ResourcePath('bpformation/cacert.pem'))
+								 verify=Web._ResourcePath('bpformation/cacert.pem'))
 		else:
 			r = requests.request(method,fq_url,
 								 headers=headers,
+								 cookies=bpformation._CONTROL_COOKIES,
 			                     data=payload, 
-								 verify=API._ResourcePath('bpformation/cacert.pem'))
+								 verify=Web._ResourcePath('bpformation/cacert.pem'))
 
 		if debug:  
-			API._DebugRequest(request=requests.Request(method,fq_url,data=payload,headers=headers).prepare(),
+			Web._DebugRequest(request=requests.Request(method,fq_url,data=payload,headers=headers).prepare(),
 			                  response=r)
 
 		if r.status_code>=200 and r.status_code<300:
 			try:
-				return(r.json())
+				return(r)
 			except:
-				return({})
+				return(None)
 		else:
 			try:
-				e = bpformation/APIFailedResponse("Response code %s.  %s %s %s" % 
-				                          (r.status_code,r.json()['message'],method,"%s%s" % (bpformation/defaults.ENDPOINT_URL_V2,url)))
-				e.response_status_code = r.status_code
+				#e = bpformation/APIFailedResponse("Response code %s.  %s %s %s" % 
+				#                          (r.status_code,r.json()['message'],method,"%s%s" % (bpformation/defaults.ENDPOINT_URL_V2,url)))
+				#e.response_status_code = r.status_code
 				e.response_json = r.json()
 				e.response_text = r.text
 				raise(e)
-			except bpformation/APIFailedResponse:
+			except FailedResponse:
 				raise
 			except:
-				e = bpformation/APIFailedResponse("Response code %s. %s. %s %s" % 
-				                         (r.status_code,r.text,method,"%s%s" % (bpformation/defaults.ENDPOINT_URL_V2,url)))
-				e.response_status_code = r.status_code
-				e.response_json = {}	# or should this be None?
+				#e = APIFailedResponse("Response code %s. %s. %s %s" % 
+				#                         (r.status_code,r.text,method,"%s%s" % (bpformation/defaults.ENDPOINT_URL_V2,url)))
+				#e.response_status_code = r.status_code
+				#e.response_json = {}	# or should this be None?
 				e.response_text = r.text
 				raise(e)
 
