@@ -87,7 +87,7 @@ class Web():
 	@staticmethod
 	def Alias(alias=None):
 		# TODO if alias is not None then set it
-		if bpformation._ALIAS!=alias:
+		if bpformation._ALIAS == False:
 			bpformation._ALIAS = re.search("<title>\s+Account\s+([^\s]+)\s*</title>",Web.CallScrape("GET","/Organization/account/details").text).group(1)
 			bpformation.output.Status('SUCCESS',1,'Alias set to %s' % bpformation._ALIAS)
 

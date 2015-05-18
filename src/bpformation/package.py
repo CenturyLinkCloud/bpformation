@@ -35,7 +35,8 @@ class Package():
 
 		m = re.search("%s_BlueprintUser</td>.*?<td>(.*?)</td>.*?<td>(.*?)</td>" % bpformation.web.Alias(),text,re.DOTALL)
 			
-		bpformation.FTP_ENDPOINT = {'user': "test", 'passwd': "secrit", 'endpoint': "127.0.0.1"}
+		bpformation.FTP_ENDPOINT = {'user': "%s_BlueprintUser" % bpformation.web.Alias(), 
+		                            'passwd': m.group(1), 'endpoint': m.group(2)}
 		bpformation.output.Status('SUCCESS',1,"FTP endpoint %s@%s cached" % (bpformation.FTP_ENDPOINT['user'],bpformation.FTP_ENDPOINT['endpoint']))
 		#bpformation.output.Status('ERROR',3,"Unable to retrieve FTP endpoint")
 
