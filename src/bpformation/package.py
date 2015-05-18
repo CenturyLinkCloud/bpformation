@@ -27,18 +27,23 @@ class Package():
 
 	@staticmethod
 	def _GetFtpEndpoint():
-		# TODO - scrape ftp page and option user, password, and ftp endpoint associated with specified alias
-		#        store data in bpformation.FTP_ENDPOINT object { user, passwd, endpoint} and cache for later use
 		# TODO - alert on failure to locate.  Maybe add scrape POST call to create if missing?
 
-		text = bpformation.web.CallScrape("GET","/Blueprints/ftpuser").text
+		# Scrape from ftp users page
+		#text = bpformation.web.CallScrape("GET","/Blueprints/ftpuser").text
+		#m = re.search("%s_BlueprintUser</td>.*?<td>(.*?)</td>.*?<td>(.*?)</td>" % bpformation.web.Alias(),text,re.DOTALL)
 
-		m = re.search("%s_BlueprintUser</td>.*?<td>(.*?)</td>.*?<td>(.*?)</td>" % bpformation.web.Alias(),text,re.DOTALL)
-			
-		bpformation.FTP_ENDPOINT = {'user': "%s_BlueprintUser" % bpformation.web.Alias(), 
-		                            'passwd': m.group(1), 'endpoint': m.group(2)}
+		#if m:
+		#	bpformation.FTP_ENDPOINT = {'user': "%s_BlueprintUser" % bpformation.web.Alias(), 
+		#	                            'passwd': m.group(1), 'endpoint': m.group(2)}
+		#	bpformation.output.Status('SUCCESS',1,"FTP endpoint %s@%s cached" % (bpformation.FTP_ENDPOINT['user'],bpformation.FTP_ENDPOINT['endpoint']))
+		#else:  bpformation.output.Status('ERROR',3,"Unable to retrieve FTP endpoint.  Make sure %s_BlueprintUser exists" % bpformation.web.Alias())
+		# json response direct form scripts page
+
+		r = bpformation.web.CallScrape("POST","/blueprints/packages/GetFTPDetails").json()
+		bpformation.FTP_ENDPOINT = {'user': r['userName'], 'passwd': r['password'], 'endpoint': r['ftpHost']}
 		bpformation.output.Status('SUCCESS',1,"FTP endpoint %s@%s cached" % (bpformation.FTP_ENDPOINT['user'],bpformation.FTP_ENDPOINT['endpoint']))
-		#bpformation.output.Status('ERROR',3,"Unable to retrieve FTP endpoint")
+
 
 
 	@staticmethod
@@ -55,8 +60,8 @@ class Package():
 		ftp = ftplib.FTP(bpformation.FTP_ENDPOINT['endpoint'],bpformation.FTP_ENDPOINT['user'],bpformation.FTP_ENDPOINT['passwd'])
 		for file in files:
 			time_start = time.time()
-			with open(filename,'rb') as fh:
-				file_name = re.sub(".*/","",filename)
+			with open(file,'rb') as fh:
+				file_name = re.sub(".*/","",file)
 				ftp.storbinary("STOR %s" % (file_name),fh)
 			bpformation.output.Status('SUCCESS',3,"%s successfully uploaded in %s seconds" % (file,int(time.time()-time_start)))
 		ftp.quit()

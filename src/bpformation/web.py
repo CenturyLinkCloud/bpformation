@@ -9,6 +9,15 @@ import xml.etree.ElementTree
 
 import bpformation
 
+#
+# TODO vCur:
+#  o Set alias
+#
+
+#
+# TODO vNext:
+#
+
 
 class Web():
 	
