@@ -120,8 +120,13 @@ class Package():
 	
 	@staticmethod
 	def Download(uuids):
+		if not bpformation._CONTROL_COOKIES:  bpformation.web._LoginScrape()
+
 		for uuid in uuids:
-			r = requests.get(url, stream=True)
+			r = requests.get("%s/Blueprints/Packages/Download?uuid=%s" % (bpformation.defaults.CONTROL_URL,uuid), 
+			                 cookies=bpformation._CONTROL_COOKIES,
+							 stream=True)
+			print r.status_code
 			with open("%s.zip" % uuid, 'wb') as f:
 				for chunk in r.iter_content(chunk_size=1024):
 					if chunk: # filter out keep-alive new chunks

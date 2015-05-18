@@ -212,7 +212,7 @@ class ExecCommand():
 		self.Exec('bpformation.package.Delete', {'uuids': bpformation.args.args.uuid }, cols=[])
 
 
-	def PackageDwownload(self):
+	def PackageDownload(self):
 		self.Exec('bpformation.package.Download', {'uuids': bpformation.args.args.uuid }, cols=[])
 
 
