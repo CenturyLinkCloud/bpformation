@@ -1,9 +1,10 @@
 """Command-line interface to the CenturyLink Cloud (CLC) API."""
 
-import argparse
-import ConfigParser
+import re
 import os
 import sys
+import argparse
+import ConfigParser
 
 import bpformation
 
@@ -193,9 +194,11 @@ class ExecCommand():
 
 	def PackageUploadAndPublish(self):
 		# Upload
-		self.Exec('bpformation.package.Upload', {'files': bpformation.args.args.file}, cols=[])
+		self.PackageUpload()
 
 		# Publish
+		bpformation.args.args.file = [re.sub(".*/","", o) for o in bpformation.args.args.file ]
+		self.PackagePublish()
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):
