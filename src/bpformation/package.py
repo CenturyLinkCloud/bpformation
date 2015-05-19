@@ -140,11 +140,21 @@ class Package():
 		r = bpformation.web.CallScrape("GET","/Blueprints/packages/Library").text
 		table = re.search('id="PackageLibrary">.*?<table class="table">.*?<tbody>(.*)</tbody>',r,re.DOTALL).group(1)
 
-		print filters
 		packages = []
 		for package_html in table.split("</tr>"):
-			m = re.search('<td>\s*(.+?)\s*<input id="package_UUID".*?value="(.+?)".*?<td>(.*?)</td>.*?<td>.*(.+?)</td>.*?<td>\s*(.+?)\s*</td>',package_html,re.DOTALL)
-			if m:  packages.append({'name': m.group(1), 'uuid': m.group(2), 'owner': m.group(3), 'visibility': m.group(4)})
+			#m = re.search('<td>\s*(.+?)\s*<input id="package_UUID".*?value="(.+?)".*?<td>(.*?)</td>.*?<td>.*(.+?)</td>i.*</i>(.*?)</td>.*<td>.*\s(.+?)\s*</td>',package_html,re.DOTALL)
+			cols = package_html.split("<td>")
+			try:
+				packages.append({'name': re.search('\s*(.+?)\s*<input',cols[1],re.DOTALL).group(1),
+				                 'uuid': re.search('<input id="package_UUID" name="package.UUID" type="hidden" value="(.*?)"\s*/>',cols[1],re.DOTALL).group(1),
+						         'owner': re.search('(.*?)</td>',cols[2]).group(1),
+						         'status': re.search('</i>(.+?)</td>',cols[3]).group(1),
+						         'visibility': re.search('\s*(.+?)\s*</td>',cols[4]).group(1) })
+				
+			except:
+				pass
+			#print m.group(0)
+			#if m:  packages.append({'name': m.group(1), 'uuid': m.group(2), 'owner': m.group(3), 'visibility': m.group(4)})
 
 		# Apply filters if any are specified
 		if not filters:  packages_final = packages
@@ -156,8 +166,7 @@ class Package():
 					if not re.search(filter," ".join(package.values()),re.IGNORECASE):  match = False
 				if  match:  packages_final.append(package)
 
-		print packages_final
-
+		return(packages_final)
 
 
 

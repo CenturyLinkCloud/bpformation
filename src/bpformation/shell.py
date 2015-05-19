@@ -94,7 +94,8 @@ class Args:
 		parser.add_argument('--control-password', metavar='PASS', help='Control password')
 		parser.add_argument('--quiet', '-q', action='count', help='Supress status output (repeat up to 2 times)')
 		parser.add_argument('--verbose', '-v', action='count', help='Increase verbosity')
-		#parser.add_argument('--format', '-f', choices=['json','table','text','csv'], default='table', help='Output result format (table is default)')
+		parser.add_argument('--cols', nargs='*', metavar='COL', help='Include only specific columns in the output')
+		parser.add_argument('--format', '-f', choices=['json','table','text','csv'], default='table', help='Output result format (table is default)')
 		self.args = parser.parse_args()
 
 
@@ -210,7 +211,7 @@ class ExecCommand():
 
 
 	def PackageList(self):
-		self.Exec('bpformation.package.List', {'filters': bpformation.args.args.filter }, cols=[])
+		self.Exec('bpformation.package.List', {'filters': bpformation.args.args.filter }, cols=['name','uuid','owner','visibility','status'])
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):
@@ -219,7 +220,7 @@ class ExecCommand():
 			else:  r = eval("%s()" % (function))
 
 			#  Filter results
-			#if bpformation.args.args.cols:  cols = bpformation.args.args.cols
+			if bpformation.args.args.cols:  cols = bpformation.args.args.cols
 
 			# Output results
 			# TODO - how do we differentiate blueprints vs. queue RequestIDs?
@@ -227,11 +228,12 @@ class ExecCommand():
 			#	r = bpformation.output.RequestBlueprintProgress(r['RequestID'],self._GetLocation(),self._GetAlias(),bpformation.args.args.quiet)
 			#	cols = ['Server']
 
-			#if not isinstance(r, list):  r = [r]
-			#if not supress_output and bpformation.args.args.format == 'json':  print bpformation.output.Json(r,cols)
-			#elif not supress_output and bpformation.args.args.format == 'table':  print bpformation.output.Table(r,cols)
-			#elif not supress_output and bpformation.args.args.format == 'text':  print bpformation.output.Text(r,cols)
-			#elif not supress_output and bpformation.args.args.format == 'csv':  print bpformation.output.Csv(r,cols)
+			if r and len(cols):
+				if not isinstance(r, list):  r = [r]
+				if not supress_output and bpformation.args.args.format == 'json':  print bpformation.output.Json(r,cols)
+				elif not supress_output and bpformation.args.args.format == 'table':  print bpformation.output.Table(r,cols)
+				elif not supress_output and bpformation.args.args.format == 'text':  print bpformation.output.Text(r,cols)
+				elif not supress_output and bpformation.args.args.format == 'csv':  print bpformation.output.Csv(r,cols)
 
 			#return(r)
 		except:
