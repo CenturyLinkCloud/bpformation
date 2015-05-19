@@ -5,6 +5,7 @@ Manage Blueprints.
 
 import os
 import re
+import sys
 import time
 
 import bpformation
@@ -103,19 +104,26 @@ class Blueprint():
 		OS:-1
 		CompanySize:-
 		"""
-		r = bpformation.web.CallScrape("POST","/blueprints/browser/LoadTemplates").text
-		table = re.search('id="PackageLibrary">.*?<table class="table">.*?<tbody>(.*)</tbody>',r,re.DOTALL).group(1)
+		r = bpformation.web.CallScrape("POST","/blueprints/browser/LoadTemplates",payload={
+					'Search-PageSize': 1000,
+					'Search-PageNumber': 1,
+				}).text
+		print r
 
-		packages = []
-		for package_html in filter(lambda x: x in Package.limited_printable_chars, table).split("</tr>"):
+		#table = re.search('id="PackageLibrary">.*?<table class="table">.*?<tbody>(.*)</tbody>',r,re.DOTALL).group(1)
+
+		blueprints = []
+		for blueprint_html in filter(lambda x: x in Blueprint.limited_printable_chars, r).split('class="blueprint-specs"'):
 			cols = package_html.split("<td>")
 			try:
-				packages.append({'name': re.search('\s*(.+?)\s*<input',cols[1],re.DOTALL).group(1),
+				blueprints.append({'name': re.search('\s*(.+?)\s*<input',cols[1],re.DOTALL).group(1),
 				                 'uuid': re.search('<input id="package_UUID" name="package.UUID" type="hidden" value="(.*?)"\s*/>',cols[1],re.DOTALL).group(1),
 						         'owner': re.search('(.*?)</td>',cols[2]).group(1),
 						         'status': re.search('</i>(.+?)</td>',cols[3]).group(1),
 						         'visibility': re.search('\s*(.+?)\s*</td>',cols[4]).group(1) })
 				
+				print blueprints
+				sys.exit()
 			except:
 				pass
 			#print m.group(0)

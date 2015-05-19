@@ -170,7 +170,7 @@ class ExecCommand():
 
 
 	def Blueprint(self):
-		elif bpformation.args.GetArgs().sub_command == 'list':  self.BlueprintList()
+		if bpformation.args.GetArgs().sub_command == 'list':  self.BlueprintList()
 
 
 	def PackageUpload(self):
