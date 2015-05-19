@@ -81,8 +81,12 @@ class Args:
 		#  o dependencies tree
 		#
 
-		#parser_blueprint = parser_sp1.add_parser('blueprint', help='Blueprint level activities (list, import, export, modify, etc.)')
-		#parser_sp2 = parser_account.add_subparsers(dest='sub_command')
+		parser_blueprint = parser_sp1.add_parser('blueprint', help='Blueprint level activities (list, import, export, delete, etc.)')
+		parser_sp2 = parser_blueprint.add_subparsers(dest='sub_command')
+
+		## List
+		parser_blueprint_list = parser_sp2.add_parser('list', help='List blueprint inventory')
+		parser_blueprint_list.add_argument('--filter', nargs='*', required=False, help='Regex filter Results by name, author, status, visibility (and)')
 
 
 
@@ -166,22 +170,7 @@ class ExecCommand():
 
 
 	def Blueprint(self):
-		pass
-
-
-	#def _GetAlias(self):
-	#	if bpformation.args.args.alias:  return(bpformation.args.args.alias)
-	#	else:
-	#		self.Exec('bpformation.Account.GetAlias','',supress_output=True)
-	#		alias = bpformation.ALIAS
-
-	#		return(alias)
-
-
-	#def PackageListUnpublished(self):
-	#	# TODO
-	#	self.Exec('bpformation.package.ListUnpublished', {'alias': self._GetAlias()}, cols=['AccountAlias', 'Status', 'City', 'Fax', 'Address1', 'Address2', 'ShareParentNetworks', 'Telephone', 'Country', 'Location', 'BusinessName', 'PostalCode', 'TimeZone', 'StateProvince', 'ParentAlias'])
-
+		elif bpformation.args.GetArgs().sub_command == 'list':  self.BlueprintList()
 
 
 	def PackageUpload(self):
@@ -212,6 +201,10 @@ class ExecCommand():
 
 	def PackageList(self):
 		self.Exec('bpformation.package.List', {'filters': bpformation.args.args.filter }, cols=['name','uuid','owner','visibility','status'])
+
+
+	def BlueprintList(self):
+		self.Exec('bpformation.blueprint.List', {'filters': bpformation.args.args.filter }, cols=['name','uuid','owner','visibility','status'])
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):
