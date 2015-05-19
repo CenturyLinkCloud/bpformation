@@ -54,14 +54,60 @@ class Blueprint():
 #			bpformation.output.Status('SUCCESS',3,"%s package downloaded" % uuid)
 
 	
+	"""
+	        <div class="blueprint-specs">
+			    <div class="price">$37.37/month</div>
+			    <div>$0.05/hour</div>
+			    <div>
+	Ubuntu 14 64-bit                                            </div>
+			    <div class="left-col">1 server</div>
+			    <div>1 cpu</div>
+			    <div class="left-col">2 GB memory</div>
+			    <div>17 GB storage</div>
+		    </div>
+	    </div>
+	</div></li>
+	        <li ><div id="2371" class="tile tile-blueprint">
+	<input id="UUID" name="UUID" type="hidden" value="83627c9c-1354-4ef3-b99c-6d9e475b956c" />
+	    <div class="blueprint-info">
+	        <a href="/blueprints/browser/details/2371">
+	            <div class="blueprint-desc">
+				    <div><strong>Complete Pivotal Greenplum setup.  Includes master, standby master, and 2 service nodes.  Deploys 8 CPUs, 32GB RAM, and 2TB disk across 6 segments.</strong></div>
+				    <hr>
+				    <div class="left-col">visibility</div>
+				    <div class="right-col"><strong>private</strong></div>
+				    <em>Feb 17, 2015</em>
+			    </div>
+	        </a>
+	        <div class="blueprint-header">
+		        <label>DEV Pivotal Greenplum - 4 node small cluster</label>
+		        <div class="author">by CSA Tools</div>
+		        <div id="star-rating-83627c9c-1354-4ef3-b99c-6d9e475b956c" class="star-rating">
+	    <input id="StarID" name="StarID" type="hidden" value="83627c9c-1354-4ef3-b99c-6d9e475b956c" />
+	    <input id="StarRating" name="StarRating" type="hidden" value="0" />
+	    <input id="Active" name="Active" type="hidden" value="False" />
+	</div>
+	"""
 	@staticmethod
 	def List(filters):
-		r = bpformation.web.CallScrape("GET","/Blueprints/packages/Library").text
+		"""
+		Search-Author:
+		Search-PageSize:9
+		Search-PageNumber:2
+		LastSort:1
+		Search-Keyword:
+		AccountAlias:--ALL--
+		Accounts:--ALL--
+		Accounts:-1
+		Category:-1
+		OS:-1
+		CompanySize:-
+		"""
+		r = bpformation.web.CallScrape("POST","/blueprints/browser/LoadTemplates").text
 		table = re.search('id="PackageLibrary">.*?<table class="table">.*?<tbody>(.*)</tbody>',r,re.DOTALL).group(1)
 
 		packages = []
 		for package_html in filter(lambda x: x in Package.limited_printable_chars, table).split("</tr>"):
-			#m = re.search('<td>\s*(.+?)\s*<input id="package_UUID".*?value="(.+?)".*?<td>(.*?)</td>.*?<td>.*(.+?)</td>i.*</i>(.*?)</td>.*<td>.*\s(.+?)\s*</td>',package_html,re.DOTALL)
 			cols = package_html.split("<td>")
 			try:
 				packages.append({'name': re.search('\s*(.+?)\s*<input',cols[1],re.DOTALL).group(1),
