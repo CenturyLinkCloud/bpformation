@@ -151,9 +151,10 @@ class Package():
 		else:
 			packages_final = []
 			for package in packages:
+				match = True
 				for filter in filters:
-					if re.search(filter," ".join(package.values())):
-						packages_final.append(package)
+					if not re.search(filter," ".join(package.values()),re.IGNORECASE):  match = False
+				if  match:  packages_final.append(package)
 
 		print packages_final
 

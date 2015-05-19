@@ -26,7 +26,6 @@ class Args:
 		########## Package ###########
 		#
 		# TODO vCur:
-		#  o list (optional filter against metadata)
 		#
 		# TODO vNext:
 		#  o dependencies tree
@@ -38,7 +37,7 @@ class Args:
 
 		## List
 		parser_package_list = parser_sp2.add_parser('list', help='List package inventory')
-		parser_package_list.add_argument('--filter', nargs='*', required=False, help='Regex filter Results by name, author, status, visibility')
+		parser_package_list.add_argument('--filter', nargs='*', required=False, help='Regex filter Results by name, author, status, visibility (and)')
 
 		## Upload
 		parser_package_upload = parser_sp2.add_parser('upload', help='Uploaded package to specified alias')
