@@ -27,6 +27,7 @@ import bpformation
 class Package():
 
 	visibility_stoi = { 'Public': 1, 'Private': 2, 'Shared': 3}
+	limited_printable_chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~  "
 
 
 	@staticmethod
@@ -141,7 +142,7 @@ class Package():
 		table = re.search('id="PackageLibrary">.*?<table class="table">.*?<tbody>(.*)</tbody>',r,re.DOTALL).group(1)
 
 		packages = []
-		for package_html in table.split("</tr>"):
+		for package_html in filter(lambda x: x in Package.limited_printable_chars, table).split("</tr>"):
 			#m = re.search('<td>\s*(.+?)\s*<input id="package_UUID".*?value="(.+?)".*?<td>(.*?)</td>.*?<td>.*(.+?)</td>i.*</i>(.*?)</td>.*<td>.*\s(.+?)\s*</td>',package_html,re.DOTALL)
 			cols = package_html.split("<td>")
 			try:
@@ -162,8 +163,8 @@ class Package():
 			packages_final = []
 			for package in packages:
 				match = True
-				for filter in filters:
-					if not re.search(filter," ".join(package.values()),re.IGNORECASE):  match = False
+				for one_filter in filters:
+					if not re.search(one_filter," ".join(package.values()),re.IGNORECASE):  match = False
 				if  match:  packages_final.append(package)
 
 		return(packages_final)
