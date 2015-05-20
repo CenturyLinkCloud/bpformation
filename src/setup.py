@@ -12,7 +12,7 @@ setup(
 	version = "0.1",
 	packages = find_packages("."),
 
-	install_requires = ['prettytable','clint','argparse','requests'],
+	install_requires = ['prettytable','clint','argparse','requests','lxml'],
 
 	entry_points = {
 		'console_scripts': [
