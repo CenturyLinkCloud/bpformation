@@ -65,12 +65,8 @@ class Blueprint():
 					server[attr] = value
 				print(' * %s = %s' % (attr, value))
 			bp['servers'].append(server)
-		#print o.Tasks.BuildServer
-		#print o.Properties
-		#import pprint
-		#pprint.pprint(o)
 
-		print bp
+		print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
 
 
 	# Available, but not returning:
