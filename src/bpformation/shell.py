@@ -70,7 +70,6 @@ class Args:
 		########## Blueprint ###########
 		#
 		# TODO vCur:
-		#  o list (optional filter against metadata)
 		#  o delete
 		#  o export (to json)
 		#  o import (from json)
@@ -87,6 +86,10 @@ class Args:
 		## List
 		parser_blueprint_list = parser_sp2.add_parser('list', help='List blueprint inventory')
 		parser_blueprint_list.add_argument('--filter', nargs='*', required=False, help='Regex filter Results by name, author, status, visibility (and)')
+
+		## Export
+		parser_blueprint_export = parser_sp2.add_parser('export', help='Export blueprint')
+		parser_blueprint_export.add_argument('--id', required=True, help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
 
 
 
@@ -171,6 +174,7 @@ class ExecCommand():
 
 	def Blueprint(self):
 		if bpformation.args.GetArgs().sub_command == 'list':  self.BlueprintList()
+		elif bpformation.args.GetArgs().sub_command == 'export':  self.BlueprintExport()
 
 
 	def PackageUpload(self):
@@ -205,6 +209,10 @@ class ExecCommand():
 
 	def BlueprintList(self):
 		self.Exec('bpformation.blueprint.List', {'filters': bpformation.args.args.filter }, cols=['name','id','owner','visibility','date_added'])
+
+
+	def BlueprintExport(self):
+		self.Exec('bpformation.blueprint.Export', {'id': bpformation.args.args.id }, cols=[])
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):
