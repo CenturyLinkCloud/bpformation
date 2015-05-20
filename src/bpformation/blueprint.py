@@ -63,9 +63,13 @@ class Blueprint():
 			#print build_server.get("AddDisk")[0].get("GB")
 			for disk in build_server.iter("AddDisk"):
 				disk_obj = {"id": disk.get("ID"), "uuid": disk.get("UUID")}
-				for prop in disk.iter("Properties").items():
-					 print prop
-					 disk_obj['gb'] = prop.get("GB").value
+				#print disk.iter("Properties")
+				#print disk.xpath("Property")
+				print "a"
+				print "b"
+				#for prop in disk.iter("Properties"):
+				#	 print prop.tag
+				#	 disk_obj['gb'] = prop.get("GB").value
 				server['disks'].append(disk_obj)
 			#for attr, value in build_server.items():
 			#	if attr in ('Title','UUID','Template','Alias','Description','MemoryGB','CpuCount','ID'):
