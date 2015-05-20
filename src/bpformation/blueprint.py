@@ -6,7 +6,9 @@ Manage Blueprints.
 import os
 import re
 import sys
+import json
 import time
+from lxml import objectify, etree
 
 import bpformation
 
@@ -42,12 +44,26 @@ class Blueprint():
 #				bpformation.output.Status('ERROR',3,"%s package deletion error (status code %s)" % (uuid,r.status_code))
 
 	
+	@staticmethod
+	def Export(id):
+		bp = {}
+		# TODO - Blueprint metadata
+
+		# Blueprint definition
+		r = bpformation.web.CallScrape("GET","/Blueprints/Designer/BlueprintXml/%s" % id).text
+		#o = objectify.fromstring(r)
+		t = etree.fromstring(r)
+		print t.Tasks
+		#print o.Tasks.BuildServer
+		#print o.Properties
+		#import pprint
+		#pprint.pprint(o)
+
 
 	# Available, but not returning:
 	#  o Price information
 	#  o Environment size details (server count, memory, CPU, etc.)
 	#  o Blueprint description
-	#
 	@staticmethod
 	def List(filters):
 		r = bpformation.web.CallScrape("POST","/blueprints/browser/LoadTemplates",payload={
