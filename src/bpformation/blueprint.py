@@ -46,18 +46,31 @@ class Blueprint():
 	
 	@staticmethod
 	def Export(id):
-		bp = {}
+		bp = {'metadata': {}, 'servers': []}
 		# TODO - Blueprint metadata
 
 		# Blueprint definition
-		r = bpformation.web.CallScrape("GET","/Blueprints/Designer/BlueprintXml/%s" % id).text
-		#o = objectify.fromstring(r)
-		t = etree.fromstring(r)
-		print t.Tasks
+		r = bpformation.web.CallScrape("GET","/Blueprints/Designer/BlueprintXml/%s" % id)
+		if r.status_code<200 or r.status_code>=300:
+			bpformation.output.Status('ERROR',3,"Error retrieving data (http response %s)" % r.status_code)
+			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+
+		print r.status_code
+		t = etree.XML(r.text)
+		print(t.findall(".//BuildServer"))
+		for build_server in t.findall(".//BuildServer"):
+			server = { 'disks': [], 'packages': [] }
+			for attr, value in build_server.items():
+				if attr in ('Title','UUID','Template','Alias','Description','MemoryGB','CpuCount','ID'):
+					server[attr] = value
+				print(' * %s = %s' % (attr, value))
+			bp['servers'].append(server)
 		#print o.Tasks.BuildServer
 		#print o.Properties
 		#import pprint
 		#pprint.pprint(o)
+
+		print bp
 
 
 	# Available, but not returning:
