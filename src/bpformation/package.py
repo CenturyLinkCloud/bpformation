@@ -14,8 +14,7 @@ import bpformation
 #
 # TODO vCur:
 #  o Create new ftp endpoint if none exists
-#  o Retrieve OS list.  Shortcut for "All Linux", "All Windows"
-#  o Retrive list of existing packages.  Filter by metadata
+#  o Retrive list of existing packages using v2 json endpoint
 #
 
 
@@ -138,6 +137,7 @@ class Package():
 	
 	@staticmethod
 	def List(filters):
+		# TODO - Query json v2 endpoint - https://control.ctl.io/api/tunnel/v2/packages/krap
 		r = bpformation.web.CallScrape("GET","/Blueprints/packages/Library").text
 		table = re.search('id="PackageLibrary">.*?<table class="table">.*?<tbody>(.*)</tbody>',r,re.DOTALL).group(1)
 

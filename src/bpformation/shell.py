@@ -204,7 +204,7 @@ class ExecCommand():
 
 
 	def BlueprintList(self):
-		self.Exec('bpformation.blueprint.List', {'filters': bpformation.args.args.filter }, cols=['name','uuid','owner','visibility','status'])
+		self.Exec('bpformation.blueprint.List', {'filters': bpformation.args.args.filter }, cols=['name','id','owner','visibility','date_added'])
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):
