@@ -55,18 +55,18 @@ class Blueprint():
 			bpformation.output.Status('ERROR',3,"Error retrieving data (http response %s)" % r.status_code)
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
-		print r.status_code
 		t = etree.XML(r.text)
-		print(t.findall(".//BuildServer"))
 		for build_server in t.findall(".//BuildServer"):
-			server = { 'disks': [], 'packages': [] }
-			for attr, value in build_server.items():
-				if attr in ('Title','UUID','Template','Alias','Description','MemoryGB','CpuCount','ID'):
-					server[attr] = value
-				print(' * %s = %s' % (attr, value))
+			server = { 'name': build_server.get("Alias"), 'uuid': build_server.get("UUID"), 'description': build_server.get("Description"),
+					   'id': build_server.get("ID"), 'template': build_server.get("Template"), 'cpu': build_server.get("CpuCount"), 
+					   'ram': build_server.get("MemoryGB"), 'disks': [], 'packages': [] }
+			#for attr, value in build_server.items():
+			#	if attr in ('Title','UUID','Template','Alias','Description','MemoryGB','CpuCount','ID'):
+			#		server[attr] = value
+			#	print(' * %s = %s' % (attr, value))
 			bp['servers'].append(server)
 
-		print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
+		#print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
 
 
 	# Available, but not returning:
