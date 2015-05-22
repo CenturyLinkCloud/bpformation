@@ -69,6 +69,12 @@ class Blueprint():
 
 
 	@staticmethod
+	def _ParseExportTaskReboot(root):
+		ip_obj = {"type": "reboot", "id": root.get("ID"), "uuid": root.get("UUID") }
+		return(ip_obj)
+
+
+	@staticmethod
 	def _ParseExportTaskAddDisk(root):
 		disk_obj = {"type": "disk", "id": root.get("ID"), "uuid": root.get("UUID")}
 		for prop in root[0]:
@@ -86,15 +92,13 @@ class Blueprint():
 				   'id': root.get("ID"), 'template': root.get("Template"), 'cpu': root.get("CpuCount"), 
 				   'ram': root.get("MemoryGB"), 'tasks': [] }
 
-		# TODO alternate iter that only finds immediate children
-		for o in root.iter():
+		for o in root:
 			if o.tag=='DeployPackage':  server['tasks'].append(Blueprint._ParseExportTaskDeployPackage(o))
 			elif o.tag=='AddDisk':  server['tasks'].append(Blueprint._ParseExportTaskAddDisk(o))
 			elif o.tag=='AddIPAddress':  server['tasks'].append(Blueprint._ParseExportTaskAddIPAddress(o))
 			elif o.tag=='AddMappedIPAddress':  server['tasks'].append(Blueprint._ParseExportTaskAddMappedIPAddress(o))
+			elif o.tag=='Reboot':  server['tasks'].append(Blueprint._ParseExportTaskReboot(o))
 			elif o.tag=='Properties':  continue
-			elif o.tag=='Property':  continue
-			elif o.tag=='BuildServer':  continue
 			else:  print "Unknown server tag: %s" % o.tag
 
 		return(server)
@@ -105,12 +109,12 @@ class Blueprint():
 		tasks = []
 		if root.tag=="BuildServer":  tasks.append(Blueprint._ParseExportTaskBuildServer(root))
 		elif root.tag=="DeployPackage":  tasks.append(Blueprint._ParseExportTaskDeployPackage(root))
-		#elif root.tag=="Blueprint":  taskBlueprint._ExportProcessRoot(o)
 		elif root.tag=="Blueprint":  
-			for o in root.iter():
+			for o in root:
 				try:
 					if o.tag != "Blueprint":  tasks.append(Blueprint._ExportProcessRoot(o)[0])
 				except:
+					# Catch only our exceptions
 					pass
 		else:  
 			print "Unknown: %s" % root.tag
@@ -121,6 +125,13 @@ class Blueprint():
 
 	@staticmethod
 	def Export(id):
+		bp = {'metadata': {}, 'tasks': [] }
+
+		# Blueprint metadata 
+		r = bpformation.web.CallScrape("GET","/Blueprints/Designer/BlueprintXml/%s" % id)
+		if r.status_code<200 or r.status_code>=300:
+			bpformation.output.Status('ERROR',3,"Error retrieving data (http response %s)" % r.status_code)
+			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
 		# Blueprint definition
 		r = bpformation.web.CallScrape("GET","/Blueprints/Designer/BlueprintXml/%s" % id)
@@ -129,12 +140,11 @@ class Blueprint():
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
 		t = etree.XML(r.text)
-		bp = {'metadata': {}, 'tasks': [] }
 		for o in t.findall("Tasks/*"):  
 			try:
-				#print Blueprint._ExportProcessRoot(o)
 				bp['tasks'] += Blueprint._ExportProcessRoot(o)
 			except:
+					# Catch only our exceptions
 				pass
 
 		print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
