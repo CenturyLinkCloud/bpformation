@@ -128,10 +128,19 @@ class Blueprint():
 		bp = {'metadata': {}, 'tasks': [] }
 
 		# Blueprint metadata 
-		r = bpformation.web.CallScrape("GET","/Blueprints/Designer/BlueprintXml/%s" % id)
+		r = bpformation.web.CallScrape("GET","/blueprints/browser/details/%s" % id)
 		if r.status_code<200 or r.status_code>=300:
 			bpformation.output.Status('ERROR',3,"Error retrieving data (http response %s)" % r.status_code)
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+		bp['metadata'] = {
+				'name': re.search('<h1 id="body-title" class="left">\s*(.+?)\s*<small>',r.text,re.DOTALL).group(1),
+				'owner': re.search('<small>by (.+?)</small>',r.text).group(1),
+				'version': re.search('<dt>version</dt>\s*<dd>\s*(.+?)\s*</dd>',r.text,re.DOTALL).group(1),
+				'visibility': re.search('<dt>visibility</dt>\s*<dd>\s*(.+?)\s*-</dd>',r.text,re.DOTALL).group(1),
+				'description': re.search('<div class="blueprint-price">.*?<p>\s*(.+?)\s*</p>',r.text,re.DOTALL).group(1),
+			}
+		print bp
+		sys.exit()
 
 		# Blueprint definition
 		r = bpformation.web.CallScrape("GET","/Blueprints/Designer/BlueprintXml/%s" % id)
