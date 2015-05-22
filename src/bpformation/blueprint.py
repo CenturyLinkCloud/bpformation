@@ -76,11 +76,13 @@ class Blueprint():
 		# TODO find packages and apply to tasks in order
 		for o in root.iter():
 			if o.tag=='DeployPackage':  server['tasks'].append(Blueprint._ParseExportTaskDeployPackage(o))
-			if o.tag=='AddDisk':  server['tasks'].append(Blueprint._ParseExportTaskAddDisk(o))
-			print o.tag
-		#server['packages'] = [ Blueprint._ParseExportTaskDeployPackage(o) for o in root.findall(".//DeployPackage") ]
-		#server['disks'] = [ Blueprint._ParseExportTaskAddDisk(o) for o in root.findall(".//AddDisk") ]
-		# TODO other system packages?
+			elif o.tag=='AddDisk':  server['tasks'].append(Blueprint._ParseExportTaskAddDisk(o))
+			elif o.tag=='AddIPAddress':  server['tasks'].append(Blueprint._ParseExportTaskAddIPAddress(o))
+			#elif o.tag=='AddMappedIPAddress':  server['tasks'].append(Blueprint._ParseExportTaskAddMappedIPAddress(o))
+			elif o.tag=='Properties':  continue
+			else:  print "Unknown server tag: %s" % o.tag
+			# TODO <AddIPAddress Network="${T3.Server.Network}" ID= UUID Classification="System" Title="Add IP Address"/>
+			# TODO <AddMappedIPAddress Network="${T3.Server.Network}" FirewallOptions="HTTP, HTTP8080" ID= UUID= Classification="System" Title="Add Public IP Address"/>
 
 		return(server)
 
@@ -97,7 +99,7 @@ class Blueprint():
 		t = etree.XML(r.text)
 		
 		bp = {'metadata': {}, 'tasks': []}
-		for o in t.findall(".//Tasks/*"):
+		for o in t.findall("Tasks/*"):
 			if o.tag=="BuildServer":  bp['tasks'].append(Blueprint._ParseExportTaskBuildServer(o))
 			elif o.tag=="DeployPackage":  bp['tasks'].append(Blueprint._ParseExportTaskDeployPackage(o))
 			else:  print "Unknown: %s" % o.tag
