@@ -56,6 +56,19 @@ class Blueprint():
 
 
 	@staticmethod
+	def _ParseExportTaskAddIPAddress(root):
+		ip_obj = {"type": "add_ip", "id": root.get("ID"), "uuid": root.get("UUID") }
+		return(ip_obj)
+
+
+	@staticmethod
+	def _ParseExportTaskAddMappedIPAddress(root):
+		ip_obj = {"type": "add_nat_ip", "id": root.get("ID"), "uuid": root.get("UUID"),
+		          "ingress_ports": root.get("FirewallOptions").split(", ") }
+		return(ip_obj)
+
+
+	@staticmethod
 	def _ParseExportTaskAddDisk(root):
 		disk_obj = {"type": "disk", "id": root.get("ID"), "uuid": root.get("UUID")}
 		for prop in root[0]:
@@ -78,7 +91,7 @@ class Blueprint():
 			if o.tag=='DeployPackage':  server['tasks'].append(Blueprint._ParseExportTaskDeployPackage(o))
 			elif o.tag=='AddDisk':  server['tasks'].append(Blueprint._ParseExportTaskAddDisk(o))
 			elif o.tag=='AddIPAddress':  server['tasks'].append(Blueprint._ParseExportTaskAddIPAddress(o))
-			#elif o.tag=='AddMappedIPAddress':  server['tasks'].append(Blueprint._ParseExportTaskAddMappedIPAddress(o))
+			elif o.tag=='AddMappedIPAddress':  server['tasks'].append(Blueprint._ParseExportTaskAddMappedIPAddress(o))
 			elif o.tag=='Properties':  continue
 			else:  print "Unknown server tag: %s" % o.tag
 			# TODO <AddIPAddress Network="${T3.Server.Network}" ID= UUID Classification="System" Title="Add IP Address"/>
