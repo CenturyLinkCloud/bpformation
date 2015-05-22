@@ -136,11 +136,9 @@ class Blueprint():
 				'name': re.search('<h1 id="body-title" class="left">\s*(.+?)\s*<small>',r.text,re.DOTALL).group(1),
 				'owner': re.search('<small>by (.+?)</small>',r.text).group(1),
 				'version': re.search('<dt>version</dt>\s*<dd>\s*(.+?)\s*</dd>',r.text,re.DOTALL).group(1),
-				'visibility': re.search('<dt>visibility</dt>\s*<dd>\s*(.+?)\s*-</dd>',r.text,re.DOTALL).group(1),
+				'visibility': re.search('<dt>visibility</dt>\s*<dd>\s*(.+?)\s*-',r.text,re.DOTALL).group(1),
 				'description': re.search('<div class="blueprint-price">.*?<p>\s*(.+?)\s*</p>',r.text,re.DOTALL).group(1),
 			}
-		print bp
-		sys.exit()
 
 		# Blueprint definition
 		r = bpformation.web.CallScrape("GET","/Blueprints/Designer/BlueprintXml/%s" % id)
