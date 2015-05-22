@@ -46,19 +46,24 @@ class Blueprint():
 
 	@staticmethod
 	def _ParseExportTaskDeployPackage(root):
-		for package in root.iter("DeployPackage"):
-			print package.get("ID")
-			package_obj = {"id": package.get("ID"), "uuid": package.get("UUID"), "name": package.get("Title") }
-			if package.get("Server"):  package_obj['server'] = package.get("Server")
-			print package.get("Server")
-			# TODO - design time parameters
-			#for prop in package[0]:
-			#	if prop.get("Value")=="True":  package_obj[prop.get("Name").lower()] = True
-			#	elif prop.get("Value")=="False":  package_obj[prop.get("Name").lower()] = False
-			#	else:  package_obj[prop.get("Name").lower()] = prop.get("Value")
-			print package_obj
+		package_obj = {"id": root.get("ID"), "uuid": root.get("UUID"), "name": root.get("Title") }
+		if root.get("Server"):  package_obj['server'] = root.get("Server")
+		# TODO - design time parameters
 
-			return(package_obj)
+		return(package_obj)
+
+
+	@staticmethod
+	def _ParseExportTaskAddDisk(root):
+		# AddDisk
+		disk_obj = {"id": root.get("ID"), "uuid": root.get("UUID")}
+		for prop in root[0]:
+			# TODO - set standard disk
+			if prop.get("Value")=="True":  disk_obj[prop.get("Name").lower()] = True
+			elif prop.get("Value")=="False":  disk_obj[prop.get("Name").lower()] = False
+			else:  disk_obj[prop.get("Name").lower()] = prop.get("Value")
+
+		return(disk_obj)
 
 
 	@staticmethod
@@ -70,21 +75,11 @@ class Blueprint():
 
 		# TODO - parse multiple disks
 		server['packages'] = [ Blueprint._ParseExportTaskDeployPackage(o) for o in root.findall(".//DeployPackage") ]
-		server['disks'] = [ Blueprint._ParseExportTaskDisk(o) for o in root.findall(".//AddDisk") ]
+		server['disks'] = [ Blueprint._ParseExportTaskAddDisk(o) for o in root.findall(".//AddDisk") ]
 		#server['packages'] = Blueprint._ParseExportTaskDeployPackage(root)
 		# TODO other system packages
 
-		# AddDisk
-		for disk in root.iter("AddDisk"):
-			disk_obj = {"id": disk.get("ID"), "uuid": disk.get("UUID")}
-			for prop in disk[0]:
-				# TODO - set standard disk
-				if prop.get("Value")=="True":  disk_obj[prop.get("Name").lower()] = True
-				elif prop.get("Value")=="False":  disk_obj[prop.get("Name").lower()] = False
-				else:  disk_obj[prop.get("Name").lower()] = prop.get("Value")
-			server['disks'].append(disk_obj)
-
-		bp['servers'].append(server)
+		return(server)
 
 
 	@staticmethod
