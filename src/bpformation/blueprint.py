@@ -75,9 +75,11 @@ class Blueprint():
 
 		# TODO find packages and apply to tasks in order
 		for o in root.iter():
+			if o.tag=='DeployPackage':  server['tasks'].append(Blueprint._ParseExportTaskDeployPackage(o))
+			if o.tag=='AddDisk':  server['tasks'].append(Blueprint._ParseExportTaskAddDisk(o))
 			print o.tag
-		server['packages'] = [ Blueprint._ParseExportTaskDeployPackage(o) for o in root.findall(".//DeployPackage") ]
-		server['disks'] = [ Blueprint._ParseExportTaskAddDisk(o) for o in root.findall(".//AddDisk") ]
+		#server['packages'] = [ Blueprint._ParseExportTaskDeployPackage(o) for o in root.findall(".//DeployPackage") ]
+		#server['disks'] = [ Blueprint._ParseExportTaskAddDisk(o) for o in root.findall(".//AddDisk") ]
 		# TODO other system packages?
 
 		return(server)
@@ -105,7 +107,7 @@ class Blueprint():
 		# TODO - add system and other tasks done outside of a single server level
 		#bp['packages'] = [ Blueprint._ParseExportTaskDeployPackage(o) for o in t.findall(".//Tasks/DeployPackage") ]
 
-		#print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
+		print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
 
 
 	# Available, but not returning:
