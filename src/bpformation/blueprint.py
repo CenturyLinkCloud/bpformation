@@ -103,11 +103,15 @@ class Blueprint():
 	@staticmethod
 	def _ExportProcessRoot(root):
 		tasks = []
-		for o in root.findall("Tasks/*"):
-			if o.tag=="BuildServer":  tasks.append(Blueprint._ParseExportTaskBuildServer(o))
-			elif o.tag=="DeployPackage":  tasks.append(Blueprint._ParseExportTaskDeployPackage(o))
-			elif o.tag=="Blueprint":  tasks += Blueprint._ExportProcessRoot(o))
-			else:  print "Unknown: %s" % o.tag
+		if root.tag=="BuildServer":  tasks.append(Blueprint._ParseExportTaskBuildServer(root))
+		elif root.tag=="DeployPackage":  tasks.append(Blueprint._ParseExportTaskDeployPackage(root))
+		#elif root.tag=="Blueprint":  taskBlueprint._ExportProcessRoot(o)
+		elif root.tag=="Blueprint":  
+			for o in root.iter():
+				if o.tag != "Blueprint":  tasks.append(Blueprint._ExportProcessRoot(o))
+		else:  
+			print "Unknown: %s" % root.tag
+			raise(Exception("Unknown tag %s" % root.tag))
 
 		return(tasks)
 
@@ -122,7 +126,12 @@ class Blueprint():
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
 		t = etree.XML(r.text)
-		bp = {'metadata': {}, 'tasks': Blueprint._ExportProcessRoot(t) }
+		bp = {'metadata': {}, 'tasks': [] }
+		for o in t.findall("Tasks/*"):  
+			try:
+				bp['tasks'] += Blueprint._ExportProcessRoot(o)
+			except:
+				pass
 
 		print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
 
