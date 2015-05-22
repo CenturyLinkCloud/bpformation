@@ -46,11 +46,12 @@ class Blueprint():
 
 	@staticmethod
 	def _ParseExportTaskDeployPackage(root):
-		package_obj = {"type": "package", "id": root.get("ID"), "uuid": root.get("UUID"), "name": root.get("Title") }
+		package_obj = {"type": "package", "id": root.get("ID"), "uuid": root.get("UUID"), "name": root.get("Title"), 'properties': {} }
 		if root.get("Server"):  package_obj['server'] = root.get("Server")
 		for prop in root.iter("Property"):
-			print prop.get("Name")
+			package_obj['properties'][prop.get("Name")] = prop.get("Value")
 
+		if not len(package_obj['properties'].keys()):  del(package_obj['properties'])
 		return(package_obj)
 
 
@@ -102,7 +103,7 @@ class Blueprint():
 		# TODO - add system and other tasks done outside of a single server level
 		#bp['packages'] = [ Blueprint._ParseExportTaskDeployPackage(o) for o in t.findall(".//Tasks/DeployPackage") ]
 
-		#print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
+		print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
 
 
 	# Available, but not returning:
