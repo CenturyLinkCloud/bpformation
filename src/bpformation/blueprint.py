@@ -108,7 +108,10 @@ class Blueprint():
 		#elif root.tag=="Blueprint":  taskBlueprint._ExportProcessRoot(o)
 		elif root.tag=="Blueprint":  
 			for o in root.iter():
-				if o.tag != "Blueprint":  tasks.append(Blueprint._ExportProcessRoot(o))
+				try:
+					if o.tag != "Blueprint":  tasks.append(Blueprint._ExportProcessRoot(o))
+				except:
+					pass
 		else:  
 			print "Unknown: %s" % root.tag
 			raise(Exception("Unknown tag %s" % root.tag))
