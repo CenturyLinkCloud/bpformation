@@ -86,16 +86,16 @@ class Blueprint():
 				   'id': root.get("ID"), 'template': root.get("Template"), 'cpu': root.get("CpuCount"), 
 				   'ram': root.get("MemoryGB"), 'tasks': [] }
 
-		# TODO find packages and apply to tasks in order
+		# TODO alternate iter that only finds immediate children
 		for o in root.iter():
 			if o.tag=='DeployPackage':  server['tasks'].append(Blueprint._ParseExportTaskDeployPackage(o))
 			elif o.tag=='AddDisk':  server['tasks'].append(Blueprint._ParseExportTaskAddDisk(o))
 			elif o.tag=='AddIPAddress':  server['tasks'].append(Blueprint._ParseExportTaskAddIPAddress(o))
 			elif o.tag=='AddMappedIPAddress':  server['tasks'].append(Blueprint._ParseExportTaskAddMappedIPAddress(o))
 			elif o.tag=='Properties':  continue
+			elif o.tag=='Property':  continue
+			elif o.tag=='BuildServer':  continue
 			else:  print "Unknown server tag: %s" % o.tag
-			# TODO <AddIPAddress Network="${T3.Server.Network}" ID= UUID Classification="System" Title="Add IP Address"/>
-			# TODO <AddMappedIPAddress Network="${T3.Server.Network}" FirewallOptions="HTTP, HTTP8080" ID= UUID= Classification="System" Title="Add Public IP Address"/>
 
 		return(server)
 
