@@ -106,6 +106,7 @@ class Blueprint():
 		for o in root.findall("Tasks/*"):
 			if o.tag=="BuildServer":  tasks.append(Blueprint._ParseExportTaskBuildServer(o))
 			elif o.tag=="DeployPackage":  tasks.append(Blueprint._ParseExportTaskDeployPackage(o))
+			elif o.tag=="Blueprint":  tasks += Blueprint._ExportProcessRoot(o))
 			else:  print "Unknown: %s" % o.tag
 
 		return(tasks)
