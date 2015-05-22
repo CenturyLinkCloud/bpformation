@@ -100,6 +100,10 @@ class Blueprint():
 		return(server)
 
 
+	@static_method
+	def _ExportRoot(root):
+
+
 	@staticmethod
 	def Export(id):
 
@@ -116,11 +120,6 @@ class Blueprint():
 			if o.tag=="BuildServer":  bp['tasks'].append(Blueprint._ParseExportTaskBuildServer(o))
 			elif o.tag=="DeployPackage":  bp['tasks'].append(Blueprint._ParseExportTaskDeployPackage(o))
 			else:  print "Unknown: %s" % o.tag
-
-		# Blueprint top-level and metadata
-		# TODO - need to maintain the ordering of all scripts and server build commands
-		# TODO - add system and other tasks done outside of a single server level
-		#bp['packages'] = [ Blueprint._ParseExportTaskDeployPackage(o) for o in t.findall(".//Tasks/DeployPackage") ]
 
 		print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
 
