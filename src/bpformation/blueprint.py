@@ -46,7 +46,7 @@ class Blueprint():
 
 	@staticmethod
 	def _ParseExportTaskDeployPackage(root):
-		package_obj = {"id": root.get("ID"), "uuid": root.get("UUID"), "name": root.get("Title") }
+		package_obj = {"type": "package", "id": root.get("ID"), "uuid": root.get("UUID"), "name": root.get("Title") }
 		if root.get("Server"):  package_obj['server'] = root.get("Server")
 		# TODO - design time parameters
 
@@ -56,9 +56,8 @@ class Blueprint():
 	@staticmethod
 	def _ParseExportTaskAddDisk(root):
 		# AddDisk
-		disk_obj = {"id": root.get("ID"), "uuid": root.get("UUID")}
+		disk_obj = {"type": "disk", "id": root.get("ID"), "uuid": root.get("UUID")}
 		for prop in root[0]:
-			# TODO - set standard disk
 			if prop.get("Value")=="True":  disk_obj[prop.get("Name").lower()] = True
 			elif prop.get("Value")=="False":  disk_obj[prop.get("Name").lower()] = False
 			else:  disk_obj[prop.get("Name").lower()] = prop.get("Value")
@@ -69,15 +68,13 @@ class Blueprint():
 	@staticmethod
 	def _ParseExportTaskBuildServer(root):
 		# Server foundation data
-		server = { 'name': root.get("Alias"), 'uuid': root.get("UUID"), 'description': root.get("Description"),
+		server = { 'type': "server", 'name': root.get("Alias"), 'uuid': root.get("UUID"), 'description': root.get("Description"),
 				   'id': root.get("ID"), 'template': root.get("Template"), 'cpu': root.get("CpuCount"), 
 				   'ram': root.get("MemoryGB"), 'disks': [], 'packages': [] }
 
-		# TODO - parse multiple disks
 		server['packages'] = [ Blueprint._ParseExportTaskDeployPackage(o) for o in root.findall(".//DeployPackage") ]
 		server['disks'] = [ Blueprint._ParseExportTaskAddDisk(o) for o in root.findall(".//AddDisk") ]
-		#server['packages'] = Blueprint._ParseExportTaskDeployPackage(root)
-		# TODO other system packages
+		# TODO other system packages?
 
 		return(server)
 
@@ -95,9 +92,8 @@ class Blueprint():
 		
 		bp = {'metadata': {}, 'tasks': []}
 		for o in t.findall(".//Tasks/*"):
-			print o.tag
 			if o.tag=="BuildServer":  bp['tasks'].append(Blueprint._ParseExportTaskBuildServer(o))
-			if o.tag=="DeployPackage":  bp['tasks'].append(Blueprint._ParseExportTaskDeployPackage(o))
+			elif o.tag=="DeployPackage":  bp['tasks'].append(Blueprint._ParseExportTaskDeployPackage(o))
 			else:  print "Unknown: %s" % o.tag
 
 		# Blueprint top-level and metadata
