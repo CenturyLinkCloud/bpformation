@@ -109,7 +109,7 @@ class Blueprint():
 		elif root.tag=="Blueprint":  
 			for o in root.iter():
 				try:
-					if o.tag != "Blueprint":  tasks.append(Blueprint._ExportProcessRoot(o))
+					if o.tag != "Blueprint":  tasks.append(Blueprint._ExportProcessRoot(o)[0])
 				except:
 					pass
 		else:  
@@ -132,6 +132,7 @@ class Blueprint():
 		bp = {'metadata': {}, 'tasks': [] }
 		for o in t.findall("Tasks/*"):  
 			try:
+				#print Blueprint._ExportProcessRoot(o)
 				bp['tasks'] += Blueprint._ExportProcessRoot(o)
 			except:
 				pass
