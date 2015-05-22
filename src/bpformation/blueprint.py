@@ -48,14 +48,14 @@ class Blueprint():
 	def _ParseExportTaskDeployPackage(root):
 		package_obj = {"type": "package", "id": root.get("ID"), "uuid": root.get("UUID"), "name": root.get("Title") }
 		if root.get("Server"):  package_obj['server'] = root.get("Server")
-		# TODO - design time parameters
+		for prop in root.iter("Property"):
+			print prop.get("Name")
 
 		return(package_obj)
 
 
 	@staticmethod
 	def _ParseExportTaskAddDisk(root):
-		# AddDisk
 		disk_obj = {"type": "disk", "id": root.get("ID"), "uuid": root.get("UUID")}
 		for prop in root[0]:
 			if prop.get("Value")=="True":  disk_obj[prop.get("Name").lower()] = True
@@ -70,8 +70,9 @@ class Blueprint():
 		# Server foundation data
 		server = { 'type': "server", 'name': root.get("Alias"), 'uuid': root.get("UUID"), 'description': root.get("Description"),
 				   'id': root.get("ID"), 'template': root.get("Template"), 'cpu': root.get("CpuCount"), 
-				   'ram': root.get("MemoryGB"), 'disks': [], 'packages': [] }
+				   'ram': root.get("MemoryGB"), 'tasks': [] }
 
+		# TODO find packages and apply to tasks in order
 		server['packages'] = [ Blueprint._ParseExportTaskDeployPackage(o) for o in root.findall(".//DeployPackage") ]
 		server['disks'] = [ Blueprint._ParseExportTaskAddDisk(o) for o in root.findall(".//AddDisk") ]
 		# TODO other system packages?
@@ -101,7 +102,7 @@ class Blueprint():
 		# TODO - add system and other tasks done outside of a single server level
 		#bp['packages'] = [ Blueprint._ParseExportTaskDeployPackage(o) for o in t.findall(".//Tasks/DeployPackage") ]
 
-		print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
+		#print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
 
 
 	# Available, but not returning:
