@@ -43,11 +43,6 @@ class Blueprint():
 #			else:
 #				bpformation.output.Status('ERROR',3,"%s package deletion error (status code %s)" % (uuid,r.status_code))
 
-	
-	@staticmethod
-	def _ParseExportTaskBuildServer(root):
-		for package in root.iter("DeployPackage"):
-	
 
 	@staticmethod
 	def _ParseExportTaskDeployPackage(root):
@@ -66,7 +61,32 @@ class Blueprint():
 			return(package_obj)
 
 
-	
+	@staticmethod
+	def _ParseExportTaskBuildServer(root):
+		# Server foundation data
+		server = { 'name': root.get("Alias"), 'uuid': root.get("UUID"), 'description': root.get("Description"),
+				   'id': root.get("ID"), 'template': root.get("Template"), 'cpu': root.get("CpuCount"), 
+				   'ram': root.get("MemoryGB"), 'disks': [], 'packages': [] }
+
+		# TODO - parse multiple disks
+		server['packages'] = [ Blueprint._ParseExportTaskDeployPackage(o) for o in root.findall(".//DeployPackage") ]
+		server['disks'] = [ Blueprint._ParseExportTaskDisk(o) for o in root.findall(".//AddDisk") ]
+		#server['packages'] = Blueprint._ParseExportTaskDeployPackage(root)
+		# TODO other system packages
+
+		# AddDisk
+		for disk in root.iter("AddDisk"):
+			disk_obj = {"id": disk.get("ID"), "uuid": disk.get("UUID")}
+			for prop in disk[0]:
+				# TODO - set standard disk
+				if prop.get("Value")=="True":  disk_obj[prop.get("Name").lower()] = True
+				elif prop.get("Value")=="False":  disk_obj[prop.get("Name").lower()] = False
+				else:  disk_obj[prop.get("Name").lower()] = prop.get("Value")
+			server['disks'].append(disk_obj)
+
+		bp['servers'].append(server)
+
+
 	@staticmethod
 	def Export(id):
 
@@ -80,34 +100,15 @@ class Blueprint():
 		
 		bp = {'metadata': {}, 'tasks': []}
 		for o in t.findall(".//Tasks/*"):
-			if o.tag=="BuildServer":  bp['tasks'].append(Blueprint._ParseExportTaskBuildServer(o)
 			print o.tag
+			if o.tag=="BuildServer":  bp['tasks'].append(Blueprint._ParseExportTaskBuildServer(o))
+			if o.tag=="DeployPackage":  bp['tasks'].append(Blueprint._ParseExportTaskDeployPackage(o))
+			else:  print "Unknown: %s" % o.tag
 
 		# Blueprint top-level and metadata
 		# TODO - need to maintain the ordering of all scripts and server build commands
 		# TODO - add system and other tasks done outside of a single server level
-		bp['packages'] = [ Blueprint._ParseExportTaskDeployPackage(o) for o in t.findall(".//Tasks/DeployPackage") ]
-
-		for build_server in t.findall(".//BuildServer"):
-			# Server foundation data
-			server = { 'name': build_server.get("Alias"), 'uuid': build_server.get("UUID"), 'description': build_server.get("Description"),
-					   'id': build_server.get("ID"), 'template': build_server.get("Template"), 'cpu': build_server.get("CpuCount"), 
-					   'ram': build_server.get("MemoryGB"), 'disks': [], 'packages': [] }
-
-			server['packages'] = Blueprint._ParseExportTaskDeployPackage(build_server)
-			# TODO other system packages
-
-			# AddDisk
-			for disk in build_server.iter("AddDisk"):
-				disk_obj = {"id": disk.get("ID"), "uuid": disk.get("UUID")}
-				for prop in disk[0]:
-					# TODO - set standard disk
-					if prop.get("Value")=="True":  disk_obj[prop.get("Name").lower()] = True
-					elif prop.get("Value")=="False":  disk_obj[prop.get("Name").lower()] = False
-					else:  disk_obj[prop.get("Name").lower()] = prop.get("Value")
-				server['disks'].append(disk_obj)
-
-			bp['servers'].append(server)
+		#bp['packages'] = [ Blueprint._ParseExportTaskDeployPackage(o) for o in t.findall(".//Tasks/DeployPackage") ]
 
 		print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
 
