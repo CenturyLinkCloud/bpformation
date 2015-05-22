@@ -45,6 +45,11 @@ class Blueprint():
 
 	
 	@staticmethod
+	def _ParseExportTaskBuildServer(root):
+		for package in root.iter("DeployPackage"):
+	
+
+	@staticmethod
 	def _ParseExportTaskDeployPackage(root):
 		for package in root.iter("DeployPackage"):
 			print package.get("ID")
@@ -73,8 +78,12 @@ class Blueprint():
 
 		t = etree.XML(r.text)
 		
+		bp = {'metadata': {}, 'tasks': []}
+		for o in t.findall(".//Tasks/*"):
+			if o.tag=="BuildServer":  bp['tasks'].append(Blueprint._ParseExportTaskBuildServer(o)
+			print o.tag
+
 		# Blueprint top-level and metadata
-		bp = {'metadata': {}, 'servers': [], 'packages': []}
 		# TODO - need to maintain the ordering of all scripts and server build commands
 		# TODO - add system and other tasks done outside of a single server level
 		bp['packages'] = [ Blueprint._ParseExportTaskDeployPackage(o) for o in t.findall(".//Tasks/DeployPackage") ]
