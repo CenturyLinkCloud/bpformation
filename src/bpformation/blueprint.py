@@ -45,9 +45,25 @@ class Blueprint():
 
 	
 	@staticmethod
+	def _ParseExportTaskDeployPackage(root):
+		for package in root.iter("DeployPackage"):
+			print package.get("ID")
+			package_obj = {"id": package.get("ID"), "uuid": package.get("UUID"), "name": package.get("Title") }
+			if package.get("Server"):  package_obj['server'] = package.get("Server")
+			print package.get("Server")
+			# TODO - design time parameters
+			#for prop in package[0]:
+			#	if prop.get("Value")=="True":  package_obj[prop.get("Name").lower()] = True
+			#	elif prop.get("Value")=="False":  package_obj[prop.get("Name").lower()] = False
+			#	else:  package_obj[prop.get("Name").lower()] = prop.get("Value")
+			print package_obj
+
+			return(package_obj)
+
+
+	
+	@staticmethod
 	def Export(id):
-		bp = {'metadata': {}, 'servers': []}
-		# TODO - Blueprint metadata
 
 		# Blueprint definition
 		r = bpformation.web.CallScrape("GET","/Blueprints/Designer/BlueprintXml/%s" % id)
@@ -56,28 +72,35 @@ class Blueprint():
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
 		t = etree.XML(r.text)
+		
+		# Blueprint top-level and metadata
+		bp = {'metadata': {}, 'servers': [], 'packages': []}
+		# TODO - need to maintain the ordering of all scripts and server build commands
+		# TODO - add system and other tasks done outside of a single server level
+		bp['packages'] = [ Blueprint._ParseExportTaskDeployPackage(o) for o in t.findall(".//Tasks/DeployPackage") ]
+
 		for build_server in t.findall(".//BuildServer"):
+			# Server foundation data
 			server = { 'name': build_server.get("Alias"), 'uuid': build_server.get("UUID"), 'description': build_server.get("Description"),
 					   'id': build_server.get("ID"), 'template': build_server.get("Template"), 'cpu': build_server.get("CpuCount"), 
 					   'ram': build_server.get("MemoryGB"), 'disks': [], 'packages': [] }
-			#print build_server.get("AddDisk")[0].get("GB")
+
+			server['packages'] = Blueprint._ParseExportTaskDeployPackage(build_server)
+			# TODO other system packages
+
+			# AddDisk
 			for disk in build_server.iter("AddDisk"):
 				disk_obj = {"id": disk.get("ID"), "uuid": disk.get("UUID")}
-				#print disk.iter("Properties")
-				#print disk.xpath("Property")
-				print "a"
-				print "b"
-				#for prop in disk.iter("Properties"):
-				#	 print prop.tag
-				#	 disk_obj['gb'] = prop.get("GB").value
+				for prop in disk[0]:
+					# TODO - set standard disk
+					if prop.get("Value")=="True":  disk_obj[prop.get("Name").lower()] = True
+					elif prop.get("Value")=="False":  disk_obj[prop.get("Name").lower()] = False
+					else:  disk_obj[prop.get("Name").lower()] = prop.get("Value")
 				server['disks'].append(disk_obj)
-			#for attr, value in build_server.items():
-			#	if attr in ('Title','UUID','Template','Alias','Description','MemoryGB','CpuCount','ID'):
-			#		server[attr] = value
-			#	print(' * %s = %s' % (attr, value))
+
 			bp['servers'].append(server)
 
-		#print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
+		print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
 
 
 	# Available, but not returning:
