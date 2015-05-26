@@ -13,18 +13,15 @@ from lxml import objectify, etree
 import bpformation
 
 
-#
 # TODO vCur:
-#  o Delete
-#  o Export
 #  o Import
-#  o Create
+#  o Delete
 #  o Change
 
 
 #
 # TODO vNext:
-#
+#  o Create
 
 
 class Blueprint():
@@ -194,5 +191,7 @@ class Blueprint():
 		return(blueprints_final)
 
 
+	@staticmethod
+	def Import(files)
 
 
