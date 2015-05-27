@@ -169,7 +169,6 @@ class Blueprint():
 		for blueprint_html in filter(lambda x: x in Blueprint.limited_printable_chars, r).split('class="blueprint-specs"'):
 			try:
 				blueprints.append({'name': re.search('class="blueprint-header">.*<label>(.+?)</label>',blueprint_html).group(1),
-						           'owner': re.search('<div class="author">by (.+?)</div>',blueprint_html).group(1),
 								   'date_added': re.search('<em>(.+?)</em>',blueprint_html).group(1),
 								   'description': re.search('<div class="blueprint-desc">\s*<div><strong>(.+?)</strong>',blueprint_html).group(1),
 								   'visibility': re.search('<div class="right-col"><strong>(.+?)</strong></div>',blueprint_html).group(1),
@@ -192,6 +191,72 @@ class Blueprint():
 
 
 	@staticmethod
-	def Import(files)
+	def Import(files):
+		for file in files:
+			if not os.path.isfile(file):
+				bpformation.output.Status('ERROR',3,"Blueprint json file '%s' not found" % file)
+				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+
+			# Load json
+			o = json.load(file)
+			print json.dumps(o)
+
+			#TODO on import remove id tags and uuid tags where not needed.
+			#     if a new server remove uuid/id.
+			#     if executing a package remove id
+
+			# Set metadata
+			r = requests.post("https://control.ctl.io/blueprints/designer/metadata",
+							  cookies=control_cookies,allow_redirects=False,
+							  data={"capabilities": "",
+									"companySize": 3, 
+									"description": package_ini.get("package","friendly_descr"),
+									"errors": [],
+									"isReseller": False,
+									"templateID": 0,
+									"templateName": "Install %s on %s" % (package_ini.get("package","friendly_name"),package_ini.get("package","os").title()),
+									"userCapabilities": "Bitnami",
+									"versionMajor": 1,
+									"versionMinor": package_ini.get("system","change_count"),
+									"visibility": 1})
+			package_ini.set("system","blueprint_id",re.search("(\d+)$",r.json()['url']).group(1))
+		
+			# Save server config with package(s)
+			if package_ini.get("package","os")=="linux":  
+				payload = {"Server.ID": 0,
+						   "Server.Template": config.get("clc","blueprint_template_%s_template" % package_ini.get("package","os")),
+						   "Server.Name": package_ini.get("package","package")[:4],
+						   "Server.Description": package_ini.get("package","friendly_name"),
+						   "Server.Processor": config.get("clc","blueprint_template_%s_cpu" % package_ini.get("package","os")),
+						   "Server.Memory": config.get("clc","blueprint_template_%s_ram" % package_ini.get("package","os")),
+						   "Server.Tasks[0].ID": config.get("clc","blueprint_template_linux_update_uuid"),
+						   "Server.Tasks[1].ID": package_ini.get("system","uuid")}
+			else:
+				payload = {"Server.ID": 0,
+						   "Server.Template": config.get("clc","blueprint_template_%s_template" % package_ini.get("package","os")),
+						   "Server.Name": package_ini.get("package","package")[:4],
+						   "Server.Description": package_ini.get("package","friendly_name"),
+						   "Server.Processor": config.get("clc","blueprint_template_%s_cpu" % package_ini.get("package","os")),
+						   "Server.Memory": config.get("clc","blueprint_template_%s_ram" % package_ini.get("package","os")),
+						   "Server.Tasks[0].ID": package_ini.get("system","uuid")}
+			r = requests.post("https://control.ctl.io/blueprints/designer/SaveServer?id=%s" % package_ini.get("system","blueprint_id"),
+							  cookies=control_cookies,data=payload)
+		
+			# Publish blueprint
+			r = requests.post("https://control.ctl.io/Blueprints/Designer/Publish/%s" % package_ini.get("system","blueprint_id"),
+							  cookies=control_cookies,
+							  data={"TemplateID": package_ini.get("system","blueprint_id"),
+									"DataTemplate.UUID": str(uuid.uuid4()),		# throw away value - not sure of purpose
+							  		"Publish": ""})
+			#print r.status_code
+			#print r.text
+		
+			# Get blueprint uuid
+			r = requests.get("https://control.ctl.io/blueprints/browser/details/%s" % package_ini.get("system","blueprint_id"),
+							  cookies=control_cookies)
+		
+			package_ini.set("system","blueprint_uuid",re.search("/Blueprints/Designer/MetaData/(.+?)\"",r.text).group(1))
+			print "\tNew Blueprint created and published via screen scrape"
+
 
 

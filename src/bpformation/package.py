@@ -67,7 +67,7 @@ class Package():
 			with open(file,'rb') as fh:
 				file_name = re.sub(".*/","",file)
 				ftp.storbinary("STOR %s" % (file_name),fh)
-			bpformation.output.Status('SUCCESS',3,"%s successfully uploaded in %s seconds" % (file_name,int(time.time()-time_start)))
+			bpformation.output.Status('SUCCESS',3,"%s successfully uploaded (%s seconds)" % (file_name,int(time.time()-time_start)))
 		ftp.quit()
 
 	
