@@ -1,0 +1,44 @@
+{
+    "metadata": {
+        "description": "bpformation bp 1",
+        "name": "bpformation bp test create 1",
+        "version": "0.1",
+        "visibility": "private"
+    },
+    "tasks": [
+        {
+            "cpu": "1",
+            "description": "my server",
+            "name": "MY",
+            "ram": "2",
+            "tasks": [
+                {
+                    "drive": "/data1",
+                    "gb": "50",
+                    "type": "disk",
+                    "uuid": "22460210-b682-4138-93fd-1a95c5e4e039"
+                },
+                {
+                    "drive": "/data2",
+                    "gb": "50",
+                    "type": "disk",
+                    "uuid": "22460210-b682-4138-93fd-1a95c5e4e039"
+                },
+                {
+                    "type": "reboot",
+                    "uuid": "5b949945-6981-4a81-bbcc-4ddd3d394b8d"
+                },
+                {
+                    "ingress_ports": [
+                        "HTTP",
+                        "HTTP8080"
+                    ],
+                    "type": "add_nat_ip",
+                    "uuid": "c000d327-3543-4d9e-ac43-e8fbce4620ab"
+                },
+            ],
+            "template": "CENTOS-6-64-TEMPLATE",
+            "type": "server",
+        }
+    ]
+}
