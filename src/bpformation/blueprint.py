@@ -191,6 +191,23 @@ class Blueprint():
 
 
 	@staticmethod
+	def _ExportAnonymizeTasks(o):
+		# {"type": "package", "id": root.get("ID"), "uuid": root.get("UUID"), "name": root.get("Title"), 'properties': {} }
+		# ip_obj = {"type": "add_ip", "id": root.get("ID"), "uuid": root.get("UUID") }
+		# ip_obj = {"type": "add_nat_ip", "id": root.get("ID"), "uuid": root.get("UUID"),
+		# ip_obj = {"type": "reboot", "id": root.get("ID"), "uuid": root.get("UUID") }
+		# disk_obj = {"type": "disk", "id": root.get("ID"), "uuid": root.get("UUID")}
+		# server = { 'type': "server", 'name': root.get("Alias"), 'uuid': root.get("UUID"), 'description': root.get("Description"),
+		if o['type'] == 'server' and 'uuid' in o: del(o['uuid'])
+		if 'id' in o:  del(o['id'])
+		if 'tasks' in o:
+			for idx,task in enumerate(o['tasks']):
+				o['tasks'][idx] = Blueprint._ExportAnonymizeTasks(task)
+
+		return(o)
+
+
+	@staticmethod
 	def Import(files):
 		for file in files:
 			if not os.path.isfile(file):
@@ -198,12 +215,15 @@ class Blueprint():
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
 			# Load json
-			o = json.load(file)
-			print json.dumps(o)
+			with open(file) as fh:
+				o = json.load(fh)
 
-			#TODO on import remove id tags and uuid tags where not needed.
-			#     if a new server remove uuid/id.
-			#     if executing a package remove id
+			for idx,task in enumerate(o['tasks']):
+				o['tasks'][idx] = Blueprint._ExportAnonymizeTasks(task)
+				
+
+			print json.dumps(o,sort_keys=True,indent=4,separators=(',', ': '))
+			sys.exit()
 
 			# Set metadata
 			r = requests.post("https://control.ctl.io/blueprints/designer/metadata",

@@ -225,7 +225,7 @@ class ExecCommand():
 
 
 	def BlueprintImport(self):
-		self.Exec('bpformation.blueprint.Export', {'files': bpformation.args.args.file }, cols=[])
+		self.Exec('bpformation.blueprint.Import', {'files': bpformation.args.args.file }, cols=[])
 
 
 	def BlueprintDelete(self):

@@ -35,10 +35,10 @@
                     ],
                     "type": "add_nat_ip",
                     "uuid": "c000d327-3543-4d9e-ac43-e8fbce4620ab"
-                },
+                }
             ],
             "template": "CENTOS-6-64-TEMPLATE",
-            "type": "server",
+            "type": "server"
         }
     ]
 }
