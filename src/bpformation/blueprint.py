@@ -160,6 +160,7 @@ class Blueprint():
 	#  o Blueprint description
 	@staticmethod
 	def List(filters):
+		# TODO - much of this is available with a json response as part of group execute package
 		r = bpformation.web.CallScrape("POST","/blueprints/browser/LoadTemplates",payload={
 					'Search-PageSize': 1000,
 					'Search-PageNumber': 1,
@@ -192,12 +193,6 @@ class Blueprint():
 
 	@staticmethod
 	def _ExportAnonymizeTasks(o):
-		# {"type": "package", "id": root.get("ID"), "uuid": root.get("UUID"), "name": root.get("Title"), 'properties': {} }
-		# ip_obj = {"type": "add_ip", "id": root.get("ID"), "uuid": root.get("UUID") }
-		# ip_obj = {"type": "add_nat_ip", "id": root.get("ID"), "uuid": root.get("UUID"),
-		# ip_obj = {"type": "reboot", "id": root.get("ID"), "uuid": root.get("UUID") }
-		# disk_obj = {"type": "disk", "id": root.get("ID"), "uuid": root.get("UUID")}
-		# server = { 'type': "server", 'name': root.get("Alias"), 'uuid': root.get("UUID"), 'description': root.get("Description"),
 		if o['type'] == 'server' and 'uuid' in o: del(o['uuid'])
 		if 'id' in o:  del(o['id'])
 		if 'tasks' in o:
@@ -218,9 +213,44 @@ class Blueprint():
 			with open(file) as fh:
 				o = json.load(fh)
 
+			# Strip unique IDs from assets that will be duplicated
 			for idx,task in enumerate(o['tasks']):
 				o['tasks'][idx] = Blueprint._ExportAnonymizeTasks(task)
 				
+
+			# TODO - validate syntax and required metadata fields
+			"""
+			capabilities: ["23", "19"]
+			companySize: "3"
+			description: "dddd"
+			errors: []
+			isReseller: false
+			templateID: 0
+			templateName: "bpf test 1"
+			userCapabilities: "tag1, tag2"
+			versionMajor: "0"
+			versionMinor: "1"
+			visibility: "2"
+			"""
+			r = bpformation.web.CallScrape("POST","/blueprints/designer/metadata",payload={
+						"capabilities": "",     # Aligns to "tags"
+						"companySize": 3,       # 1: 1-100, 2: 101-1,000, 3: 1001-5000, 4: 5,000+
+						"isReseller": False,    # Tied to is_managed, no-op
+						"userCapabilities": "", # Custom tags
+						"templateID": 0,        # unknown
+						"errors": [],           # unknown
+						"description": package_ini.get("package","friendly_descr"),
+						"templateName": "Install %s on %s" % (package_ini.get("package","friendly_name"),package_ini.get("package","os").title()),
+
+						"versionMajor": 1,
+						"versionMinor": package_ini.get("system","change_count"),
+
+						# 
+						"visibility": 1})
+					}).text
+			
+
+
 
 			print json.dumps(o,sort_keys=True,indent=4,separators=(',', ': '))
 			sys.exit()
