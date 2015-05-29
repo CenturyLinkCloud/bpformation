@@ -26,7 +26,7 @@ import bpformation
 
 class Blueprint():
 
-	#visibility_stoi = { 'Public': 1, 'Private': 2, 'Shared': 3}
+	visibility_stoi = { 'public': 1, 'private': 2, 'shared': 3}
 	limited_printable_chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~  "
 
 
@@ -207,7 +207,6 @@ class Blueprint():
 		for file in files:
 			if not os.path.isfile(file):
 				bpformation.output.Status('ERROR',3,"Blueprint json file '%s' not found" % file)
-				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
 			# Load json
 			with open(file) as fh:
@@ -217,37 +216,35 @@ class Blueprint():
 			for idx,task in enumerate(o['tasks']):
 				o['tasks'][idx] = Blueprint._ExportAnonymizeTasks(task)
 				
+			# Validate syntax and required metadata fields
+			for key in ('description','title','visibility','version'):
+				if key not in o['metadata']:
+					bpformation.output.Status('ERROR',3,"Blueprint json missing metadata/%s" % key)
+					raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
-			# TODO - validate syntax and required metadata fields
-			"""
-			capabilities: ["23", "19"]
-			companySize: "3"
-			description: "dddd"
-			errors: []
-			isReseller: false
-			templateID: 0
-			templateName: "bpf test 1"
-			userCapabilities: "tag1, tag2"
-			versionMajor: "0"
-			versionMinor: "1"
-			visibility: "2"
-			"""
+			# Munge version formatting
+			if not re.search("^[\d\.]+$",o['metadata']['version']):  
+				bpformation.output.Status('ERROR',3,"Blueprint json version must contain only a dotted number representation")
+				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+			m = re.search("(.+?)\.?(.*)",o['metadata']['version'])
+			ver_major = int(m.group(1))
+			if len(m.groups(2)):  ver_minor = int(m.group(2).replace(".",""))
+			else:  ver_minor = 0
+
+			# Metadata post and create Blueprint shell
 			r = bpformation.web.CallScrape("POST","/blueprints/designer/metadata",payload={
 						"capabilities": "",     # Aligns to "tags"
 						"companySize": 3,       # 1: 1-100, 2: 101-1,000, 3: 1001-5000, 4: 5,000+
 						"isReseller": False,    # Tied to is_managed, no-op
-						"userCapabilities": "", # Custom tags
 						"templateID": 0,        # unknown
 						"errors": [],           # unknown
-						"description": package_ini.get("package","friendly_descr"),
-						"templateName": "Install %s on %s" % (package_ini.get("package","friendly_name"),package_ini.get("package","os").title()),
-
-						"versionMajor": 1,
-						"versionMinor": package_ini.get("system","change_count"),
-
-						# 
-						"visibility": 1})
-					}).text
+						"userCapabilities": "", # TODO - Custom tags
+						"description": o['metadata']['description'],
+						"templateName": o['metadata']['title'].
+						"visibility": Blueprints.visibility_stoi[o['metadata']['visibility'].lower()],
+						"versionMajor": ver_major,
+						"versionMinor": ver_minor,
+					})
 			
 
 
