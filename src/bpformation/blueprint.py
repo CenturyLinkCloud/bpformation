@@ -192,14 +192,18 @@ class Blueprint():
 
 
 	@staticmethod
-	def _ExportAnonymizeTasks(o):
+	def _ImportAnonymizeTasks(o):
 		if o['type'] == 'server' and 'uuid' in o: del(o['uuid'])
 		if 'id' in o:  del(o['id'])
 		if 'tasks' in o:
 			for idx,task in enumerate(o['tasks']):
-				o['tasks'][idx] = Blueprint._ExportAnonymizeTasks(task)
+				o['tasks'][idx] = Blueprint._ImportAnonymizeTasks(task)
 
 		return(o)
+
+
+	@staticMethod
+	def _ImportAddServer(o):
 
 
 	@staticmethod
@@ -214,7 +218,7 @@ class Blueprint():
 
 			# Strip unique IDs from assets that will be duplicated
 			for idx,task in enumerate(o['tasks']):
-				o['tasks'][idx] = Blueprint._ExportAnonymizeTasks(task)
+				o['tasks'][idx] = Blueprint._ImportAnonymizeTasks(task)
 				
 			# Validate syntax and required metadata fields
 			for key in ('description','name','visibility','version'):
@@ -231,7 +235,7 @@ class Blueprint():
 			if len(m.groups(2)):  ver_minor = int(m.group(2).replace(".",""))
 			else:  ver_minor = 0
 
-			# Metadata post and create Blueprint shell
+			# Step 1 - Metadata post and create Blueprint shell
 			r = bpformation.web.CallScrape("POST","/blueprints/designer/metadata",allow_redirects=False,payload={
 						"capabilities": "",     # Aligns to "tags"
 						"companySize": 3,       # 1: 1-100, 2: 101-1,000, 3: 1001-5000, 4: 5,000+
@@ -255,21 +259,6 @@ class Blueprint():
 			#print json.dumps(o,sort_keys=True,indent=4,separators=(',', ': '))
 			sys.exit()
 
-			# Set metadata
-			r = requests.post("https://control.ctl.io/blueprints/designer/metadata",
-							  cookies=control_cookies,
-							  data={"capabilities": "",
-									"companySize": 3, 
-									"description": package_ini.get("package","friendly_descr"),
-									"errors": [],
-									"isReseller": False,
-									"templateID": 0,
-									"templateName": "Install %s on %s" % (package_ini.get("package","friendly_name"),package_ini.get("package","os").title()),
-									"userCapabilities": "Bitnami",
-									"versionMajor": 1,
-									"versionMinor": package_ini.get("system","change_count"),
-									"visibility": 1})
-			package_ini.set("system","blueprint_id",re.search("(\d+)$",r.json()['url']).group(1))
 		
 			# Save server config with package(s)
 			if package_ini.get("package","os")=="linux":  
