@@ -217,7 +217,7 @@ class Blueprint():
 				o['tasks'][idx] = Blueprint._ExportAnonymizeTasks(task)
 				
 			# Validate syntax and required metadata fields
-			for key in ('description','title','visibility','version'):
+			for key in ('description','name','visibility','version'):
 				if key not in o['metadata']:
 					bpformation.output.Status('ERROR',3,"Blueprint json missing metadata/%s" % key)
 					raise(bpformation.BPFormationFatalExeption("Fatal Error"))
@@ -232,7 +232,7 @@ class Blueprint():
 			else:  ver_minor = 0
 
 			# Metadata post and create Blueprint shell
-			r = bpformation.web.CallScrape("POST","/blueprints/designer/metadata",payload={
+			r = bpformation.web.CallScrape("POST","/blueprints/designer/metadata",allow_redirects=False,payload={
 						"capabilities": "",     # Aligns to "tags"
 						"companySize": 3,       # 1: 1-100, 2: 101-1,000, 3: 1001-5000, 4: 5,000+
 						"isReseller": False,    # Tied to is_managed, no-op
@@ -240,21 +240,24 @@ class Blueprint():
 						"errors": [],           # unknown
 						"userCapabilities": "", # TODO - Custom tags
 						"description": o['metadata']['description'],
-						"templateName": o['metadata']['title'].
-						"visibility": Blueprints.visibility_stoi[o['metadata']['visibility'].lower()],
+						"templateName": o['metadata']['name'],
+						"visibility": Blueprint.visibility_stoi[o['metadata']['visibility'].lower()],
 						"versionMajor": ver_major,
 						"versionMinor": ver_minor,
 					})
-			
+			if r.status_code<200 or >=300:
+				bpformation.output.Status('ERROR',3,"Error creating blueprint - step 1 metadata failure (response %s") % r.status_code)
+				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+			blueprint_id = r.json()['url']).group(1)
 
 
 
-			print json.dumps(o,sort_keys=True,indent=4,separators=(',', ': '))
+			#print json.dumps(o,sort_keys=True,indent=4,separators=(',', ': '))
 			sys.exit()
 
 			# Set metadata
 			r = requests.post("https://control.ctl.io/blueprints/designer/metadata",
-							  cookies=control_cookies,allow_redirects=False,
+							  cookies=control_cookies,
 							  data={"capabilities": "",
 									"companySize": 3, 
 									"description": package_ini.get("package","friendly_descr"),

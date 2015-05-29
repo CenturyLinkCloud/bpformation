@@ -105,7 +105,7 @@ class Web():
 
 	# TODO
 	@staticmethod
-	def CallScrape(method,url,payload={},debug=False):
+	def CallScrape(method,url,payload={},allow_redirects=True,debug=False):
 		"""Execute screen scrape call
 
 		:param url: URL paths associated with the API call
@@ -123,6 +123,7 @@ class Web():
 		if method=="GET":
 			r = requests.request(method,fq_url,
 								 headers=headers,
+						  		 allow_redirects=allow_redirects,
 								 cookies=bpformation._CONTROL_COOKIES,
 			                     params=payload, 
 								 verify=Web._ResourcePath('bpformation/cacert.pem'))
