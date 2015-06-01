@@ -158,8 +158,8 @@ class Blueprint():
 		if file=="-":  
 			print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
 		else:
-			if file is None:  file = "%s-%s-%s.json" % (re.sub("[^a-z0-9\-_]","_",bp['metadata']['name'],re.I),id,bp['metadata']['version'])
-			bpformation.output.Status('SUCCESS',3,"Blueprint exported to %s ()" % (file,))
+			if file is None:  file = "%s-%s-%s.json" % (re.sub("[^a-zA-Z0-9\-_]","_",bp['metadata']['name']).lower(),id,bp['metadata']['version'])
+			bpformation.output.Status('SUCCESS',3,"%s v%s exported to %s (%s tasks)" % (bp['metadata']['name'],bp['metadata']['version'],file,len(bp['tasks'])))
 			with open(file,'w') as fh:
 				fh.write(json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': ')))
 
