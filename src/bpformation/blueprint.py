@@ -149,6 +149,7 @@ class Blueprint():
 				'version': re.search('<dt>version</dt>\s*<dd>\s*(.+?)\s*</dd>',r.text,re.DOTALL).group(1),
 				'visibility': re.search('<dt>visibility</dt>\s*<dd>\s*(.+?)\s*-',r.text,re.DOTALL).group(1),
 				'description': re.search('<div class="blueprint-price">.*?<p>\s*(.+?)\s*</p>',r.text,re.DOTALL).group(1),
+				'id': id,
 			}
 
 		# Blueprint definition
@@ -238,6 +239,7 @@ class Blueprint():
 			if key not in o:
 				bpformation.output.Status('ERROR',3,"Blueprint json server definition missing '%s'" % key)
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+		if 'id' not in o:  o['id'] = 0	# New servers don't start with an ID
 		if len(o['name'])==0 or len(o['name'])>5:
 			bpformation.output.Status('ERROR',3,"Blueprint json server name must be between 0 and five characters" % key)
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
@@ -321,73 +323,61 @@ class Blueprint():
 
 
 	@staticmethod
-	def _ImportAddServer(blueprint_id,o):
-		"""Create new server.  Set id=0 t o create new."""
-		o['id'] = 0
-		o['id'] = Blueprint._PostServer(blueprint_id,o)
-
-		return(o)
-
-
-	@staticmethod
-	def _PostBlueprint(bps):
+	def _PostBlueprint(bp):
 		"""Update and publish provided Blueprint objects."""
 
-		for bp in bps:
-			# Validate syntax and required metadata fields
-			for key in ('description','name','visibility','version'):
-				if key not in bp['metadata']:
-					bpformation.output.Status('ERROR',3,"Blueprint json missing metadata/%s" % key)
-					raise(bpformation.BPFormationFatalExeption("Fatal Error"))
-
-			# Munge version formatting
-			if not re.search("^[\d\.]+$",bp['metadata']['version']):  
-				bpformation.output.Status('ERROR',3,"Blueprint json version must contain only a dotted number representation")
+		# Validate syntax and required metadata fields
+		for key in ('description','name','visibility','version'):
+			if key not in bp['metadata']:
+				bpformation.output.Status('ERROR',3,"Blueprint json missing metadata/%s" % key)
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
-			m = re.search("(.+?)\.?(.*)",bp['metadata']['version'])
-			ver_major = int(m.group(1))
-			if len(m.groups(2)):  ver_minor = int(m.group(2).replace(".",""))
-			else:  ver_minor = 0
 
-			# Step 1 - Metadata post and create Blueprint shell
-			r = bpformation.web.CallScrape("POST","/blueprints/designer/metadata",allow_redirects=False,payload={
-						"capabilities": "",     # Aligns to "tags"
-						"companySize": 3,       # 1: 1-100, 2: 101-1,000, 3: 1001-5000, 4: 5,000+
-						"isReseller": False,    # Tied to is_managed, no-op
-						"templateID": 0,        # unknown
-						"errors": [],           # unknown
-						"userCapabilities": "", # TODO - Custom tags
-						"description": bp['metadata']['description'],
-						"templateName": bp['metadata']['name'],
-						"visibility": Blueprint.visibility_stoi[bp['metadata']['visibility'].lower()],
-						"versionMajor": ver_major,
-						"versionMinor": ver_minor,
-					})
-			if r.status_code<200 or r.status_code>=300:
-				bpformation.output.Status('ERROR',3,"Error creating blueprint - step 1 metadata failure (response %s)" % r.status_code)
+		# Munge version formatting
+		if not re.search("^[\d\.]+$",bp['metadata']['version']):  
+			bpformation.output.Status('ERROR',3,"Blueprint json version must contain only a dotted number representation")
+			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+		m = re.search("(.+?)\.?(.*)",bp['metadata']['version'])
+		ver_major = int(m.group(1))
+		if len(m.groups(2)):  ver_minor = int(m.group(2).replace(".",""))
+		else:  ver_minor = 0
+
+		# Step 1 - Metadata post and create Blueprint shell
+		r = bpformation.web.CallScrape("POST","/blueprints/designer/metadata",allow_redirects=False,payload={
+					"capabilities": "",     # Aligns to "tags"
+					"companySize": 3,       # 1: 1-100, 2: 101-1,000, 3: 1001-5000, 4: 5,000+
+					"isReseller": False,    # Tied to is_managed, no-op
+					"errors": [],           # unknown
+					"userCapabilities": "", # TODO - Custom tags
+					"templateID": bp['metadata']['id'],
+					"description": bp['metadata']['description'],
+					"templateName": bp['metadata']['name'],
+					"visibility": Blueprint.visibility_stoi[bp['metadata']['visibility'].lower()],
+					"versionMajor": ver_major,
+					"versionMinor": ver_minor,
+				})
+		if r.status_code<200 or r.status_code>=300:
+			bpformation.output.Status('ERROR',3,"Error creating blueprint - step 1 metadata failure (response %s)" % r.status_code)
+			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+		bp['metadata']['id'] = re.search("(\d+)$",r.json()['url']).group(1)
+
+		# Step 2 - Apply all tasks
+		new_tasks = []
+		for task in bp['tasks']:
+			if task['type'] == 'server':  new_tasks.append(Blueprint._PostServer(bp['metadata']['id'],task))
+			else:
+				bpformation.output.Status('ERROR',3,"Unknown task type '%s'" % task['type'])
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
-			blueprint_id = re.search("(\d+)$",r.json()['url']).group(1)
+		bp['tasks'] = new_tasks
 
-			# Step 2 - Apply all tasks
-			new_tasks = []
-			for task in bp['tasks']:
-				if task['type'] == 'server':  new_tasks.append(Blueprint._ImportAddServer(blueprint_id,task))
-				else:
-					bpformation.output.Status('ERROR',3,"Unknown task type '%s'" % task['type'])
-					raise(bpformation.BPFormationFatalExeption("Fatal Error"))
-			bp['tasks'] = new_tasks
+		# Step 3 - Publish Blueprint
+		r = bpformation.web.CallScrape("POST","/Blueprints/Designer/Publish/%s" % bp['metadata']['id'],allow_redirects=False,payload={
+					"Publish": "",                          # unknown
+					"DataTemplate.UUID": str(uuid.uuid4()), # throw away value - not sure of purpose
+				})
 
-			# Step 3 - Publish Blueprint
-			r = bpformation.web.CallScrape("POST","/Blueprints/Designer/Publish/%s" % blueprint_id,allow_redirects=False,payload={
-						"Publish": "",                          # unknown
-						"DataTemplate.UUID": str(uuid.uuid4()), # throw away value - not sure of purpose
-					})
+		# TODO Step 4 - save output?  Assume needed for some kind of update
 
-			# TODO Step 4 - save output?  Assume needed for some kind of update
-
-
-			bpformation.output.Status('SUCCESS',3,"%s v%s imported ID %s (%s tasks)" % (bp['metadata']['name'],bp['metadata']['version'],blueprint_id,len(bp['tasks'])))
-			#bpformation.output.Status('SUCCESS',3,"Blueprint created with ID %s (https://control.ctl.io/blueprints/browser/details/%s)" % (blueprint_id,blueprint_id))
+		return(bp)
 
 
 	@staticmethod
@@ -401,11 +391,30 @@ class Blueprint():
 				bp = json.load(fh)
 
 			# Strip unique IDs from assets that will be duplicated
+			bp['metadata']['id'] = 0
 			new_tasks = []
 			for task in bp['tasks']:  new_tasks.append(Blueprint._ImportAnonymizeTasks(task))
 			bp['tasks'] = new_tasks
 				
-			bpformation.output.Status('SUCCESS',3,"%s v%s imported ID %s (%s tasks)" % (bp['metadata']['name'],bp['metadata']['version'],blueprint_id,len(bp['tasks'])))
+			# Publish BP, obtain BP with ids as result
+			bp = Blueprint._PostBlueprint(bp)
+			bpformation.output.Status('SUCCESS',3,"%s v%s imported ID %s (%s tasks)" % (bp['metadata']['name'],bp['metadata']['version'],bp['metadata']['id'],len(bp['tasks'])))
+			#bpformation.output.Status('SUCCESS',3,"Blueprint created with ID %s (https://control.ctl.io/blueprints/browser/details/%s)" % (blueprint_id,blueprint_id))
+
+
+	@staticmethod
+	def Update(files):
+		for file in files:
+			if not os.path.isfile(file):
+				bpformation.output.Status('ERROR',3,"Blueprint json file '%s' not found" % file)
+
+			# Load json
+			with open(file) as fh:
+				bp = json.load(fh)
+
+			# Publish BP, obtain BP with ids as result
+			bp = Blueprint._PostBlueprint(bp)
+			bpformation.output.Status('SUCCESS',3,"%s v%s imported ID %s (%s tasks)" % (bp['metadata']['name'],bp['metadata']['version'],bp['metadata']['id'],len(bp['tasks'])))
 			#bpformation.output.Status('SUCCESS',3,"Blueprint created with ID %s (https://control.ctl.io/blueprints/browser/details/%s)" % (blueprint_id,blueprint_id))
 
 
