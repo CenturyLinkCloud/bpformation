@@ -244,6 +244,15 @@ class Blueprint():
 			if key not in o:
 				bpformation.output.Status('ERROR',3,"Blueprint json server definition missing '%s'" % key)
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+		if len(o['name'])==0 or len(o['name'])>5:
+			bpformation.output.Status('ERROR',3,"Blueprint json server name must be between 0 and five characters" % key)
+			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+		if not re.match("^\d+$",o['cpu']) or int(o['cpu'])==0 or int(o['cpu'])>16:
+			bpformation.output.Status('ERROR',3,"Blueprint json server cpu must be between 1 and 16" % key)
+			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+		if not re.match("^\d+$",o['ram']) or int(o['ram'])==0 or int(o['cpu'])>128:
+			bpformation.output.Status('ERROR',3,"Blueprint json server ram must be between 1 and 128" % key)
+			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
 		return(id)
 
