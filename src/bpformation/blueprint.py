@@ -122,7 +122,7 @@ class Blueprint():
 
 
 	@staticmethod
-	def Export(id):
+	def Export(id,file=None):
 		bp = {'metadata': {}, 'tasks': [] }
 
 		# Blueprint metadata 

@@ -89,6 +89,7 @@ class Args:
 		## Export
 		parser_blueprint_export = parser_sp2.add_parser('export', help='Export blueprint')
 		parser_blueprint_export.add_argument('--id', required=True, help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
+		parser_blueprint_export.add_argument('--file', required=False, help='Filename target for Blueprint json definition')
 
 		## Import
 		parser_blueprint_export = parser_sp2.add_parser('import', help='Import blueprint from json')
@@ -221,7 +222,7 @@ class ExecCommand():
 
 
 	def BlueprintExport(self):
-		self.Exec('bpformation.blueprint.Export', {'id': bpformation.args.args.id }, cols=[])
+		self.Exec('bpformation.blueprint.Export', {'id': bpformation.args.args.id, 'file': bpformation.args.args.file }, cols=[])
 
 
 	def BlueprintImport(self):
