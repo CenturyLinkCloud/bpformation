@@ -15,14 +15,14 @@ import bpformation
 
 
 # TODO vCur:
-#  o Delete
 #  o Change
 
 
 #
 # TODO vNext:
-#  o Create
+#  o Create (via wizard)
 #  o Blueprint package parameters - verify with /blueprints/designer/TaskParameters and alert on error
+#  o Dependencies tree
 
 
 class Blueprint():
@@ -235,7 +235,7 @@ class Blueprint():
 		"""
 
 		# Validate core params
-		for key in ('name','description','cpu','ram','id'):
+		for key in ('name','description','cpu','ram'):
 			if key not in o:
 				bpformation.output.Status('ERROR',3,"Blueprint json server definition missing '%s'" % key)
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
@@ -259,16 +259,11 @@ class Blueprint():
 			# System - add disk
 			if task['type']=='disk' and task['uuid']=='22460210-b682-4138-93fd-1a95c5e4e039':
 				staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
-				staged_tasks['Server.Tasks[%s].Properties[0].Name' % staged_tasks_idx] = 'Drive'
-				staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = task['drive']
-				staged_tasks['Server.Tasks[%s].Properties[1].Name' % staged_tasks_idx] = 'GB'
-				staged_tasks['Server.Tasks[%s].Properties[1].Value' % staged_tasks_idx] = task['gb']
-
-			# System - raw disk
-			elif task['type']=='disk' and task['uuid']=='9a851f50-c676-4c11-b4c8-a0a7241c1060':
-				staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
-				staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = task['drive']
 				staged_tasks['Server.Tasks[%s].Properties[0].Name' % staged_tasks_idx] = 'GB'
+				staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = task['gb']
+				if 'drive' in task:
+					staged_tasks['Server.Tasks[%s].Properties[1].Name' % staged_tasks_idx] = 'Drive'
+					staged_tasks['Server.Tasks[%s].Properties[1].Value' % staged_tasks_idx] = task['drive']
 
 			# System - reboot
 			elif task['type']=='reboot' and task['uuid']=='5b949945-6981-4a81-bbcc-4ddd3d394b8d':
@@ -414,7 +409,7 @@ class Blueprint():
 
 			# Publish BP, obtain BP with ids as result
 			bp = Blueprint._PostBlueprint(bp)
-			bpformation.output.Status('SUCCESS',3,"%s v%s imported ID %s (%s tasks)" % (bp['metadata']['name'],bp['metadata']['version'],bp['metadata']['id'],len(bp['tasks'])))
+			bpformation.output.Status('SUCCESS',3,"%s v%s updated ID %s (%s tasks)" % (bp['metadata']['name'],bp['metadata']['version'],bp['metadata']['id'],len(bp['tasks'])))
 			#bpformation.output.Status('SUCCESS',3,"Blueprint created with ID %s (https://control.ctl.io/blueprints/browser/details/%s)" % (blueprint_id,blueprint_id))
 
 
