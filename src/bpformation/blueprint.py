@@ -124,7 +124,7 @@ class Blueprint():
 	@staticmethod
 	def Export(id,file=None):
 		# Silence status output if writing to stdout
-		bpformation.args.args.quiet = 999
+		if file == "-":  bpformation.args.args.quiet = 999
 
 		bp = {'metadata': {}, 'tasks': [] }
 
@@ -158,7 +158,9 @@ class Blueprint():
 		if file=="-":  
 			print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
 		else:
-			with open("%-%s-%s" % (bp['name']),'w') as fh:
+			if file is None:  file = "%s-%s-%s.json" % (re.sub("[^a-z0-9\-_]","_",bp['metadata']['name'],re.I),id,bp['metadata']['version'])
+			bpformation.output.Status('SUCCESS',3,"Blueprint exported to %s ()" % (file,))
+			with open(file,'w') as fh:
 				fh.write(json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': ')))
 
 
