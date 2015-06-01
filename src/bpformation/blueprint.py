@@ -239,6 +239,12 @@ class Blueprint():
 		--> {"id":3435,"serverID":"634a26d1-ef03-464e-ac92-04b8d48e467f"}
 		"""
 
+		# Validate core params
+		for key in ('name','description','cpu','ram','id'):
+			if key not in o:
+				bpformation.output.Status('ERROR',3,"Blueprint json server definition missing '%s'" % key)
+				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+
 		return(id)
 
 
@@ -304,11 +310,13 @@ class Blueprint():
 
 			# Step 2 - Apply all tasks
 			import pprint
+			new_tasks = []
 			for task in o['tasks']:
-				if task['type'] == 'server':
-				else
+				if task['type'] == 'server':  new_tasks.append(Blueprint._ImportAddServer(task))
+				else:
 					bpformation.output.Status('ERROR',3,"Unknown task type '%s'" % task['type'])
 					raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+			o['tasks'] = new_tasks
 
 
 			#print json.dumps(o,sort_keys=True,indent=4,separators=(',', ': '))
