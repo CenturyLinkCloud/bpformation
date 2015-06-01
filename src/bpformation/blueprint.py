@@ -262,8 +262,9 @@ class Blueprint():
 				o = json.load(fh)
 
 			# Strip unique IDs from assets that will be duplicated
-			for idx,task in enumerate(o['tasks']):
-				o['tasks'][idx] = Blueprint._ImportAnonymizeTasks(task)
+			new_tasks = []
+			for task in o['tasks']:  new_tasks.append(Blueprint._ImportAnonymizeTasks(task))
+			o['tasks'] = new_tasks
 				
 			# Validate syntax and required metadata fields
 			for key in ('description','name','visibility','version'):
@@ -281,6 +282,7 @@ class Blueprint():
 			else:  ver_minor = 0
 
 			# Step 1 - Metadata post and create Blueprint shell
+			"""
 			r = bpformation.web.CallScrape("POST","/blueprints/designer/metadata",allow_redirects=False,payload={
 						"capabilities": "",     # Aligns to "tags"
 						"companySize": 3,       # 1: 1-100, 2: 101-1,000, 3: 1001-5000, 4: 5,000+
@@ -298,11 +300,15 @@ class Blueprint():
 				bpformation.output.Status('ERROR',3,"Error creating blueprint - step 1 metadata failure (response %s)" % r.status_code)
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 			blueprint_id = re.search("(\d+)$",r.json()['url']).group(1)
+			"""
 
 			# Step 2 - Apply all tasks
+			import pprint
 			for task in o['tasks']:
-				print task
-
+				if task['type'] == 'server':
+				else
+					bpformation.output.Status('ERROR',3,"Unknown task type '%s'" % task['type'])
+					raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
 
 			#print json.dumps(o,sort_keys=True,indent=4,separators=(',', ': '))
