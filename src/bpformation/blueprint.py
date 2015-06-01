@@ -254,6 +254,9 @@ class Blueprint():
 			bpformation.output.Status('ERROR',3,"Blueprint json server ram must be between 1 and 128" % key)
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
+		# Build tasks data structure
+		for task in o['tasks']:
+
 		return(id)
 
 
