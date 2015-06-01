@@ -93,6 +93,10 @@ class Args:
 		parser_blueprint_export = parser_sp2.add_parser('import', help='Import blueprint from json')
 		parser_blueprint_export.add_argument('--file', nargs='*', required=True, help='Blueprint definition json files')
 
+		## Update
+		parser_blueprint_export = parser_sp2.add_parser('update', help='Update existing blueprint from json')
+		parser_blueprint_export.add_argument('--file', nargs='*', required=True, help='Blueprint definition json files')
+
 		## Delete
 		parser_blueprint_export = parser_sp2.add_parser('delete', help='Delete blueprint')
 		parser_blueprint_export.add_argument('--id', nargs='*', required=True, help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
@@ -183,6 +187,7 @@ class ExecCommand():
 		elif bpformation.args.GetArgs().sub_command == 'export':  self.BlueprintExport()
 		elif bpformation.args.GetArgs().sub_command == 'delete':  self.BlueprintDelete()
 		elif bpformation.args.GetArgs().sub_command == 'import':  self.BlueprintImport()
+		elif bpformation.args.GetArgs().sub_command == 'update':  self.BlueprintUpdate()
 
 
 	def PackageUpload(self):
@@ -225,6 +230,10 @@ class ExecCommand():
 
 	def BlueprintImport(self):
 		self.Exec('bpformation.blueprint.Import', {'files': bpformation.args.args.file }, cols=[])
+
+
+	def BlueprintUpdate(self):
+		self.Exec('bpformation.blueprint.Update', {'files': bpformation.args.args.file }, cols=[])
 
 
 	def BlueprintDelete(self):
