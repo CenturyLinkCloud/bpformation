@@ -330,20 +330,10 @@ class Blueprint():
 
 
 	@staticmethod
-	def Import(files):
-		for file in files:
-			if not os.path.isfile(file):
-				bpformation.output.Status('ERROR',3,"Blueprint json file '%s' not found" % file)
+	def _PostBlueprint(bps):
+		"""Update and publish provided Blueprint objects."""
 
-			# Load json
-			with open(file) as fh:
-				bp = json.load(fh)
-
-			# Strip unique IDs from assets that will be duplicated
-			new_tasks = []
-			for task in bp['tasks']:  new_tasks.append(Blueprint._ImportAnonymizeTasks(task))
-			bp['tasks'] = new_tasks
-				
+		for bp in bps:
 			# Validate syntax and required metadata fields
 			for key in ('description','name','visibility','version'):
 				if key not in bp['metadata']:
@@ -396,6 +386,25 @@ class Blueprint():
 			# TODO Step 4 - save output?  Assume needed for some kind of update
 
 
+			bpformation.output.Status('SUCCESS',3,"%s v%s imported ID %s (%s tasks)" % (bp['metadata']['name'],bp['metadata']['version'],blueprint_id,len(bp['tasks'])))
+			#bpformation.output.Status('SUCCESS',3,"Blueprint created with ID %s (https://control.ctl.io/blueprints/browser/details/%s)" % (blueprint_id,blueprint_id))
+
+
+	@staticmethod
+	def Import(files):
+		for file in files:
+			if not os.path.isfile(file):
+				bpformation.output.Status('ERROR',3,"Blueprint json file '%s' not found" % file)
+
+			# Load json
+			with open(file) as fh:
+				bp = json.load(fh)
+
+			# Strip unique IDs from assets that will be duplicated
+			new_tasks = []
+			for task in bp['tasks']:  new_tasks.append(Blueprint._ImportAnonymizeTasks(task))
+			bp['tasks'] = new_tasks
+				
 			bpformation.output.Status('SUCCESS',3,"%s v%s imported ID %s (%s tasks)" % (bp['metadata']['name'],bp['metadata']['version'],blueprint_id,len(bp['tasks'])))
 			#bpformation.output.Status('SUCCESS',3,"Blueprint created with ID %s (https://control.ctl.io/blueprints/browser/details/%s)" % (blueprint_id,blueprint_id))
 
