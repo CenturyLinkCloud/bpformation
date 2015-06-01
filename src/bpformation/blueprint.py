@@ -266,8 +266,16 @@ class Blueprint():
 			# User package
 			elif task['type']=='package':
 				staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
-				staged_tasks['Server.Tasks[%s].Properties[0].Name' % staged_tasks_idx] = 'FirewallOptions'
-				staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = ",".join(task['ingress_ports'])
+
+				# Add all design-time parameters
+				try:
+					properties_idx = 0
+					for key,value in enumerate(task['properties']):
+						staged_tasks['Server.Tasks[%s].Properties[%s].Name' % (staged_tasks_idx,properties_idx)] = key
+						staged_tasks['Server.Tasks[%s].Properties[%s].Value' % (staged_tasks_idx,properties_idx)] = value
+						properties_idx += 1
+				except:
+					pass
 
 			# Unknown type/ID
 			else:
