@@ -213,22 +213,6 @@ class Blueprint():
 		o['id'] is 0 for new servers, otherwise include the uuid of the existing server to modify.
 		"""
 
-		""" 
-		POST https://control.ctl.io/blueprints/designer/SaveServer?id=3435
-		Server.ID:634a26d1-ef03-464e-ac92-04b8d48e467f
-		Server.Template:CENTOS-6-64-TEMPLATE
-		Server.Name:sn
-		Server.Description:sdescr
-		Server.Processor:2
-		Server.Memory:4
-		Server.Tasks[0].ID:22460210-b682-4138-93fd-1a95c5e4e039
-		Server.Tasks[0].Properties[0].Name:Drive
-		Server.Tasks[0].Properties[0].Value:/data
-		Server.Tasks[0].Properties[1].Name:GB
-		Server.Tasks[0].Properties[1].Value:50
-		--> {"id":3435,"serverID":"634a26d1-ef03-464e-ac92-04b8d48e467f"}
-		"""
-
 		# Validate core params
 		for key in ('name','description','cpu','ram','id'):
 			if key not in o:
@@ -256,30 +240,63 @@ class Blueprint():
 
 			# TODO System - raw disk
 			elif task['type']=='disk' and task['uuid']=='22460210-b682-4138-93fd-1a95c5e4e039':
-				staged_tasks.append({'id': task['uuid'], 'properties': [
+				staged_tasks.append({'ID': task['uuid'], 'Properties': [
 						{ 'name': 'Drive', 'value': task['drive'] },
 						{ 'name': 'GB', 'value': task['gb'] },
 					]})
 
 			# System - reboot
 			elif task['type']=='reboot' and task['uuid']=='5b949945-6981-4a81-bbcc-4ddd3d394b8d':
-				staged_tasks.append({'id': task['uuid']})
+				staged_tasks.append({'ID': task['uuid']})
 
 			# TODO System - add public NAT
 			elif task['type']=='add_nat_ip' and task['uuid']=='c000d327-3543-4d9e-ac43-e8fbce4620ab':
 				pass
-				staged_tasks.append({'id': task['uuid'], 'properties': [
-						{ 'name': 'Drive', 'value': task['drive'] },
-						{ 'name': 'GB', 'value': task['gb'] },
-					]})
+				#staged_tasks.append({'id': task['uuid'], 'properties': [
+				#		{ 'name': 'Drive', 'value': task['drive'] },
+				#		{ 'name': 'GB', 'value': task['gb'] },
+				#	]})
 
-			# Uknown type/ID
+			# Unknown type/ID
 			else:
 				bpformation.output.Status('ERROR',3,"Blueprint json server task unknown type/id '%s'" % task['type'])
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
 
-		return(id)
+		# Post
+		""" 
+		POST https://control.ctl.io/blueprints/designer/SaveServer?id=3435
+		Server.ID:634a26d1-ef03-464e-ac92-04b8d48e467f
+		Server.Template:CENTOS-6-64-TEMPLATE
+		Server.Name:sn
+		Server.Description:sdescr
+		Server.Processor:2
+		Server.Memory:4
+		Server.Tasks[0].ID:22460210-b682-4138-93fd-1a95c5e4e039
+		Server.Tasks[0].Properties[0].Name:Drive
+		Server.Tasks[0].Properties[0].Value:/data
+		Server.Tasks[0].Properties[1].Name:GB
+		Server.Tasks[0].Properties[1].Value:50
+		--> {"id":3435,"serverID":"634a26d1-ef03-464e-ac92-04b8d48e467f"}
+
+		Server.Template=CENTOS-6-64-TEMPLATE&Server.Tasks=id&Server.Tasks=properties&Server.Tasks=id&Server.Tasks=properties&Server.Tasks=ID&Server.Processor=1&Server.ID=0&Server.Description=my+server&Server.Memory=2&Server.Name=MY
+		"""
+
+		r = bpformation.web.CallScrape("POST","/blueprints/designer/SaveServer",allow_redirects=False,payload={
+					"Server.ID": o['id'],     # Aligns to "tags"
+					"Server.Template": o['template'],
+					"Server.Name": o['name'],
+					"Server.Description": o['description'],
+					"Server.Processor": o['cpu'],
+					"Server.Memory": o['ram'],
+					"Server.Tasks": staged_tasks,
+				},debug=True)
+		if r.status_code<200 or r.status_code>=300:
+			bpformation.output.Status('ERROR',3,"Error creating blueprint - step 2 add server failure (response %s)" % r.status_code)
+			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+		print r.json()['serverID']
+
+		return(r.json()['serverID'])
 
 
 	@staticmethod
@@ -322,7 +339,6 @@ class Blueprint():
 			else:  ver_minor = 0
 
 			# Step 1 - Metadata post and create Blueprint shell
-			"""
 			r = bpformation.web.CallScrape("POST","/blueprints/designer/metadata",allow_redirects=False,payload={
 						"capabilities": "",     # Aligns to "tags"
 						"companySize": 3,       # 1: 1-100, 2: 101-1,000, 3: 1001-5000, 4: 5,000+
@@ -340,7 +356,6 @@ class Blueprint():
 				bpformation.output.Status('ERROR',3,"Error creating blueprint - step 1 metadata failure (response %s)" % r.status_code)
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 			blueprint_id = re.search("(\d+)$",r.json()['url']).group(1)
-			"""
 
 			# Step 2 - Apply all tasks
 			import pprint
