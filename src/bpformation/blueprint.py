@@ -215,16 +215,6 @@ class Blueprint():
 
 		""" 
 		POST https://control.ctl.io/blueprints/designer/SaveServer?id=3435
-		Server.ID:0
-		Server.Template:CENTOS-6-64-TEMPLATE
-		Server.Name:sn
-		Server.Description:sdescr
-		Server.Processor:2
-		Server.Memory:4
-		--> {"id":3435,"serverID":"634a26d1-ef03-464e-ac92-04b8d48e467f"}
-		
-		
-		POST https://control.ctl.io/blueprints/designer/SaveServer?id=3435
 		Server.ID:634a26d1-ef03-464e-ac92-04b8d48e467f
 		Server.Template:CENTOS-6-64-TEMPLATE
 		Server.Name:sn
@@ -255,8 +245,39 @@ class Blueprint():
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
 		# Build tasks data structure
+		staged_tasks = []
 		for task in o['tasks']:
-			print task
+			# System - add disk
+			if task['type']=='disk' and task['uuid']=='22460210-b682-4138-93fd-1a95c5e4e039':
+				staged_tasks.append({'id': task['uuid'], 'properties': [
+						{ 'name': 'Drive', 'value': task['drive'] },
+						{ 'name': 'GB', 'value': task['gb'] },
+					]})
+
+			# TODO System - raw disk
+			elif task['type']=='disk' and task['uuid']=='22460210-b682-4138-93fd-1a95c5e4e039':
+				staged_tasks.append({'id': task['uuid'], 'properties': [
+						{ 'name': 'Drive', 'value': task['drive'] },
+						{ 'name': 'GB', 'value': task['gb'] },
+					]})
+
+			# System - reboot
+			elif task['type']=='reboot' and task['uuid']=='5b949945-6981-4a81-bbcc-4ddd3d394b8d':
+				staged_tasks.append({'id': task['uuid']})
+
+			# TODO System - add public NAT
+			elif task['type']=='add_nat_ip' and task['uuid']=='c000d327-3543-4d9e-ac43-e8fbce4620ab':
+				pass
+				staged_tasks.append({'id': task['uuid'], 'properties': [
+						{ 'name': 'Drive', 'value': task['drive'] },
+						{ 'name': 'GB', 'value': task['gb'] },
+					]})
+
+			# Uknown type/ID
+			else:
+				bpformation.output.Status('ERROR',3,"Blueprint json server task unknown type/id '%s'" % task['type'])
+				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+
 
 		return(id)
 
