@@ -31,15 +31,15 @@ class Blueprint():
 	limited_printable_chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~  "
 
 
-#	@staticmethod
-#	def Delete(uuids):
-#		for uuid in uuids:
-#			r = bpformation.web.CallScrape("POST","/blueprints/packages/DeletePackage/",
-#							               payload={"id": uuid, "classification": "Script", })
-#			if r.status_code<400 and r.status_code>=200:
-#				bpformation.output.Status('SUCCESS',3,"%s package deleted" % uuid)
-#			else:
-#				bpformation.output.Status('ERROR',3,"%s package deletion error (status code %s)" % (uuid,r.status_code))
+	@staticmethod
+	def Delete(ids):
+		for uuid in uuids:
+			r = bpformation.web.CallScrape("POST","/blueprints/packages/DeletePackage/",
+							               payload={"id": uuid, "classification": "Script", })
+			if r.status_code<400 and r.status_code>=200:
+				bpformation.output.Status('SUCCESS',3,"%s package deleted" % uuid)
+			else:
+				bpformation.output.Status('ERROR',3,"%s package deletion error (status code %s)" % (uuid,r.status_code))
 
 
 	@staticmethod
@@ -327,24 +327,24 @@ class Blueprint():
 
 			# Load json
 			with open(file) as fh:
-				o = json.load(fh)
+				bp = json.load(fh)
 
 			# Strip unique IDs from assets that will be duplicated
 			new_tasks = []
-			for task in o['tasks']:  new_tasks.append(Blueprint._ImportAnonymizeTasks(task))
-			o['tasks'] = new_tasks
+			for task in bp['tasks']:  new_tasks.append(Blueprint._ImportAnonymizeTasks(task))
+			bp['tasks'] = new_tasks
 				
 			# Validate syntax and required metadata fields
 			for key in ('description','name','visibility','version'):
-				if key not in o['metadata']:
+				if key not in bp['metadata']:
 					bpformation.output.Status('ERROR',3,"Blueprint json missing metadata/%s" % key)
 					raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
 			# Munge version formatting
-			if not re.search("^[\d\.]+$",o['metadata']['version']):  
+			if not re.search("^[\d\.]+$",bp['metadata']['version']):  
 				bpformation.output.Status('ERROR',3,"Blueprint json version must contain only a dotted number representation")
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
-			m = re.search("(.+?)\.?(.*)",o['metadata']['version'])
+			m = re.search("(.+?)\.?(.*)",bp['metadata']['version'])
 			ver_major = int(m.group(1))
 			if len(m.groups(2)):  ver_minor = int(m.group(2).replace(".",""))
 			else:  ver_minor = 0
@@ -357,9 +357,9 @@ class Blueprint():
 						"templateID": 0,        # unknown
 						"errors": [],           # unknown
 						"userCapabilities": "", # TODO - Custom tags
-						"description": o['metadata']['description'],
-						"templateName": o['metadata']['name'],
-						"visibility": Blueprint.visibility_stoi[o['metadata']['visibility'].lower()],
+						"description": bp['metadata']['description'],
+						"templateName": bp['metadata']['name'],
+						"visibility": Blueprint.visibility_stoi[bp['metadata']['visibility'].lower()],
 						"versionMajor": ver_major,
 						"versionMinor": ver_minor,
 					})
@@ -370,12 +370,12 @@ class Blueprint():
 
 			# Step 2 - Apply all tasks
 			new_tasks = []
-			for task in o['tasks']:
+			for task in bp['tasks']:
 				if task['type'] == 'server':  new_tasks.append(Blueprint._ImportAddServer(blueprint_id,task))
 				else:
 					bpformation.output.Status('ERROR',3,"Unknown task type '%s'" % task['type'])
 					raise(bpformation.BPFormationFatalExeption("Fatal Error"))
-			o['tasks'] = new_tasks
+			bp['tasks'] = new_tasks
 
 			# Step 3 - Publish Blueprint
 			r = bpformation.web.CallScrape("POST","/Blueprints/Designer/Publish/%s" % blueprint_id,allow_redirects=False,payload={
@@ -383,7 +383,10 @@ class Blueprint():
 						"DataTemplate.UUID": str(uuid.uuid4()), # throw away value - not sure of purpose
 					})
 
+			# TODO Step 4 - save output?  Assume needed for some kind of update
 
-			bpformation.output.Status('SUCCESS',3,"Blueprint created with ID %s (https://control.ctl.io/blueprints/browser/details/%s)" % (blueprint_id,blueprint_id))
+
+			bpformation.output.Status('SUCCESS',3,"%s v%s imported ID %s (%s tasks)" % (bp['metadata']['name'],bp['metadata']['version'],blueprint_id,len(bp['tasks'])))
+			#bpformation.output.Status('SUCCESS',3,"Blueprint created with ID %s (https://control.ctl.io/blueprints/browser/details/%s)" % (blueprint_id,blueprint_id))
 
 
