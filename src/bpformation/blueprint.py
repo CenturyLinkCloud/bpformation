@@ -270,7 +270,7 @@ class Blueprint():
 				# Add all design-time parameters
 				try:
 					properties_idx = 0
-					for key,value in enumerate(task['properties']):
+					for key,value in task['properties'].items():
 						staged_tasks['Server.Tasks[%s].Properties[%s].Name' % (staged_tasks_idx,properties_idx)] = key
 						staged_tasks['Server.Tasks[%s].Properties[%s].Value' % (staged_tasks_idx,properties_idx)] = value
 						properties_idx += 1
@@ -360,7 +360,6 @@ class Blueprint():
 			blueprint_id = re.search("(\d+)$",r.json()['url']).group(1)
 
 			# Step 2 - Apply all tasks
-			import pprint
 			new_tasks = []
 			for task in o['tasks']:
 				if task['type'] == 'server':  new_tasks.append(Blueprint._ImportAddServer(blueprint_id,task))
@@ -370,6 +369,7 @@ class Blueprint():
 			o['tasks'] = new_tasks
 
 
+			bpformation.output.Status('SUCCESS',3,"Blueprint created with ID %s" % blueprint_id)
 			#print json.dumps(o,sort_keys=True,indent=4,separators=(',', ': '))
 			sys.exit()
 
