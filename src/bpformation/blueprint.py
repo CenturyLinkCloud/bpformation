@@ -22,6 +22,7 @@ import bpformation
 #
 # TODO vNext:
 #  o Create
+#  o Blueprint package parameters - verify with /blueprints/designer/TaskParameters and alert on error
 
 
 class Blueprint():
@@ -203,7 +204,7 @@ class Blueprint():
 
 
 	@staticmethod
-	def _PostServer(o):
+	def _PostServer(blueprint_id,o):
 		"""
 		Post to create/update server configuration.
 
@@ -229,42 +230,38 @@ class Blueprint():
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
 		# Build tasks data structure
+		# TODO - query for parameters and verify we meet requirements
 		staged_tasks = {}
 		staged_tasks_idx = 0 
 		for task in o['tasks']:
+			# TODO system tasks - scheduled task, delete snapshot, revert snapshot
 			# System - add disk
 			if task['type']=='disk' and task['uuid']=='22460210-b682-4138-93fd-1a95c5e4e039':
-				#staged_tasks.append({'ID': task['uuid'], 'Properties': [
-				#		{ 'Name': 'Drive', 'Value': task['drive'] },
-				#		{ 'Name': 'GB', 'Value': task['gb'] },
-				#	]})
-				# Server.Tasks[0].Properties[1].Value:50
 				staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
 				staged_tasks['Server.Tasks[%s].Properties[0].Name' % staged_tasks_idx] = 'Drive'
 				staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = task['drive']
 				staged_tasks['Server.Tasks[%s].Properties[1].Name' % staged_tasks_idx] = 'GB'
 				staged_tasks['Server.Tasks[%s].Properties[1].Value' % staged_tasks_idx] = task['gb']
 
-			# TODO System - raw disk
-			elif task['type']=='disk' and task['uuid']=='22460210-b682-4138-93fd-1a95c5e4e039':
-				pass
-				#staged_tasks.append({'ID': task['uuid'], 'Properties': [
-				#		{ 'Name': 'Drive', 'Value': task['drive'] },
-				#		{ 'Name': 'GB', 'Value': task['gb'] },
-				#	]})
+			# System - raw disk
+			elif task['type']=='disk' and task['uuid']=='9a851f50-c676-4c11-b4c8-a0a7241c1060':
+				staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
+				staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = task['drive']
+				staged_tasks['Server.Tasks[%s].Properties[0].Name' % staged_tasks_idx] = 'GB'
 
 			# System - reboot
 			elif task['type']=='reboot' and task['uuid']=='5b949945-6981-4a81-bbcc-4ddd3d394b8d':
-				pass
-				#staged_tasks.append({'ID': task['uuid']})
+				staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
 
-			# TODO System - add public NAT
+			# System - add public NAT
 			elif task['type']=='add_nat_ip' and task['uuid']=='c000d327-3543-4d9e-ac43-e8fbce4620ab':
-				pass
-				#staged_tasks.append({'id': task['uuid'], 'properties': [
-				#		{ 'name': 'Drive', 'value': task['drive'] },
-				#		{ 'name': 'GB', 'value': task['gb'] },
-				#	]})
+				staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
+				staged_tasks['Server.Tasks[%s].Properties[0].Name' % staged_tasks_idx] = 'FirewallOptions'
+				staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = ",".join(task['ingress_ports'])
+
+			# System - add add'l private IP
+			elif task['type']=='add_ip' and task['uuid']=='9a851f50-c676-4c11-b4c8-a0a7241c1060':
+				staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
 
 			# Unknown type/ID
 			else:
@@ -289,18 +286,10 @@ class Blueprint():
 		Server.Tasks[0].Properties[1].Value:50
 		--> {"id":3435,"serverID":"634a26d1-ef03-464e-ac92-04b8d48e467f"}
 
-		Server.Template=CENTOS-6-64-TEMPLATE&Server.Tasks=id&Server.Tasks=properties&Server.Tasks=id&Server.Tasks=properties&Server.Tasks=ID&Server.Processor=1&Server.ID=0&Server.Description=my+server&Server.Memory=2&Server.Name=MY
 		"""
 
-		print dict({
-					"Server.ID": o['id'],
-					"Server.Template": o['template'],
-					"Server.Name": o['name'],
-					"Server.Description": o['description'],
-					"Server.Processor": o['cpu'],
-					"Server.Memory": o['ram'],
-				}.items()+staged_tasks.items())
 		r = bpformation.web.CallScrape("POST","/blueprints/designer/SaveServer",allow_redirects=False,payload=dict({
+					"id": blueprint_id,
 					"Server.ID": o['id'],
 					"Server.Template": o['template'],
 					"Server.Name": o['name'],
@@ -311,16 +300,15 @@ class Blueprint():
 		if r.status_code<200 or r.status_code>=300:
 			bpformation.output.Status('ERROR',3,"Error creating blueprint - step 2 add server failure (response %s)" % r.status_code)
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
-		print r.json()['serverID']
 
 		return(r.json()['serverID'])
 
 
 	@staticmethod
-	def _ImportAddServer(o):
+	def _ImportAddServer(blueprint_id,o):
 		"""Create new server.  Set id=0 t o create new."""
 		o['id'] = 0
-		o['id'] = Blueprint._PostServer(o)
+		o['id'] = Blueprint._PostServer(blueprint_id,o)
 
 		return(o)
 
@@ -378,7 +366,7 @@ class Blueprint():
 			import pprint
 			new_tasks = []
 			for task in o['tasks']:
-				if task['type'] == 'server':  new_tasks.append(Blueprint._ImportAddServer(task))
+				if task['type'] == 'server':  new_tasks.append(Blueprint._ImportAddServer(blueprint_id,task))
 				else:
 					bpformation.output.Status('ERROR',3,"Unknown task type '%s'" % task['type'])
 					raise(bpformation.BPFormationFatalExeption("Fatal Error"))
