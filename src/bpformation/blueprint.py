@@ -256,6 +256,7 @@ class Blueprint():
 
 		# Build tasks data structure
 		for task in o['tasks']:
+			print task
 
 		return(id)
 
