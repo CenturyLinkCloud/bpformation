@@ -202,8 +202,53 @@ class Blueprint():
 		return(o)
 
 
-	@staticMethod
+	@staticmethod
+	def _PostServer(o):
+		"""
+		Post to create/update server configuration.
+
+		Must include all parameters for the server - anything not specified is "deleted".
+
+		o is a server object with keys name, description, cpu, ram, template, id, and a list of tasks.
+		o['id'] is 0 for new servers, otherwise include the uuid of the existing server to modify.
+		"""
+
+		""" 
+		POST https://control.ctl.io/blueprints/designer/SaveServer?id=3435
+		Server.ID:0
+		Server.Template:CENTOS-6-64-TEMPLATE
+		Server.Name:sn
+		Server.Description:sdescr
+		Server.Processor:2
+		Server.Memory:4
+		--> {"id":3435,"serverID":"634a26d1-ef03-464e-ac92-04b8d48e467f"}
+		
+		
+		POST https://control.ctl.io/blueprints/designer/SaveServer?id=3435
+		Server.ID:634a26d1-ef03-464e-ac92-04b8d48e467f
+		Server.Template:CENTOS-6-64-TEMPLATE
+		Server.Name:sn
+		Server.Description:sdescr
+		Server.Processor:2
+		Server.Memory:4
+		Server.Tasks[0].ID:22460210-b682-4138-93fd-1a95c5e4e039
+		Server.Tasks[0].Properties[0].Name:Drive
+		Server.Tasks[0].Properties[0].Value:/data
+		Server.Tasks[0].Properties[1].Name:GB
+		Server.Tasks[0].Properties[1].Value:50
+		--> {"id":3435,"serverID":"634a26d1-ef03-464e-ac92-04b8d48e467f"}
+		"""
+
+		return(id)
+
+
+	@staticmethod
 	def _ImportAddServer(o):
+		"""Create new server.  Set id=0 t o create new."""
+		o['id'] = 0
+		o['id'] = Blueprint._PostServer(o)
+
+		return(o)
 
 
 	@staticmethod
@@ -249,10 +294,14 @@ class Blueprint():
 						"versionMajor": ver_major,
 						"versionMinor": ver_minor,
 					})
-			if r.status_code<200 or >=300:
-				bpformation.output.Status('ERROR',3,"Error creating blueprint - step 1 metadata failure (response %s") % r.status_code)
+			if r.status_code<200 or r.status_code>=300:
+				bpformation.output.Status('ERROR',3,"Error creating blueprint - step 1 metadata failure (response %s)" % r.status_code)
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
-			blueprint_id = r.json()['url']).group(1)
+			blueprint_id = re.search("(\d+)$",r.json()['url']).group(1)
+
+			# Step 2 - Apply all tasks
+			for task in o['tasks']:
+				print task
 
 
 
