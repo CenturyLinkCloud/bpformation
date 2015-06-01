@@ -6,6 +6,7 @@ Manage Blueprints.
 import os
 import re
 import sys
+import uuid
 import json
 import time
 from lxml import objectify, etree
@@ -14,7 +15,6 @@ import bpformation
 
 
 # TODO vCur:
-#  o Import
 #  o Delete
 #  o Change
 
@@ -377,48 +377,13 @@ class Blueprint():
 					raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 			o['tasks'] = new_tasks
 
+			# Step 3 - Publish Blueprint
+			r = bpformation.web.CallScrape("POST","/Blueprints/Designer/Publish/%s" % blueprint_id,allow_redirects=False,payload={
+						"Publish": "",                          # unknown
+						"DataTemplate.UUID": str(uuid.uuid4()), # throw away value - not sure of purpose
+					})
 
-			bpformation.output.Status('SUCCESS',3,"Blueprint created with ID %s" % blueprint_id)
-			#print json.dumps(o,sort_keys=True,indent=4,separators=(',', ': '))
-			sys.exit()
 
-		
-			# Save server config with package(s)
-			if package_ini.get("package","os")=="linux":  
-				payload = {"Server.ID": 0,
-						   "Server.Template": config.get("clc","blueprint_template_%s_template" % package_ini.get("package","os")),
-						   "Server.Name": package_ini.get("package","package")[:4],
-						   "Server.Description": package_ini.get("package","friendly_name"),
-						   "Server.Processor": config.get("clc","blueprint_template_%s_cpu" % package_ini.get("package","os")),
-						   "Server.Memory": config.get("clc","blueprint_template_%s_ram" % package_ini.get("package","os")),
-						   "Server.Tasks[0].ID": config.get("clc","blueprint_template_linux_update_uuid"),
-						   "Server.Tasks[1].ID": package_ini.get("system","uuid")}
-			else:
-				payload = {"Server.ID": 0,
-						   "Server.Template": config.get("clc","blueprint_template_%s_template" % package_ini.get("package","os")),
-						   "Server.Name": package_ini.get("package","package")[:4],
-						   "Server.Description": package_ini.get("package","friendly_name"),
-						   "Server.Processor": config.get("clc","blueprint_template_%s_cpu" % package_ini.get("package","os")),
-						   "Server.Memory": config.get("clc","blueprint_template_%s_ram" % package_ini.get("package","os")),
-						   "Server.Tasks[0].ID": package_ini.get("system","uuid")}
-			r = requests.post("https://control.ctl.io/blueprints/designer/SaveServer?id=%s" % package_ini.get("system","blueprint_id"),
-							  cookies=control_cookies,data=payload)
-		
-			# Publish blueprint
-			r = requests.post("https://control.ctl.io/Blueprints/Designer/Publish/%s" % package_ini.get("system","blueprint_id"),
-							  cookies=control_cookies,
-							  data={"TemplateID": package_ini.get("system","blueprint_id"),
-									"DataTemplate.UUID": str(uuid.uuid4()),		# throw away value - not sure of purpose
-							  		"Publish": ""})
-			#print r.status_code
-			#print r.text
-		
-			# Get blueprint uuid
-			r = requests.get("https://control.ctl.io/blueprints/browser/details/%s" % package_ini.get("system","blueprint_id"),
-							  cookies=control_cookies)
-		
-			package_ini.set("system","blueprint_uuid",re.search("/Blueprints/Designer/MetaData/(.+?)\"",r.text).group(1))
-			print "\tNew Blueprint created and published via screen scrape"
-
+			bpformation.output.Status('SUCCESS',3,"Blueprint created with ID %s (https://control.ctl.io/blueprints/browser/details/%s)" % (blueprint_id,blueprint_id))
 
 
