@@ -33,13 +33,23 @@ class Blueprint():
 
 	@staticmethod
 	def Delete(ids):
-		for uuid in uuids:
-			r = bpformation.web.CallScrape("POST","/blueprints/packages/DeletePackage/",
-							               payload={"id": uuid, "classification": "Script", })
+		for id in ids:
+			# Lookup package uuid given id
+			r = bpformation.web.CallScrape("GET","/blueprints/browser/details/%s" % id)
+			try:
+				name = re.search('<h1 id="body-title" class="left">\s*(.+?)\s*<small>',r.text,re.DOTALL).group(1)
+				bp_uuid = re.search("/Blueprints/Designer/MetaData/(.+?)\"",r.text).group(1)
+			except:
+				bpformation.output.Status('ERROR',3,"Unable to location Blueprint %s (status code %s)" % (id,r.status_code))
+				continue
+				
+
+			# Exec delete against uuid
+			r = bpformation.web.CallScrape("POST","/blueprints/browser/delete", payload={"uuid": bp_uuid, })
 			if r.status_code<400 and r.status_code>=200:
-				bpformation.output.Status('SUCCESS',3,"%s package deleted" % uuid)
+				bpformation.output.Status('SUCCESS',3,"%s deleted (id %s)" % (name,id))
 			else:
-				bpformation.output.Status('ERROR',3,"%s package deletion error (status code %s)" % (uuid,r.status_code))
+				bpformation.output.Status('ERROR',3,"%s deletion error (status code %s)" % (id,r.status_code))
 
 
 	@staticmethod

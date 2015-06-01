@@ -70,9 +70,7 @@ class Args:
 		########## Blueprint ###########
 		#
 		# TODO vCur:
-		#  o import (from json)
 		#  o modify
-		#  o delete
 		#
 		# TODO vNext:
 		#  o create (interactive ui to build blueprint)
@@ -97,7 +95,7 @@ class Args:
 
 		## Delete
 		parser_blueprint_export = parser_sp2.add_parser('delete', help='Delete blueprint')
-		parser_blueprint_export.add_argument('--id', required=True, help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
+		parser_blueprint_export.add_argument('--id', nargs='*', required=True, help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
 
 
 
@@ -230,7 +228,7 @@ class ExecCommand():
 
 
 	def BlueprintDelete(self):
-		self.Exec('bpformation.blueprint.Delete', {'id': bpformation.args.args.id }, cols=[])
+		self.Exec('bpformation.blueprint.Delete', {'ids': bpformation.args.args.id }, cols=[])
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):
