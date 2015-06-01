@@ -263,6 +263,12 @@ class Blueprint():
 			elif task['type']=='add_ip' and task['uuid']=='9a851f50-c676-4c11-b4c8-a0a7241c1060':
 				staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
 
+			# User package
+			elif task['type']=='package':
+				staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
+				staged_tasks['Server.Tasks[%s].Properties[0].Name' % staged_tasks_idx] = 'FirewallOptions'
+				staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = ",".join(task['ingress_ports'])
+
 			# Unknown type/ID
 			else:
 				bpformation.output.Status('ERROR',3,"Blueprint json server task unknown type/id '%s'" % task['type'])
@@ -271,23 +277,6 @@ class Blueprint():
 			staged_tasks_idx += 1
 
 		# Post
-		""" 
-		POST https://control.ctl.io/blueprints/designer/SaveServer?id=3435
-		Server.ID:634a26d1-ef03-464e-ac92-04b8d48e467f
-		Server.Template:CENTOS-6-64-TEMPLATE
-		Server.Name:sn
-		Server.Description:sdescr
-		Server.Processor:2
-		Server.Memory:4
-		Server.Tasks[0].ID:22460210-b682-4138-93fd-1a95c5e4e039
-		Server.Tasks[0].Properties[0].Name:Drive
-		Server.Tasks[0].Properties[0].Value:/data
-		Server.Tasks[0].Properties[1].Name:GB
-		Server.Tasks[0].Properties[1].Value:50
-		--> {"id":3435,"serverID":"634a26d1-ef03-464e-ac92-04b8d48e467f"}
-
-		"""
-
 		r = bpformation.web.CallScrape("POST","/blueprints/designer/SaveServer",allow_redirects=False,payload=dict({
 					"id": blueprint_id,
 					"Server.ID": o['id'],
@@ -296,7 +285,7 @@ class Blueprint():
 					"Server.Description": o['description'],
 					"Server.Processor": o['cpu'],
 					"Server.Memory": o['ram'],
-				}.items() + staged_tasks.items()),debug=True)
+				}.items() + staged_tasks.items()))
 		if r.status_code<200 or r.status_code>=300:
 			bpformation.output.Status('ERROR',3,"Error creating blueprint - step 2 add server failure (response %s)" % r.status_code)
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
