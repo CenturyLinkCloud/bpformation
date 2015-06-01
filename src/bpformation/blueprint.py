@@ -123,6 +123,9 @@ class Blueprint():
 
 	@staticmethod
 	def Export(id,file=None):
+		# Silence status output if writing to stdout
+		bpformation.args.args.quiet = 999
+
 		bp = {'metadata': {}, 'tasks': [] }
 
 		# Blueprint metadata 
@@ -152,7 +155,11 @@ class Blueprint():
 					# Catch only our exceptions
 				pass
 
-		print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
+		if file=="-":  
+			print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
+		else:
+			with open("%-%s-%s" % (bp['name']),'w') as fh:
+				fh.write(json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': ')))
 
 
 	# Available, but not returning:

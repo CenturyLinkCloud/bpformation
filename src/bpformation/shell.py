@@ -107,7 +107,7 @@ class Args:
 		parser.add_argument('--alias', '-a', help='Operate on specific account alias')
 		parser.add_argument('--control-user', metavar='USER', help='Control username')
 		parser.add_argument('--control-password', metavar='PASS', help='Control password')
-		parser.add_argument('--quiet', '-q', action='count', help='Supress status output (repeat up to 2 times)')
+		parser.add_argument('--quiet', '-q', default=1, action='count', help='Supress status output (repeat up to 2 times)')
 		parser.add_argument('--verbose', '-v', action='count', help='Increase verbosity')
 		parser.add_argument('--cols', nargs='*', metavar='COL', help='Include only specific columns in the output')
 		parser.add_argument('--format', '-f', choices=['json','table','text','csv'], default='table', help='Output result format (table is default)')
@@ -137,7 +137,7 @@ class Args:
 			elif os.path.isfile("/usr/local/etc/bpformation_config"):
 				config_file = "/usr/local/etc/bpformation_config"
 		if config_file:  
-			bpformation.output.Status('SUCCESS',3,"Reading %s" % (config_file))
+			bpformation.output.Status('SUCCESS',0,"Reading %s" % (config_file))
 			config = ConfigParser.ConfigParser()
 			config.read(config_file)
 
