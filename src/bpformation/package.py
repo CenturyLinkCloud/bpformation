@@ -192,14 +192,10 @@ class Package():
 			bpformation.output.Status('SUCCESS',3,"Execution completed on %s (%s seconds)" % (",".join(success_servers),int(time.time()-start_time)))
 		for request in request_errors:
 			(req_loc,req_id) = request.id.split("-",1)
+			r = bpformation.web.CallScrape("GET","/Blueprints/Queue/RequestDetails/%s?location=%s" % (req_id,req_loc))
 			if r.status_code<300 and r.status_code>=200:
-				r = bpformation.web.CallScrape("GET","/Blueprints/Queue/RequestDetails/%s?location=%s" % (req_id,req_loc))
-				print r.text
-				print re.search('<class="module-body">.*?<pre>(.*?)\s*</pre>',r.text,re.DOTALL)
-				error = re.search('<class="module-body">.*?<pre>(.*?)\s*</pre>',r.text,re.DOTALL).group(1)
-				print "-"
-				print error
-				print "-"
+				error = re.search('<div class="module-body">.*?<pre>(\s*.Error.\s*)?(.*?)\s*</pre>',r.text,re.DOTALL).group(2)
+				bpformation.output.Status('ERROR',3,"Execution failed on %s: %s" % (request.data['context_val'],error))
 			else:
 				bpformation.output.Status('ERROR',3,"Execution failed on %s request ID %s (https://control.ctl.io/Blueprints/Queue/RequestDetails/%s?location=%s)" % \
 						(request.data['context_val'],req_id,req_id,req_loc))
