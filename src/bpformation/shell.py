@@ -112,7 +112,7 @@ class Args:
 		#        as long as in the end they can be sensibly merged into a unified view that supplies all needed info.
 		parser_blueprint_execute = parser_sp2.add_parser('execute', help='Execute blueprint')
 		parser_blueprint_execute.add_argument('--file', nargs='*', help='Blueprint definition json files with "execute" populated')
-		parser_blueprint_exec.add_argument('--id', nargs='*', help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
+		parser_blueprint_execute.add_argument('--id', nargs='*', help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
 		parser_blueprint_execute.add_argument('--parameter', nargs='*', help='key=value pairs for package parameters (overrides "file")')
 		parser_blueprint_execute.add_argument('--type', choices=['Standard','HyperScale'], help='Server hardware type')
 		parser_blueprint_execute.add_argument('--password', help='Server deploy password')
@@ -159,11 +159,11 @@ class Args:
 				config_file = "/usr/local/etc/bpformation_config"
 		if config_file:  
 			bpformation.output.Status('SUCCESS',0,"Reading %s" % (config_file))
-			config = ConfigParser.ConfigParser()
-			config.read(config_file)
+			bpformation.config = ConfigParser.ConfigParser()
+			bpformation.config.read(config_file)
 
-			if config.has_option('global','control_user'):  bpformation.CONTROL_USER = config.get('global','control_user')
-			if config.has_option('global','control_password'):  bpformation.CONTROL_PASSWORD = config.get('global','control_password')
+			if bpformation.config.has_option('global','control_user'):  bpformation.CONTROL_USER = bpformation.config.get('global','control_user')
+			if bpformation.config.has_option('global','control_password'):  bpformation.CONTROL_PASSWORD = bpformation.config.get('global','control_password')
 
 
 	def MergeEnvironment(self):

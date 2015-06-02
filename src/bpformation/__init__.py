@@ -26,6 +26,7 @@ FTP_ENDPOINT = False
 
 
 args = False
+config = False
 
 _SSL_VERIFY = True
 

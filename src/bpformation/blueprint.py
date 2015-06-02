@@ -438,23 +438,25 @@ class Blueprint():
 
 		# Build list of file-based assets to exec
 		bps = []
-		for file in files:
-			if not os.path.isfile(file):
-				bpformation.output.Status('ERROR',3,"Blueprint json file '%s' not found" % file)
-
-			# Load json
-			with open(file) as fh:
-				bp = json.load(fh)
-
-			if 'id' not in bp['metadata']:
-				bpformation.output.Status('ERROR',3,"No blueprint ID in '%s'" % file)
-				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
-
-			bps.append({'execute': bp['execute'], 'id': bp['metadata']['id']})
+		if files is not None and len(files):
+			for file in files:
+				if not os.path.isfile(file):
+					bpformation.output.Status('ERROR',3,"Blueprint json file '%s' not found" % file)
+	
+				# Load json
+				with open(file) as fh:
+					bp = json.load(fh)
+	
+				if 'id' not in bp['metadata']:
+					bpformation.output.Status('ERROR',3,"No blueprint ID in '%s'" % file)
+					raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+	
+				bps.append({'execute': bp['execute'], 'id': bp['metadata']['id']})
 
 
 		# Build list of id-based assets to exec
-		for id in ids:  bps.append({'execute': {}, 'id': id})
+		if ids is not None and len(ids):
+			for id in ids:  bps.append({'execute': {}, 'id': id})
 
 		# Build execute parameter lists
 		# order of precedence (low to high):
@@ -466,24 +468,31 @@ class Blueprint():
 			# Apply defaults from config file - don't overwrite existing items.  Only covers system items
 			for key in ('type','password','group_id','network','dns'):
 				if key in bp['execute']:  continue
-				if config.has_option('blueprint_execute',key):  bp['execute'][key] = config.get('blueprint_execute',key)
+				if bpformation.config.has_option('blueprint_execute',key):  bp['execute'][key] = bpformation.config.get('blueprint_execute',key)
 
 			# Apply system-level command line args
 			for key in ('type','password','group_id','network','dns'):
-				if globals()[key] is not None:  bp['execute'][key] = globals()[key]
+				if key in globals() and globals()[key] is not None:  bp['execute'][key] = globals()[key]
 
 			# Apply parameter command line args
-			for parameter in parameters:
+			if parameters is not None and len(parameters):
+				for parameter in parameters:
+					print "xxx"
+					(key,value) = parameter.split("=",1)
+					bp['execute'][key] = value
+
+			# Hardcoded default DNS - this is dumb that we ask for it
+			if 'dns' not in bp['execute'] or not len(bp['execute']['dns']):
+				bp['execute']['dns'] = "172.17.1.26"
+
+			new_bps.append(bp)
 				
-			{ p.split("=")[0]: p.split("=",1)[1] for p in parameters }
-			
 		bps = new_bps
+		print bps
 
 		# TODO - confirm all needed parameters are actually set (system +  bp)
 		# TODO - foreach id/file - execute
 
-		# Superficial parameter validation
-		if dns is None: dns = "172.17.1.26"
 
 		"""
 		POST https://control.ctl.io/Blueprints/Builder/Customize/3389
