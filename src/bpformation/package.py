@@ -128,7 +128,6 @@ class Package():
 			r = requests.get("%s/Blueprints/Packages/Download?uuid=%s" % (bpformation.defaults.CONTROL_URL,uuid), 
 			                 cookies=bpformation._CONTROL_COOKIES,
 							 stream=True)
-			print r.status_code
 			with open("%s.zip" % uuid, 'wb') as f:
 				for chunk in r.iter_content(chunk_size=1024):
 					if chunk: # filter out keep-alive new chunks
@@ -175,14 +174,6 @@ class Package():
 	@staticmethod
 	def Execute(uuid,servers,parameters):
 		# TODO - async option
-		payload = {
-				"package":  {
-						"packageId": re.sub("[^a-zA-Z0-9]","",uuid).lower(),   # Wants uuid w/o dashes
-						"parameters" : { p.split("=")[0]: p.split("=",1)[1] for p in parameters },
-					},
-				"servers":  servers,
-			}
-
 		clc.v2.SetCredentials(bpformation.CONTROL_USER, bpformation.CONTROL_PASSWORD)
 		requests = []
 		start_time = time.time()
@@ -201,8 +192,17 @@ class Package():
 			bpformation.output.Status('SUCCESS',3,"Execution completed on %s (%s seconds)" % (",".join(success_servers),int(time.time()-start_time)))
 		for request in request_errors:
 			(req_loc,req_id) = request.id.split("-",1)
-			bpformation.output.Status('ERROR',3,"Execution failed on %s request ID %s (https://control.ctl.io/Blueprints/Queue/RequestDetails/%s?location=%s)" % \
-					(request.data['context_val'],req_id,req_id,req_loc))
+			if r.status_code<300 and r.status_code>=200:
+				r = bpformation.web.CallScrape("GET","/Blueprints/Queue/RequestDetails/%s?location=%s" % (req_id,req_loc))
+				print r.text
+				print re.search('<class="module-body">.*?<pre>(.*?)\s*</pre>',r.text,re.DOTALL)
+				error = re.search('<class="module-body">.*?<pre>(.*?)\s*</pre>',r.text,re.DOTALL).group(1)
+				print "-"
+				print error
+				print "-"
+			else:
+				bpformation.output.Status('ERROR',3,"Execution failed on %s request ID %s (https://control.ctl.io/Blueprints/Queue/RequestDetails/%s?location=%s)" % \
+						(request.data['context_val'],req_id,req_id,req_loc))
 
 
 
