@@ -174,6 +174,7 @@ class Package():
 
 	@staticmethod
 	def Execute(uuid,servers,parameters):
+		# TODO - async option
 		payload = {
 				"package":  {
 						"packageId": re.sub("[^a-zA-Z0-9]","",uuid).lower(),   # Wants uuid w/o dashes
@@ -182,7 +183,18 @@ class Package():
 				"servers":  servers,
 			}
 
-		print payload
+		clc.v2.SetCredentials(bpformation.CONTROL_USER, bpformation.CONTROL_PASSWORD)
+		requests = []
+		start_time = time.time()
+		for server in servers:
+			bpformation.output.Status('SUCCESS',3,"Execution request submitted for %s" % server)
+			requests.append(clc.v2.Server(server,alias=bpformation.web.Alias()).ExecutePackage(
+					package_id=re.sub("[^a-zA-Z0-9]","",uuid).lower(),   # Wants uuid w/o dashes
+					parameters={ p.split("=")[0]: p.split("=",1)[1] for p in parameters },
+				))
+
+		sum(requests).WaitUntilComplete()
+		bpformation.output.Status('SUCCESS',3,"Execution completed on %s servers (%s seconds)" % (len(servers),int(time.time()-start_time)))
 
 
 

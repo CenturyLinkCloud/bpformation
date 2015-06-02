@@ -11,6 +11,7 @@ from bpformation.shell import Args, ExecCommand
 from bpformation.package import Package as package
 from bpformation.blueprint import Blueprint as blueprint
 from bpformation.web import Web as web
+from bpformation.api import API as api
 from bpformation.queue import Queue as queue
 import bpformation.output
 import defaults
