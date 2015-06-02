@@ -5,6 +5,7 @@ Manage Blueprint packages.
 
 import os
 import re
+import clc
 import time
 import ftplib
 import requests
@@ -13,13 +14,14 @@ import bpformation
 
 #
 # TODO vCur:
-#  o Create new ftp endpoint if none exists
-#  o Retrive list of existing packages using v2 json endpoint
+#  o Query for all parameters associated with a package.  Optionally enforce on package Execute
 #
 
 
 #
 # TODO vNext:
+#  o Create new ftp endpoint if none exists
+#  o Retrive list of existing packages using v2 json endpoint
 #
 
 
@@ -169,6 +171,18 @@ class Package():
 
 		return(packages_final)
 
+
+	@staticmethod
+	def Execute(uuid,servers,parameters):
+		payload = {
+				"package":  {
+						"packageId": re.sub("[^a-zA-Z0-9]","",uuid).lower(),   # Wants uuid w/o dashes
+						"parameters" : { p.split("=")[0]: p.split("=",1)[1] for p in parameters },
+					},
+				"servers":  servers,
+			}
+
+		print payload
 
 
 

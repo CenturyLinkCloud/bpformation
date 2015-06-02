@@ -65,6 +65,12 @@ class Args:
 		parser_package_download = parser_sp2.add_parser('download', help='Download published package')
 		parser_package_download.add_argument('--uuid', nargs='*', required=True, help='UUID for packages')
 
+		## Execute
+		parser_package_download = parser_sp2.add_parser('execute', help='Execute package')
+		parser_package_download.add_argument('--uuid', required=True, help='UUID for package')
+		parser_package_download.add_argument('--server', required=True, nargs='*', help='Servers targets for package execution')
+		parser_package_download.add_argument('--parameter', nargs='*', help='key=value pairs for package parameters')
+
 
 
 		########## Blueprint ###########
@@ -180,6 +186,7 @@ class ExecCommand():
 		elif bpformation.args.GetArgs().sub_command == 'delete':  self.PackageDelete()
 		elif bpformation.args.GetArgs().sub_command == 'download':  self.PackageDownload()
 		elif bpformation.args.GetArgs().sub_command == 'list':  self.PackageList()
+		elif bpformation.args.GetArgs().sub_command == 'execute':  self.PackageExecute()
 
 
 	def Blueprint(self):
@@ -218,6 +225,12 @@ class ExecCommand():
 
 	def PackageList(self):
 		self.Exec('bpformation.package.List', {'filters': bpformation.args.args.filter }, cols=['name','uuid','owner','visibility','status'])
+
+
+	def PackageExecute(self):
+		self.Exec('bpformation.package.Execute', 
+		          {'uuid': bpformation.args.args.uuid, 'servers': bpformation.args.args.server, 'parameters': bpformation.args.args.parameter },
+		          cols=['name','uuid','owner','visibility','status'])
 
 
 	def BlueprintList(self):
