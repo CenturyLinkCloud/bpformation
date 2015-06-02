@@ -472,7 +472,7 @@ class Blueprint():
 
 			# Apply system-level command line args
 			for key in ('type','password','group_id','network','dns'):
-				if key in globals() and globals()[key] is not None:  bp['execute'][key] = globals()[key]
+				if key in vars() and vars()[key] is not None:  bp['execute'][key] = vars()[key]
 
 			# Apply parameter command line args
 			if parameters is not None and len(parameters):
