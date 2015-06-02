@@ -429,11 +429,15 @@ class Blueprint():
 
 
 	@staticmethod
-	def Execute(id,parameters):
+	self.Exec('bpformation.blueprint.Execute',
+	{'files': bpformation.args.args.file, 'type': bpformation.args.args.type, 'password': bpformation.args.args.password,
+	def Execute(files,type,password,group_id,network,dns):
+
+		# Superficial parameter validation
+		if dns is None: dns = "172.17.1.26"
 
 		# TODO - get groups
 		# TODO - get networks
-		# TODO - DNS in defaults
 		# TODO - server type
 
 		"""
