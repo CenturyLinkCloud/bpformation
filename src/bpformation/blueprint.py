@@ -496,10 +496,7 @@ class Blueprint():
 				
 		bps = new_bps
 
-		# TODO - confirm all needed parameters are actually set (system +  bp)
 		# TODO - foreach id/file - execute
-
-
 		print bps
 		"""
 		POST https://control.ctl.io/Blueprints/Builder/Customize/3389
