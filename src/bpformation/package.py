@@ -108,6 +108,9 @@ class Package():
 
 		bpformation.queue.WaitForQueue(task_queue)
 
+		if visibility.lower()=="public":
+			bpformation.output.Status('SUCCESS',3,"CenturyLink approval needed for Public publishing.  Email ecosystem@CenturyLinkCloud.com for approval")
+
 	
 	@staticmethod
 	def Delete(uuids):

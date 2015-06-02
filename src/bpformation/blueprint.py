@@ -372,6 +372,9 @@ class Blueprint():
 
 		# TODO Step 4 - save output?  Assume needed for some kind of update
 
+		if bp['metadata']['visibility'].lower()=="public":  
+				bpformation.output.Status('SUCCESS',3,"CenturyLink approval needed for Public publishing.  Email ecosystem@CenturyLinkCloud.com for approval")
+
 		return(bp)
 
 
@@ -412,4 +415,42 @@ class Blueprint():
 			bpformation.output.Status('SUCCESS',3,"%s v%s updated ID %s (%s tasks)" % (bp['metadata']['name'],bp['metadata']['version'],bp['metadata']['id'],len(bp['tasks'])))
 			#bpformation.output.Status('SUCCESS',3,"Blueprint created with ID %s (https://control.ctl.io/blueprints/browser/details/%s)" % (blueprint_id,blueprint_id))
 
+
+	@staticmethod
+	def Execute(id,parameters):
+
+		# TODO - get groups
+		# TODO - get networks
+		# TODO - DNS in defaults
+		# TODO - server type
+
+		"""
+		POST https://control.ctl.io/Blueprints/Builder/Customize/3389
+		TemplateID:3389
+		T3.BuildServerTask.Password:Savvis11
+		Confirm.T3.BuildServerTask.Password:Savvis11
+		T3.BuildServerTask.GroupID:93cf0e58-9a38-448c-b0d7-c78f757c8874
+		T3.BuildServerTask.Network:vlan_2314_10.50.14
+		T3.BuildServerTask.PrimaryDNS:Manual
+		T3.BuildServerTask.PrimaryDNS_manual:172.17.1.26
+		T3.BuildServerTask.SecondaryDNS:
+		T3.BuildServerTask.SecondaryDNS_manual:
+		T3.BuildServerTask.HardwareType:Standard
+		T3.BuildServerTask.AntiAffinityPoolId:
+		T3.BuildServerTask.ServiceLevel:Standard
+		72d04ebc-15fb-4cf9-b3c5-9acd33704824.Alias:X
+		RequestID:
+		Submit:
+		--> 302 - /Blueprints/Builder/Review/26658
+
+		GET https://control.ctl.io/Blueprints/Builder/Review/26658
+
+		POST https://control.ctl.io/Blueprints/Builder/Review/26658
+		TemplateID:3389
+		Submit:
+		--> 302 - /Blueprints/Queue/RequestDetails/26658?location=CA1
+
+		GET https://control.ctl.io/Blueprints/Queue/RequestDetails/26658?location=CA1
+
+		"""
 
