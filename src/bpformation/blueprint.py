@@ -429,16 +429,20 @@ class Blueprint():
 
 
 	@staticmethod
-	self.Exec('bpformation.blueprint.Execute',
-	{'files': bpformation.args.args.file, 'type': bpformation.args.args.type, 'password': bpformation.args.args.password,
-	def Execute(files,type,password,group_id,network,dns):
+	def _ExecuteMergeSystemParameters(type,password,group_id,network,dns):
+		
+
+
+	@staticmethod
+	def Execute(id,files,parameters,type,password,group_id,network,dns):
+
+		# TODO - find ids
+		# TODO - verify any files specified exist and can be opened
+		# TODO - foreach id/file - create merge payload
+		# TODO - foreach id/file - execute
 
 		# Superficial parameter validation
 		if dns is None: dns = "172.17.1.26"
-
-		# TODO - get groups
-		# TODO - get networks
-		# TODO - server type
 
 		"""
 		POST https://control.ctl.io/Blueprints/Builder/Customize/3389

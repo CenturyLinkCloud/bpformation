@@ -108,8 +108,12 @@ class Args:
 		parser_blueprint_delete.add_argument('--id', nargs='*', required=True, help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
 
 		## Execute
+		# TODO - update verbiage/grouping to make less confusing.  User can specify any combo of file, id, parameter, etc.
+		#        as long as in the end they can be sensibly merged into a unified view that supplies all needed info.
 		parser_blueprint_execute = parser_sp2.add_parser('execute', help='Execute blueprint')
-		parser_blueprint_execute.add_argument('--file', nargs='*', required=True, help='Blueprint definition json files with "execute" populated')
+		parser_blueprint_execute.add_argument('--file', nargs='*', help='Blueprint definition json files with "execute" populated')
+		parser_blueprint_exec.add_argument('--id', nargs='*', help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
+		parser_blueprint_execute.add_argument('--parameter', nargs='*', help='key=value pairs for package parameters (overrides "file")')
 		parser_blueprint_execute.add_argument('--type', choices=['Standard','HyperScale'], help='Server hardware type')
 		parser_blueprint_execute.add_argument('--password', help='Server deploy password')
 		parser_blueprint_execute.add_argument('--group-id', help='Server deploy group ID')
@@ -265,7 +269,8 @@ class ExecCommand():
 	def BlueprintExecute(self):
 		self.Exec('bpformation.blueprint.Execute', 
 		          {'files': bpformation.args.args.file, 'type': bpformation.args.args.type, 'password': bpformation.args.args.password,
-				   'group_id': bpformation.args.args.group_id, 'network': bpformation.args.args.network, 'dns': bpformation.args.args.dns})
+				   'group_id': bpformation.args.args.group_id, 'network': bpformation.args.args.network, 'dns': bpformation.args.args.dns,
+				   'parameters': bpformation.args.args.parameter, 'ids': bpformation.args.args.id })
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):
