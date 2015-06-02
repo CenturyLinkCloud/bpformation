@@ -15,7 +15,6 @@ import bpformation
 
 
 # TODO vCur:
-#  o Change
 
 
 #
@@ -166,9 +165,17 @@ class Blueprint():
 					# Catch only our exceptions
 				pass
 
-		# Populate Blueprint execute stub
-
-		sys.exit()
+		# Populate Blueprint execute stub with script-specific vals
+		for o in t.findall("UI/Group"):  
+			if o.get("Name") == "Global Blueprint Values":  
+				global_bp_values =  o
+				break
+		for o in global_bp_values.findall("Parameter"):  
+			if o.get("Default"):  default = o.get("Default")
+			elif o.get("Type") in ("Option","MultiSelect"):
+				default = " | ".join([ opt.get("Value") for opt in o.findall("Option") ])
+			else:  default = ''
+			bp['execute'][o.get("Variable")] = default
 
 		# Output
 		if file=="-":  
