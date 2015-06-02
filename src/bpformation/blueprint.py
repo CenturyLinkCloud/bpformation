@@ -430,14 +430,32 @@ class Blueprint():
 
 	@staticmethod
 	def _ExecuteMergeSystemParameters(type,password,group_id,network,dns):
-		
+		pass
 
 
 	@staticmethod
-	def Execute(id,files,parameters,type,password,group_id,network,dns):
+	def Execute(ids,files,parameters,type,password,group_id,network,dns):
 
-		# TODO - find ids
-		# TODO - verify any files specified exist and can be opened
+		# Build list of file-based assets to exec
+		bps = []
+		for file in files:
+			if not os.path.isfile(file):
+				bpformation.output.Status('ERROR',3,"Blueprint json file '%s' not found" % file)
+
+			# Load json
+			with open(file) as fh:
+				bp = json.load(fh)
+
+			if 'id' not in bp['metadata']:
+				bpformation.output.Status('ERROR',3,"No blueprint ID in '%s'" % file)
+				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+
+			bps.append({'execute': bp['execute'], 'id': bp['metadata']['id']})
+
+
+		# Build list of id-based assets to exec
+		for id in ids:  bps.append({'execute': {}, 'id': id})
+
 		# TODO - foreach id/file - create merge payload
 		# TODO - foreach id/file - execute
 
