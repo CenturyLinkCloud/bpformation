@@ -197,20 +197,12 @@ class Package():
 		request_errors = [ o.error_requests[0] for o in requests if len(o.error_requests) ]
 		request_success = [ o.success_requests[0] for o in requests if len(o.success_requests) ]
 		if len(request_success):
-			print "a"
-			bpformation.output.Status('SUCCESS',3,"Execution completed on %s requests (%s seconds)" % (len(request_success),int(time.time()-start_time)))
-			print "b"
-		print "c"
+			success_servers = [ o.data['context_val'] for o in request_success ]
+			bpformation.output.Status('SUCCESS',3,"Execution completed on %s (%s seconds)" % (",".join(success_servers),int(time.time()-start_time)))
 		for request in request_errors:
-			print "d"
-			print request
-			print "e"
-			print request.id
-			print "f"
-			print request.data
-			print "g"
-			#bpformation.output.Status('ERROR',3,"Execution failed on %s requests, IDs: %s " % \
-			#		(len(requests.error_requests),", ".join(requests.error_requests))))
+			(req_loc,req_id) = request.id.split("-",1)
+			bpformation.output.Status('ERROR',3,"Execution failed on %s request ID %s (https://control.ctl.io/Blueprints/Queue/RequestDetails/%s?location=%s)" % \
+					(request.data['context_val'],req_id,req_id,req_loc))
 
 
 
