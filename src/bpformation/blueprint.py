@@ -470,15 +470,16 @@ class Blueprint():
 
 			# Apply system-level command line args
 			for key in ('type','password','group_id','network','dns'):
+				if globals()[key] is not None:  bp['execute'][key] = globals()[key]
 
 			# Apply parameter command line args
+			for parameter in parameters:
+				
+			{ p.split("=")[0]: p.split("=",1)[1] for p in parameters }
 			
 		bps = new_bps
-		# TODO - verify any files specified exist and can be opened
-		# Apply defaults from config file
 
-		# Apply 
-		# TODO - foreach id/file - create merge payload
+		# TODO - confirm all needed parameters are actually set (system +  bp)
 		# TODO - foreach id/file - execute
 
 		# Superficial parameter validation
