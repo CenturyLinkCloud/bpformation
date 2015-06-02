@@ -96,20 +96,20 @@ class Args:
 		parser_blueprint_export.add_argument('--file', required=False, help='Filename target for Blueprint json definition')
 
 		## Import
-		parser_blueprint_export = parser_sp2.add_parser('import', help='Import blueprint from json')
-		parser_blueprint_export.add_argument('--file', nargs='*', required=True, help='Blueprint definition json files')
+		parser_blueprint_import = parser_sp2.add_parser('import', help='Import blueprint from json')
+		parser_blueprint_import.add_argument('--file', nargs='*', required=True, help='Blueprint definition json files')
 
 		## Update
-		parser_blueprint_export = parser_sp2.add_parser('update', help='Update existing blueprint from json')
-		parser_blueprint_export.add_argument('--file', nargs='*', required=True, help='Blueprint definition json files')
+		parser_blueprint_update = parser_sp2.add_parser('update', help='Update existing blueprint from json')
+		parser_blueprint_update.add_argument('--file', nargs='*', required=True, help='Blueprint definition json files')
 
 		## Delete
-		parser_blueprint_export = parser_sp2.add_parser('delete', help='Delete blueprint')
-		parser_blueprint_export.add_argument('--id', nargs='*', required=True, help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
+		parser_blueprint_delete = parser_sp2.add_parser('delete', help='Delete blueprint')
+		parser_blueprint_delete.add_argument('--id', nargs='*', required=True, help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
 
 		## Execute
 		parser_blueprint_execute = parser_sp2.add_parser('execute', help='Execute blueprint')
-		parser_blueprint_export.add_argument('--id', required=True, help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
+		parser_blueprint_execute.add_argument('--id', required=True, help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
 		parser_blueprint_execute.add_argument('--parameter', nargs='*', help='key=value pairs for package parameters')
 
 

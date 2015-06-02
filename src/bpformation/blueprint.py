@@ -136,7 +136,7 @@ class Blueprint():
 		# Silence status output if writing to stdout
 		if file == "-":  bpformation.args.args.quiet = 999
 
-		bp = {'metadata': {}, 'tasks': [] }
+		bp = {'metadata': {}, 'tasks': [], 'execute': {} }
 
 		# Blueprint metadata 
 		r = bpformation.web.CallScrape("GET","/blueprints/browser/details/%s" % id)
@@ -166,6 +166,11 @@ class Blueprint():
 					# Catch only our exceptions
 				pass
 
+		# Populate Blueprint execute stub
+
+		sys.exit()
+
+		# Output
 		if file=="-":  
 			print json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': '))
 		else:
