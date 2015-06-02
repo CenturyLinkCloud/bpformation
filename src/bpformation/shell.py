@@ -66,10 +66,10 @@ class Args:
 		parser_package_download.add_argument('--uuid', nargs='*', required=True, help='UUID for packages')
 
 		## Execute
-		parser_package_download = parser_sp2.add_parser('execute', help='Execute package')
-		parser_package_download.add_argument('--uuid', required=True, help='UUID for package')
-		parser_package_download.add_argument('--server', required=True, nargs='*', help='Servers targets for package execution')
-		parser_package_download.add_argument('--parameter', nargs='*', help='key=value pairs for package parameters')
+		parser_package_execute = parser_sp2.add_parser('execute', help='Execute package')
+		parser_package_execute.add_argument('--uuid', required=True, help='UUID for package')
+		parser_package_execute.add_argument('--server', required=True, nargs='*', help='Servers targets for package execution')
+		parser_package_execute.add_argument('--parameter', nargs='*', help='key=value pairs for package parameters')
 
 
 
@@ -106,6 +106,11 @@ class Args:
 		## Delete
 		parser_blueprint_export = parser_sp2.add_parser('delete', help='Delete blueprint')
 		parser_blueprint_export.add_argument('--id', nargs='*', required=True, help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
+
+		## Execute
+		parser_blueprint_execute = parser_sp2.add_parser('execute', help='Execute blueprint')
+		parser_blueprint_export.add_argument('--id', required=True, help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
+		parser_blueprint_execute.add_argument('--parameter', nargs='*', help='key=value pairs for package parameters')
 
 
 
@@ -195,6 +200,7 @@ class ExecCommand():
 		elif bpformation.args.GetArgs().sub_command == 'delete':  self.BlueprintDelete()
 		elif bpformation.args.GetArgs().sub_command == 'import':  self.BlueprintImport()
 		elif bpformation.args.GetArgs().sub_command == 'update':  self.BlueprintUpdate()
+		elif bpformation.args.GetArgs().sub_command == 'execute':  self.BlueprintExecute()
 
 
 	def PackageUpload(self):
@@ -229,8 +235,7 @@ class ExecCommand():
 
 	def PackageExecute(self):
 		self.Exec('bpformation.package.Execute', 
-		          {'uuid': bpformation.args.args.uuid, 'servers': bpformation.args.args.server, 'parameters': bpformation.args.args.parameter },
-		          cols=['name','uuid','owner','visibility','status'])
+		          {'uuid': bpformation.args.args.uuid, 'servers': bpformation.args.args.server, 'parameters': bpformation.args.args.parameter })
 
 
 	def BlueprintList(self):
@@ -251,6 +256,10 @@ class ExecCommand():
 
 	def BlueprintDelete(self):
 		self.Exec('bpformation.blueprint.Delete', {'ids': bpformation.args.args.id }, cols=[])
+
+
+	def BlueprintExecute(self):
+		self.Exec('bpformation.blueprint.Execute', {'id': bpformation.args.args.id, 'parameters': bpformation.args.args.parameter })
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):
