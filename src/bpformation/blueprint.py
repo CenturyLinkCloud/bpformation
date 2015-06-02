@@ -477,7 +477,6 @@ class Blueprint():
 			# Apply parameter command line args
 			if parameters is not None and len(parameters):
 				for parameter in parameters:
-					print "xxx"
 					(key,value) = parameter.split("=",1)
 					bp['execute'][key] = value
 
@@ -485,15 +484,23 @@ class Blueprint():
 			if 'dns' not in bp['execute'] or not len(bp['execute']['dns']):
 				bp['execute']['dns'] = "172.17.1.26"
 
+			# Confirm system parameters are all set
+			for key in ('type','password','group_id','network','dns'):
+				if key not in bp['execute'] or not len(bp['execute'][key]:
+					bpformation.output.Status('ERROR',3,"Missing required system parameter '%s'" % key)
+					raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+
+			# TODO Confirm all blueprint parameters are set
+
 			new_bps.append(bp)
 				
 		bps = new_bps
-		print bps
 
 		# TODO - confirm all needed parameters are actually set (system +  bp)
 		# TODO - foreach id/file - execute
 
 
+		print bps
 		"""
 		POST https://control.ctl.io/Blueprints/Builder/Customize/3389
 		TemplateID:3389
