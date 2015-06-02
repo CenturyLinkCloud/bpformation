@@ -469,6 +469,7 @@ class Blueprint():
 				if config.has_option('blueprint_execute',key):  bp['execute'][key] = config.get('blueprint_execute',key)
 
 			# Apply system-level command line args
+			for key in ('type','password','group_id','network','dns'):
 
 			# Apply parameter command line args
 			
