@@ -109,8 +109,12 @@ class Args:
 
 		## Execute
 		parser_blueprint_execute = parser_sp2.add_parser('execute', help='Execute blueprint')
-		parser_blueprint_execute.add_argument('--id', required=True, help='Blueprint ID (note this ID is not globally unique - find this from your primary datacenter')
-		parser_blueprint_execute.add_argument('--parameter', nargs='*', help='key=value pairs for package parameters')
+		parser_blueprint_execute.add_argument('--file', nargs='*', required=True, help='Blueprint definition json files with "execute" populated')
+		parser_blueprint_execute.add_argument('--type', required=True, choices=['Standard','HyperScale'], help='Server hardware type')
+		parser_blueprint_execute.add_argument('--password', required=True, help='Server deploy password')
+		parser_blueprint_execute.add_argument('--group-id', required=True, help='Server deploy group ID')
+		parser_blueprint_execute.add_argument('--network', required=True, help='Server deploy network')
+		parser_blueprint_execute.add_argument('--dns', required=True, help='Server DNS')
 
 
 
@@ -259,7 +263,9 @@ class ExecCommand():
 
 
 	def BlueprintExecute(self):
-		self.Exec('bpformation.blueprint.Execute', {'id': bpformation.args.args.id, 'parameters': bpformation.args.args.parameter })
+		self.Exec('bpformation.blueprint.Execute', 
+		          {'files': bpformation.args.args.file, 'type': bpformation.args.args.type, 'password': bpformation.args.args.password,
+				   'group-id': bpformation.args.args.group_id, 'network': bpformation.args.args.network, 'dns': bpformation.args.args.dns})
 
 
 	def Exec(self,function,args=False,cols=None,supress_output=False):
