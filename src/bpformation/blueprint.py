@@ -456,6 +456,27 @@ class Blueprint():
 		# Build list of id-based assets to exec
 		for id in ids:  bps.append({'execute': {}, 'id': id})
 
+		# Build execute parameter lists
+		# order of precedence (low to high):
+		#   o .bpformation ini file
+		#   o blueprint json file 'execute' obj
+		#   o command line args
+		new_bps = []
+		for bp in bps:
+			# Apply defaults from config file - don't overwrite existing items.  Only covers system items
+			for key in ('type','password','group_id','network','dns'):
+				if key in bp['execute']:  continue
+				if config.has_option('blueprint_execute',key):  bp['execute'][key] = config.get('blueprint_execute',key)
+
+			# Apply system-level command line args
+
+			# Apply parameter command line args
+			
+		bps = new_bps
+		# TODO - verify any files specified exist and can be opened
+		# Apply defaults from config file
+
+		# Apply 
 		# TODO - foreach id/file - create merge payload
 		# TODO - foreach id/file - execute
 
