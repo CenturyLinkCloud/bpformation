@@ -166,16 +166,18 @@ class Blueprint():
 				pass
 
 		# Populate Blueprint execute stub with script-specific vals
+		global_bp_values = None
 		for o in t.findall("UI/Group"):  
 			if o.get("Name") == "Global Blueprint Values":  
 				global_bp_values =  o
 				break
-		for o in global_bp_values.findall("Parameter"):  
-			if o.get("Default"):  default = o.get("Default")
-			elif o.get("Type") in ("Option","MultiSelect"):
-				default = " | ".join([ opt.get("Value") for opt in o.findall("Option") ])
-			else:  default = ''
-			bp['execute'][o.get("Variable")] = default
+		if global_bp_values is not None:
+			for o in global_bp_values.findall("Parameter"):  
+				if o.get("Default"):  default = o.get("Default")
+				elif o.get("Type") in ("Option","MultiSelect"):
+					default = " | ".join([ opt.get("Value") for opt in o.findall("Option") ])
+				else:  default = ''
+				bp['execute'][o.get("Variable")] = default
 
 		# Output
 		if file=="-":  
@@ -486,45 +488,76 @@ class Blueprint():
 
 			# Confirm system parameters are all set
 			for key in ('type','password','group_id','network','dns'):
-				if key not in bp['execute'] or not len(bp['execute'][key]:
+				if key not in bp['execute'] or not len(bp['execute'][key]):
 					bpformation.output.Status('ERROR',3,"Missing required system parameter '%s'" % key)
 					raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
 			# TODO Confirm all blueprint parameters are set
 
+			# Rename system parameters so they match what POST is expecting
+			bp['execute']['TemplateID'] = bp['id']
+			bp['execute']['T3.BuildServerTask.Password'] = bp['execute']['password']
+			bp['execute']['Confirm.T3.BuildServerTask.Password'] = bp['execute']['password']
+			bp['execute']['T3.BuildServerTask.GroupID'] = bp['execute']['group_id']
+			bp['execute']['T3.BuildServerTask.Network'] = bp['execute']['network']
+			bp['execute']['T3.BuildServerTask.PrimaryDNS'] = 'Manual'
+			bp['execute']['T3.BuildServerTask.PrimaryDNS_manual'] = bp['execute']['dns']
+			bp['execute']['T3.BuildServerTask.SecondaryDNS'] = ''
+			bp['execute']['T3.BuildServerTask.SecondaryDNS_manual'] = ''
+			bp['execute']['T3.BuildServerTask.HardwareType'] = bp['execute']['type']
+			bp['execute']['T3.BuildServerTask.AntiAffinityPoolId'] = ''
+			bp['execute']['T3.BuildServerTask.ServiceLevel'] = 'Standard'
+			bp['execute']['RequestID'] = ''
+			bp['execute']['Submit'] = ''
+			for key in ('password','group_id','network','dns','type'):  del(bp['execute'][key])
+
 			new_bps.append(bp)
 				
 		bps = new_bps
 
-		# TODO - foreach id/file - execute
-		print bps
-		"""
-		POST https://control.ctl.io/Blueprints/Builder/Customize/3389
-		TemplateID:3389
-		T3.BuildServerTask.Password:Savvis11
-		Confirm.T3.BuildServerTask.Password:Savvis11
-		T3.BuildServerTask.GroupID:93cf0e58-9a38-448c-b0d7-c78f757c8874
-		T3.BuildServerTask.Network:vlan_2314_10.50.14
-		T3.BuildServerTask.PrimaryDNS:Manual
-		T3.BuildServerTask.PrimaryDNS_manual:172.17.1.26
-		T3.BuildServerTask.SecondaryDNS:
-		T3.BuildServerTask.SecondaryDNS_manual:
-		T3.BuildServerTask.HardwareType:Standard
-		T3.BuildServerTask.AntiAffinityPoolId:
-		T3.BuildServerTask.ServiceLevel:Standard
-		72d04ebc-15fb-4cf9-b3c5-9acd33704824.Alias:X
-		RequestID:
-		Submit:
-		--> 302 - /Blueprints/Builder/Review/26658
+		# Execute each Blueprint
+		for bp in bps:
+	
+			"""
+			POST https://control.ctl.io/Blueprints/Builder/Customize/3389
+			TemplateID:3389
+			T3.BuildServerTask.Password:Savvis11
+			Confirm.T3.BuildServerTask.Password:Savvis11
+			T3.BuildServerTask.GroupID:93cf0e58-9a38-448c-b0d7-c78f757c8874
+			T3.BuildServerTask.Network:vlan_2314_10.50.14
+			T3.BuildServerTask.PrimaryDNS:Manual
+			T3.BuildServerTask.PrimaryDNS_manual:172.17.1.26
+			T3.BuildServerTask.SecondaryDNS:
+			T3.BuildServerTask.SecondaryDNS_manual:
+			T3.BuildServerTask.HardwareType:Standard
+			T3.BuildServerTask.AntiAffinityPoolId:
+			T3.BuildServerTask.ServiceLevel:Standard
+			72d04ebc-15fb-4cf9-b3c5-9acd33704824.Alias:X
+			RequestID:
+			Submit:
+			--> 302 - /Blueprints/Builder/Review/26658
+			"""
+			r = bpformation.web.CallScrape("POST","/Blueprints/Builder/Customize/%s" % bp['id'],allow_redirects=False,payload=bp['execute'],debug=True)
+			if r.status_code<200 or r.status_code>=400:
+				bpformation.output.Status('ERROR',3,"Error executing blueprint - step 1 customization metadata failure (response %s)" % r.status_code)
+				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
-		GET https://control.ctl.io/Blueprints/Builder/Review/26658
 
-		POST https://control.ctl.io/Blueprints/Builder/Review/26658
-		TemplateID:3389
-		Submit:
-		--> 302 - /Blueprints/Queue/RequestDetails/26658?location=CA1
+			"""
+			GET https://control.ctl.io/Blueprints/Builder/Review/26658
+	
+			POST https://control.ctl.io/Blueprints/Builder/Review/26658
+			TemplateID:3389
+			Submit:
+			--> 302 - /Blueprints/Queue/RequestDetails/26658?location=CA1
+	
+			GET https://control.ctl.io/Blueprints/Queue/RequestDetails/26658?location=CA1
+	
+			"""
+			r = bpformation.web.CallScrape("POST",r.headers['location'],allow_redirects=False,payload={'TemplateID': bp['id'], 'Submit': ''},debug=True)
+			print r.headers['location']
+			if r.status_code<200 or r.status_code>=300:
+				bpformation.output.Status('ERROR',3,"Error executing blueprint - step 2 submit failure (response %s)" % r.status_code)
+				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
-		GET https://control.ctl.io/Blueprints/Queue/RequestDetails/26658?location=CA1
-
-		"""
 

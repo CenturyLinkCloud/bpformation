@@ -130,6 +130,7 @@ class Web():
 		else:
 			r = requests.request(method,fq_url,
 								 headers=headers,
+						  		 allow_redirects=allow_redirects,
 								 cookies=bpformation._CONTROL_COOKIES,
 			                     data=payload, 
 								 verify=Web._ResourcePath('bpformation/cacert.pem'))
