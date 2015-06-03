@@ -6,6 +6,7 @@ Manage Blueprints.
 import os
 import re
 import sys
+import clc
 import uuid
 import json
 import time
@@ -518,46 +519,22 @@ class Blueprint():
 		# Execute each Blueprint
 		for bp in bps:
 	
-			"""
-			POST https://control.ctl.io/Blueprints/Builder/Customize/3389
-			TemplateID:3389
-			T3.BuildServerTask.Password:Savvis11
-			Confirm.T3.BuildServerTask.Password:Savvis11
-			T3.BuildServerTask.GroupID:93cf0e58-9a38-448c-b0d7-c78f757c8874
-			T3.BuildServerTask.Network:vlan_2314_10.50.14
-			T3.BuildServerTask.PrimaryDNS:Manual
-			T3.BuildServerTask.PrimaryDNS_manual:172.17.1.26
-			T3.BuildServerTask.SecondaryDNS:
-			T3.BuildServerTask.SecondaryDNS_manual:
-			T3.BuildServerTask.HardwareType:Standard
-			T3.BuildServerTask.AntiAffinityPoolId:
-			T3.BuildServerTask.ServiceLevel:Standard
-			72d04ebc-15fb-4cf9-b3c5-9acd33704824.Alias:X
-			RequestID:
-			Submit:
-			--> 302 - /Blueprints/Builder/Review/26658
-			"""
+			# Step 1 - customize blueprint
 			r = bpformation.web.CallScrape("POST","/Blueprints/Builder/Customize/%s" % bp['id'],allow_redirects=False,payload=bp['execute'],debug=True)
 			if r.status_code<200 or r.status_code>=400:
 				bpformation.output.Status('ERROR',3,"Error executing blueprint - step 1 customization metadata failure (response %s)" % r.status_code)
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
 
-			"""
-			GET https://control.ctl.io/Blueprints/Builder/Review/26658
-	
-			POST https://control.ctl.io/Blueprints/Builder/Review/26658
-			TemplateID:3389
-			Submit:
-			--> 302 - /Blueprints/Queue/RequestDetails/26658?location=CA1
-	
-			GET https://control.ctl.io/Blueprints/Queue/RequestDetails/26658?location=CA1
-	
-			"""
+			# Step 2 - deploy blueprint
 			r = bpformation.web.CallScrape("POST",r.headers['location'],allow_redirects=False,payload={'TemplateID': bp['id'], 'Submit': ''},debug=True)
 			print r.headers['location']
 			if r.status_code<200 or r.status_code>=300:
 				bpformation.output.Status('ERROR',3,"Error executing blueprint - step 2 submit failure (response %s)" % r.status_code)
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+
+		# Wait for executing blueprints to complete
+		# TODO - async option
+		clc.v2.SetCredentials(bpformation.CONTROL_USER, bpformation.CONTROL_PASSWORD)
 
 
