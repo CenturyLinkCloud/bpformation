@@ -148,14 +148,22 @@ Example:
 ### Package Upload
 
 Upload a Blueprint package into your account.  This call obtains the FTP endpoint used by your account then uploads the package via ftp.
-This can be used both for new packages and for updating the contents of an existing package.
+This can be used both for new packages and for updating the contents of an existing package.  Source file must be a valid  [Blueprint Package](https://www.centurylinkcloud.com/knowledge-base/blueprints/blueprint-package-manifest-builder-wizard/) which is a zip file that contains a valid XML `package.manifest` and optionally any supporting scripts or binaries.
 
 ```
+> ./bpformation.py package upload -h
+usage: bpformation.py package upload [-h] --file [FILE [FILE ...]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+    --file [FILE [FILE ...]]
+	                        Files to upload
 ```
 
 Example:
 
 ```
+# Upload package zip file
 ```
 
 ### Package Publish
