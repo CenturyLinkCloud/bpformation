@@ -181,7 +181,7 @@ class Package():
 		requests = []
 		start_time = time.time()
 		for server in servers:
-			bpformation.output.Status('SUCCESS',3,"Execution request submitted for %s" % server)
+			bpformation.output.Status('SUCCESS',3,"Execution request submitted for %s" % server.lower())
 			if parameters:  parameters = { p.split("=")[0]: p.split("=",1)[1] for p in parameters }
 			else:  parameters=None
 			requests.append(clc.v2.Server(server,alias=bpformation.web.Alias()).ExecutePackage(

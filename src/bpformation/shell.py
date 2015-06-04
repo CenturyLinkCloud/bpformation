@@ -294,6 +294,9 @@ class ExecCommand():
 				elif not supress_output and bpformation.args.args.format == 'csv':  print bpformation.output.Csv(r,cols)
 
 			#return(r)
+		except KeyboardInterrupt:
+			bpformation.output.Status("ERROR",3,"Exiting keyboard interupt")
+			sys.exit(1)
 		except:
 			raise
 

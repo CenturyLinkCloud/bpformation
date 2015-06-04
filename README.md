@@ -337,9 +337,9 @@ Example:
 ```
 # Execute the Linux Update patching package on a few of my servers
 > ./bpformation.py package execute --uuid 77ab3844-579d-4c8d-8955-c69a94a2ba1a --server CA1KRAPX04 CA1KRAPX05 CA1KRAPX06
-✔  Execution request submitted for CA1KRAPX04
-✔  Execution request submitted for CA1KRAPX05
-✔  Execution request submitted for CA1KRAPX06
+✔  Execution request submitted for ca1krapx05
+✔  Execution request submitted for ca1krapx06
+✔  Execution request submitted for ca1krapx07
 ✔  Execution completed on ca1krapx05, ca1krapx06, ca1krapx04 (287 seconds)
 ```
 
@@ -372,14 +372,26 @@ optional arguments:
 
 ### Blueprint List
 
-lorem ipsum 
+Query all Blueprints visible to your account, optionally filtering by any piece of metadata that's displayed. 
 
 ```
+> ./bpformation.py blueprint list -h
+usage: bpformation.py blueprint list [-h] [--filter [FILTER [FILTER ...]]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --filter [FILTER [FILTER ...]]
+                        Regex filter Results by name, author, status, visibility (and)
 ```
 
 Example:
 
 ```
+# Find my public blueprints
+> 
+
+# Find SQL Server blueprints
+> 
 ```
 
 
