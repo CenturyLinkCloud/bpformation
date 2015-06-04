@@ -206,19 +206,58 @@ Example:
 > ./bpformation.py package publish --file test_package_1.zip --type Linux --visibility Private --os Ubuntu
 ✔  test_package_1.zip publish job submitted
 ✔  test_package_1.zip publish job complete (13 seconds)
-
 ```
 
 ### Package Upload and Publish
 
+Combine the package [Upload](#packageupload) and [Publish](#packagepublish) steps into one.
+
+```
+```
+
+Example:
+
+```
+```
 
 ### Package Delete
 
+lorem ipsum 
+
+```
+```
+
+Example:
+
+```
+```
 
 ### Package Download
 
+lorem ipsum 
+
+```
+```
+
+Example:
+
+```
+```
+
+
 
 ### Package Execute
+
+lorem ipsum 
+
+```
+```
+
+Example:
+
+```
+```
+
 
 
 
@@ -229,19 +268,82 @@ A CenturyLink Cloud Blueprint package is an invoked piece of software, uploaded 
 
 ### Blueprint List
 
+lorem ipsum 
+
+```
+```
+
+Example:
+
+```
+```
+
+
 
 ### Blueprint Export
+
+lorem ipsum 
+
+```
+```
+
+Example:
+
+```
+```
+
 
 
 ### Blueprint Import
 
+lorem ipsum 
+
+```
+```
+
+Example:
+
+```
+```
+
+
 
 ### Blueprint Update
+
+lorem ipsum 
+
+```
+```
+
+Example:
+
+```
+```
+
 
 
 ### Blueprint Delete
 
+lorem ipsum 
+
+```
+```
+
+Example:
+
+```
+```
 
 ### Blueprint Execute
+
+lorem ipsum 
+
+```
+```
+
+Example:
+
+```
+```
 
 
