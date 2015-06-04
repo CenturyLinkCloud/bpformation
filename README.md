@@ -101,3 +101,14 @@ All commands require authentication which can be accomplished in several ways in
 Configuration files follow ini syntax.  Reference the [example.ini](src/example_config.ini) file with all currently accepted fields.
 
 
+
+## Packages
+
+ * [Packages](#packages) - [List](#packagelist), [Upload](#packageupload), [Publish](#packagepublish), [Upload and Publish](#packageuploadandpublish), [Delete](#packagedelete), [Download](#packagedownload), [Execute](#packageexecute)
+
+
+
+## Blueprints
+
+ * [Blueprints](#blueprints) - [List](#blueprintlist), [Export](#blueprintexport), [Import](#blueprintimport), [Update](#blueprintupdate), [Delete](#blueprintdelete), [Execute](#blueprintexecute)
+
