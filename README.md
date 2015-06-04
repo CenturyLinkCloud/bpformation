@@ -420,6 +420,8 @@ Cloud control portal, or managing the lifecycle of a Blueprint as part of a vers
 The default naming for these downloaded files is composed of `blueprint name`-`id`-`version`.json.
 
 Exports keep all IDs and task sequencing intact to subsequent [imports](#blueprintimport) and [updates)(#blueprintupdate) work as expected.
+An export json contains `metadata`, `tasks`, and a template `execute` section for re-use across other `bpformation` functions.  
+View an [example blueprint json](#) file for a look at the major sections and their respective roles.
 
 ```
 > ./bpformation.py blueprint export -h
@@ -484,7 +486,11 @@ Example:
 
 ### Blueprint Import
 
-View an [example blueprint json](#) file for a look at the major sections and their respective roles.
+Import a new Blueprint into CenturyLink Cloud.  Source must be a json file but can come from another exported Blueprint (we strip
+all unique IDs if they exist) or from a hand-crafted definition.  
+
+The `metadata` and `tasks` sections must be populated for a successful import.  View an [example blueprint json](#) file for a 
+look at the major sections and their respective roles.
 
 ```
 > ./bpformation.py blueprint import -h
@@ -508,7 +514,7 @@ Example:
 
 ### Blueprint Update
 
-lorem ipsum 
+Update an existing Blueprint my applying a modified json definition.  Updates may take several minutes to replicate and reach global consistency.
 
 ```
 ```
@@ -525,7 +531,7 @@ Example:
 
 ### Blueprint Delete
 
-lorem ipsum 
+Delete one or more Blueprints owned by your account.  Deletion may take several minute to replicate globally.
 
 ```
 ```
