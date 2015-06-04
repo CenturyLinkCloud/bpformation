@@ -538,31 +538,22 @@ class Blueprint():
 
 		# Wait for executing blueprints to complete
 		# TODO - async option
-		sum(requests).WaitUntilComplete()
-		print "requests=%s" % requests
-		request_errors = [ o.error_requests[0] for o in requests if len(o.error_requests) ]
-		request_success = [ o.success_requests[0] for o in requests if len(o.success_requests) ]
-		print "rs=%s" %request_success
-		print "re=%s" %request_errors
-		for r in requests:
-			print "request=%s error=%s success=%s" % (r,r.error_requests,r.success_requests)
-		if len(request_success):
-			#success_servers = [ o.data['context_val'] for o in request_success ]
+		requests = sum(requests)
+		requests.WaitUntilComplete()
+		if len(requests.success_requests):
 			# TODO - parse request page and pull out list of servers 
 			#bpformation.output.Status('SUCCESS',3,"Execution completed on %s (%s seconds)" % (",".join(success_servers),int(time.time()-start_time)))
-			print "a"
-			bpformation.output.Status('SUCCESS',3,"Execution completed on %s blueprints (%s seconds)" % (len(request_success),int(time.time()-start_time)))
-		for request in request_errors:
+			bpformation.output.Status('SUCCESS',3,"Execution completed on %s blueprints (%s seconds)" % (len(requests.success_requests),int(time.time()-start_time)))
+		for request in requests.error_requests:
 			(req_loc,req_id) = request.id.split("-",1)
 			r = bpformation.web.CallScrape("GET","/Blueprints/Queue/RequestDetails/%s?location=%s" % (req_id,req_loc))
 			if r.status_code<300 and r.status_code>=200:
 				error = re.search('<div class="module-body">.*?<pre>(\s*.Error.\s*)?(.*?)\s*</pre>',r.text,re.DOTALL).group(2)
-				bpformation.output.Status('ERROR',3,"Execution failed on %s: %s" % (request.data['context_val'],error))
+				bpformation.output.Status('ERROR',3,"Execution failed on %s: %s" % (request.id,error))
 			else:
 				bpformation.output.Status('ERROR',3,"Execution failed on %s request ID %s (https://control.ctl.io/Blueprints/Queue/RequestDetails/%s?location=%s)" % \
 						(request.data['context_val'],req_id,req_id,req_loc))
 
-		print "end"
 		# TODO - percolate error up so we exit with an error called as CLI or see exception as sdk
 
 
