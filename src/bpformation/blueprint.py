@@ -359,6 +359,7 @@ class Blueprint():
 				bpformation.output.Status('ERROR',3,"Error creating blueprint - step 0 uuid failure (response %s)" % r.status_code)
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 			bp['metadata']['uuid'] = re.search('/Blueprints/Browser/Clone.blueprintUUID=([a-zA-Z0-9\-]+)',r.text,re.DOTALL).group(1)
+			r = bpformation.web.CallScrape("GET","/blueprints/designer/metadata/%s" % bp['metadata']['uuid'],allow_redirects=False)
 
 		# Step 1 - Metadata post and create Blueprint shell
 		r = bpformation.web.CallScrape("POST","/blueprints/designer/metadata",allow_redirects=False,payload={
@@ -396,8 +397,8 @@ class Blueprint():
 					"Publish": "", # unknown
 					"DataTemplate.UUID": bp['metadata']['uuid'],
 					"TemplateID": bp['metadata']['id'],
-				},debug=True,headers={'Referer': 'https://control.ctl.io/Blueprints/Designer/review/%s' % bp['metadata']['id']})
-		r = bpformation.web.CallScrape("GET","/Blueprints/Designer/ThankYou/%s" % bp['metadata']['id'],allow_redirects=False)
+				})
+		#r = bpformation.web.CallScrape("GET","/Blueprints/Designer/ThankYou/%s" % bp['metadata']['id'],allow_redirects=False)
 
 		# TODO Step 4 - save output?  Assume needed for some kind of update
 
