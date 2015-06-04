@@ -269,67 +269,68 @@ class Blueprint():
 		# TODO - query for parameters and verify we meet requirements
 		staged_tasks = {}
 		staged_tasks_idx = 0 
-		for task in o['tasks']:
-			# TODO system tasks - scheduled task, delete snapshot, revert snapshot
-			# System - add disk
-			if task['type']=='disk' and task['uuid']=='22460210-b682-4138-93fd-1a95c5e4e039':
-				staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
-				staged_tasks['Server.Tasks[%s].Properties[0].Name' % staged_tasks_idx] = 'GB'
-				staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = task['gb']
-				if 'drive' in task:
-					staged_tasks['Server.Tasks[%s].Properties[1].Name' % staged_tasks_idx] = 'Drive'
-					staged_tasks['Server.Tasks[%s].Properties[1].Value' % staged_tasks_idx] = task['drive']
-
-			# System - reboot
-			elif task['type']=='reboot' and task['uuid']=='5b949945-6981-4a81-bbcc-4ddd3d394b8d':
-				staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
-
-			# System - add public NAT
-			elif task['type']=='add_nat_ip' and task['uuid']=='c000d327-3543-4d9e-ac43-e8fbce4620ab':
-				staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
-				staged_tasks['Server.Tasks[%s].Properties[0].Name' % staged_tasks_idx] = 'FirewallOptions'
-				staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = ",".join(task['ingress_ports'])
-
-			# System - add add'l private IP
-			elif task['type']=='add_ip' and task['uuid']=='9a851f50-c676-4c11-b4c8-a0a7241c1060':
-				staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
-
-			# User package
-			elif task['type']=='package':
-				staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
-
-				# Add all design-time parameters
-				try:
-					properties_idx = 0
-					for key,value in task['properties'].items():
-						staged_tasks['Server.Tasks[%s].Properties[%s].Name' % (staged_tasks_idx,properties_idx)] = key
-						staged_tasks['Server.Tasks[%s].Properties[%s].Value' % (staged_tasks_idx,properties_idx)] = value
-						properties_idx += 1
-				except:
-					pass
-
-			# Unknown type/ID
-			else:
-				bpformation.output.Status('ERROR',3,"Blueprint json server task unknown type/id '%s'" % task['type'])
-				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
-
-			staged_tasks_idx += 1
+		if 'tasks' in o:
+			for task in o['tasks']:
+				# TODO system tasks - scheduled task, delete snapshot, revert snapshot
+				# System - add disk
+				if task['type']=='disk' and task['uuid']=='22460210-b682-4138-93fd-1a95c5e4e039':
+					staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
+					staged_tasks['Server.Tasks[%s].Properties[0].Name' % staged_tasks_idx] = 'GB'
+					staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = task['gb']
+					if 'drive' in task:
+						staged_tasks['Server.Tasks[%s].Properties[1].Name' % staged_tasks_idx] = 'Drive'
+						staged_tasks['Server.Tasks[%s].Properties[1].Value' % staged_tasks_idx] = task['drive']
+	
+				# System - reboot
+				elif task['type']=='reboot' and task['uuid']=='5b949945-6981-4a81-bbcc-4ddd3d394b8d':
+					staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
+	
+				# System - add public NAT
+				elif task['type']=='add_nat_ip' and task['uuid']=='c000d327-3543-4d9e-ac43-e8fbce4620ab':
+					staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
+					staged_tasks['Server.Tasks[%s].Properties[0].Name' % staged_tasks_idx] = 'FirewallOptions'
+					staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = ",".join(task['ingress_ports'])
+	
+				# System - add add'l private IP
+				elif task['type']=='add_ip' and task['uuid']=='9a851f50-c676-4c11-b4c8-a0a7241c1060':
+					staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
+	
+				# User package
+				elif task['type']=='package':
+					staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
+	
+					# Add all design-time parameters
+					try:
+						properties_idx = 0
+						for key,value in task['properties'].items():
+							staged_tasks['Server.Tasks[%s].Properties[%s].Name' % (staged_tasks_idx,properties_idx)] = key
+							staged_tasks['Server.Tasks[%s].Properties[%s].Value' % (staged_tasks_idx,properties_idx)] = value
+							properties_idx += 1
+					except:
+						pass
+	
+				# Unknown type/ID
+				else:
+					bpformation.output.Status('ERROR',3,"Blueprint json server task unknown type/id '%s'" % task['type'])
+					raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+	
+				staged_tasks_idx += 1
 
 		# Post
-		r = bpformation.web.CallScrape("POST","/blueprints/designer/SaveServer",allow_redirects=False,payload=dict({
-					"id": blueprint_id,
+		r = bpformation.web.CallScrape("POST","/blueprints/designer/SaveServer?id=%s" % blueprint_id,allow_redirects=False,payload=dict({
 					"Server.ID": o['id'],
 					"Server.Template": o['template'],
 					"Server.Name": o['name'],
 					"Server.Description": o['description'],
 					"Server.Processor": o['cpu'],
 					"Server.Memory": o['ram'],
-				}.items() + staged_tasks.items()))
+				}.items() + staged_tasks.items()),debug=True)
 		if r.status_code<200 or r.status_code>=300:
 			bpformation.output.Status('ERROR',3,"Error creating blueprint - step 2 add server failure (response %s)" % r.status_code)
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 
-		return(r.json()['serverID'])
+		if o['id']==0:  o['id'] = r.json()['serverID']
+		return(o)
 
 
 	@staticmethod
@@ -538,11 +539,13 @@ class Blueprint():
 		# Wait for executing blueprints to complete
 		# TODO - async option
 		sum(requests).WaitUntilComplete()
-		print requests
+		print "requests=%s" % requests
 		request_errors = [ o.error_requests[0] for o in requests if len(o.error_requests) ]
 		request_success = [ o.success_requests[0] for o in requests if len(o.success_requests) ]
-		print request_success
-		print request_errors
+		print "rs=%s" %request_success
+		print "re=%s" %request_errors
+		for r in requests:
+			print "request=%s error=%s success=%s" % (r,r.error_requests,r.success_requests)
 		if len(request_success):
 			#success_servers = [ o.data['context_val'] for o in request_success ]
 			# TODO - parse request page and pull out list of servers 
