@@ -269,6 +269,7 @@ Example:
 ### Package Download
 
 Download a zip file of one or more packages specified by UUID.  The package must be visible to your account but need not be owned by you.
+The downloaded package will be saved in your current directory with the name `uuid`.zip
 
 ```
 > ./bpformation.py package download --help
@@ -284,6 +285,10 @@ Example:
 
 ```
 # Download package
+> ./bpformation.py package download --uuid 3819ee8d-c276-4d11-9d57-146fd9937a38
+✔  3819ee8d-c276-4d11-9d57-146fd9937a38 package downloaded
+> ls -l 3819ee8d-c276-4d11-9d57-146fd9937a38.zip
+-rw-r--r--  1 user  staff   1.2K Jun  4 15:34 3819ee8d-c276-4d11-9d57-146fd9937a38.zip
 ```
 
 
