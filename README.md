@@ -7,6 +7,8 @@ This repository contains a command line interface *CLI* to interact with the *[C
 * [Installing](#installing)
 * [Examples](#examples)
 * [Usage](#usage)
+ * [Packages](#packages) - [List](#packagelist), [Upload](#packageupload), [Publish](#packagepublish), [Upload and Publish](#packageuploadandpublish), [Delete](#packagedelete), [Download](#packagedownload), [Execute](#packageexecute)
+ * [Blueprints](#blueprints) - [List](#blueprintlist), [Export](#blueprintexport), [Import](#blueprintimport), [Update](#blueprintupdate), [Delete](#blueprintdelete), [Execute](#blueprintexecute)
 * Python SDK (documentation coming soon)
 
 
@@ -32,6 +34,10 @@ The CLI is available as a prepackaged single-file Windows executable and the mos
 
 ## Examples
 
+### Publish, Upload, and Test Blueprint Package on an Existing  Server
+
+
+### Replicate a Public Blueprint, Customize, Republish, then Deploy
 
 
 ## Usage
