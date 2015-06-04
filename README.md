@@ -611,10 +611,16 @@ Example:
 ```
 # Execute reading parameters from json file - pulls ID from 'metadata' 
 # and parameters from 'execute' sections
-> 
+>  ./bpformation.py blueprint execute --file testdeploy-3526-0.2.json
+✔  Execution request submitted for Blueprint ID 3526 (request ca1-26898)
+✔  Execution completed on 1 blueprints (376 seconds)
 
 # Execute a number of Blueprints.  This time specify only the ID from the command line
->
+> ./bpformation.py blueprint execute --id 3526 3526 3526
+✔  Execution request submitted for Blueprint ID 3526 (request ca1-26899)
+✔  Execution request submitted for Blueprint ID 3526 (request ca1-26900)
+✔  Execution request submitted for Blueprint ID 3526 (request ca1-26901)
+✔  Execution completed on 3 blueprints (459 seconds)
 ```
 
 
