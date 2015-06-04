@@ -83,10 +83,8 @@ optional arguments:
 
 Commands:
   {package,blueprint}
-    package             Package level activities (list, package, upload,
-                        publish, etc.)
-    blueprint           Blueprint level activities (list, import, export,
-                        delete, etc.)
+    package             Package level activities (list, package, upload, publish, etc.)
+    blueprint           Blueprint level activities (list, import, export, delete, etc.)
 ```
 
 
@@ -109,6 +107,31 @@ A CenturyLink Cloud Blueprint package is an invoked piece of software, uploaded 
 
 ### Package List
 
+Query all packages visible to your account, optionally filtering by any piece of metadata that's displayed. 
+
+```
+> ./bpformation.py package list --help
+usage: bpformation.py package list [-h] [--filter [FILTER [FILTER ...]]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+    --filter [FILTER [FILTER ...]]
+	                        Regex filter Results by name, author, status, visibility (and)
+```
+
+Example:
+
+```
+# Show all public packages for Linux tagged with Security
+> ./bpformation.py package list --filter public linux security
++-----------------------------------------------------------------------+--------------------------------------+----------+------------+-----------+
+| name                                                                  | uuid                                 | owner    | visibility | status    |
++-----------------------------------------------------------------------+--------------------------------------+----------+------------+-----------+
+| Install Vormetric Data Security Transparent Encryption Agent on Linux | e0e03253-ec7c-4278-b6c4-4ca0b5244b38 | cgosalia | Public     | published |
+| Security - Install OSSEC Agent for Linux                              | 407a3b17-cf33-4e00-84ba-9c187cdf69d6 | eco.team | Public     | published |
+| Security - Install OSSEC Manager for Linux                            | fec41e23-0f10-4b54-9fe7-5011b1229764 | eco.team | Public     | published |
++-----------------------------------------------------------------------+--------------------------------------+----------+------------+-----------+
+```
 
 ### Package Upload
 
