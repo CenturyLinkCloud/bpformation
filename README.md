@@ -179,13 +179,34 @@ Example:
 ### Package Publish
 
 Publish one or more already uploaded packages into your account.  This can be either a new package or can be an update to an existing package.  Note that the package UUID must be globally unique and can never be reused, so if you delete a package and want to re-add it or if you have a dev and prod release of the package they will need distinct UUIDs.
+Provide the OS `type` classification (`Linux` or `Windows), one or more regexs of `os`, visibility (Private, Shared, Public), and the name of all `file` already resident on the FTP server.
 
 ```
+> ./bpformation.py package publish --help
+usage: bpformation.py package publish [-h] --file [FILE [FILE ...]] --type
+                                      {Windows,Linux} --visibility
+                                      {Public,Private,Shared} --os
+                                      [OS [OS ...]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --file [FILE [FILE ...]]
+                        Uploaded filename to process
+  --type {Windows,Linux}
+                        Operating system
+  --visibility {Public,Private,Shared}
+                        Package visibility
+  --os [OS [OS ...]]    Operating system list (regex supported)
 ```
 
-Exmaple:
+Example:
 
 ```
+# Publish already uploaded package
+> ./bpformation.py package publish --file test_package_1.zip --type Linux --visibility Private --os Ubuntu
+✔  test_package_1.zip publish job submitted
+✔  test_package_1.zip publish job complete (13 seconds)
+
 ```
 
 ### Package Upload and Publish
