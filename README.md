@@ -562,7 +562,22 @@ Example:
 
 ### Blueprint Execute
 
-Execute one or more specified blueprints
+Execute one or more specified blueprints.  This command can be made complex by customizing all the system
+(server sizing, network details, etc.) and the package parameter information or it can be streamlined
+using defaults defined in a number of locations.
+
+*Take this this can only deploy Blueprints in your primary datacenter*.
+
+System information (server type, password, group ID, network, DNS) can be specified from a number of sources,
+listed below with increasing priority (last item takese precendence over the first item):
+
+* bpformation config file (See [example.ini](src/example_config.ini)) and reference the [authentication](#authentication) section which also makes use of this file and details locations where it may be found
+* Definition within the json file
+* Definition from the command line
+
+Package information can be specified from a number of sources as well, listed below with increasing priority (last item takese precendence over the first item):
+* Definition within the json file
+* Specifying `key`=`value` pairs from the command line
 
 ```
 > ./bpformation.py blueprint execute -h
