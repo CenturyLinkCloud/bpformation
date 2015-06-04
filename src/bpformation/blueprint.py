@@ -296,14 +296,14 @@ class Blueprint():
 					staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
 
 				# System - set ttl
-				elif task['type']=='ttl' and task['uuid']=='2d4d37e6-be83-461a-bfd2-b3c2ca327db5':
-					staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
-					staged_tasks['Server.Tasks[%s].Properties[0].Name' % staged_tasks_idx] = 'ActivityType'
-					staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = 'Delete'
-					staged_tasks['Server.Tasks[%s].Properties[1].Name' % staged_tasks_idx] = 'TimeZone'
-					staged_tasks['Server.Tasks[%s].Properties[1].Value' % staged_tasks_idx] = 'UTC'
-					staged_tasks['Server.Tasks[%s].Properties[2].Name' % staged_tasks_idx] = 'ScheduleDate'
-					staged_tasks['Server.Tasks[%s].Properties[2].Value' % staged_tasks_idx] = '2015-06-06T15:35:00Z'
+				#elif task['type']=='ttl' and task['uuid']=='2d4d37e6-be83-461a-bfd2-b3c2ca327db5':
+				#	staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
+				#	staged_tasks['Server.Tasks[%s].Properties[0].Name' % staged_tasks_idx] = 'ActivityType'
+				#	staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = 'Delete'
+				#	staged_tasks['Server.Tasks[%s].Properties[1].Name' % staged_tasks_idx] = 'TimeZone'
+				#	staged_tasks['Server.Tasks[%s].Properties[1].Value' % staged_tasks_idx] = 'UTC'
+				#	staged_tasks['Server.Tasks[%s].Properties[2].Name' % staged_tasks_idx] = 'ScheduleDate'
+				#	staged_tasks['Server.Tasks[%s].Properties[2].Value' % staged_tasks_idx] = '2015-06-06T15:35:00Z'
 	
 				# User package
 				elif task['type']=='package':
@@ -370,6 +370,7 @@ class Blueprint():
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 			bp['metadata']['uuid'] = re.search('/Blueprints/Browser/Clone.blueprintUUID=([a-zA-Z0-9\-]+)',r.text,re.DOTALL).group(1)
 			r = bpformation.web.CallScrape("GET","/blueprints/designer/metadata/%s" % bp['metadata']['uuid'],allow_redirects=False)
+		else:  bp['metadata']['uuid'] = str(uuid.uuid4())
 
 		# Step 1 - Metadata post and create Blueprint shell
 		r = bpformation.web.CallScrape("POST","/blueprints/designer/metadata",allow_redirects=False,payload={

@@ -446,28 +446,35 @@ Example:
 ✔  Pivotal GemFire v0.1 exported to my_gemfire.json (1 tasks)
 
 # Export Blueprint to stdout
-> ./bpformation.py blueprint export --id 2668 --file -
+> ./bpformation.py blueprint export --id 3526 --file -
 {
     "execute": {
-        "EMAIL_ADDRESS": "",
-        "EULA": "Accept",
-        "START_LOCATOR_SERVER": "Yes | No"
     },
     "metadata": {
-        "description": "Complete Pivotal GemFire setup on an existing server.",
-        "id": "2668",
-        "name": "Pivotal GemFire",
-        "owner": "owner",
-        "version": "0.1",
+        "description": "x",
+        "name": "Testdeploy",
+        "owner": "owner@ctl.io",
+        "version": "0.2",
         "visibility": "private"
     },
     "tasks": [
         {
-            "id": "46750e18-30df-4730-aee5-7cbb5ebc9ba9",
-            "name": "Install Pivotal Gemfire",
-            "server": "${46750e18-30df-4730-aee5-7cbb5ebc9ba9.TaskServer}",
-            "type": "package",
-            "uuid": "c363adb6-be00-498b-b817-80d15ef65ec2"
+            "cpu": "1",
+            "description": "x",
+            "id": "1adcbabb-fa80-4385-a83c-43ebd05d5e42",
+            "name": "X",
+            "ram": "1",
+            "tasks": [
+                {
+                    "id": "c189a7fc-2e9c-4fed-a59b-2d68fa77bdae",
+                    "name": "Linux Update",
+                    "type": "package",
+                    "uuid": "77ab3844-579d-4c8d-8955-c69a94a2ba1a"
+                }
+            ],
+            "template": "CENTOS-6-64-TEMPLATE",
+            "type": "server",
+            "uuid": "cb9762b3-61a6-4cfb-af97-96bf7dbfc359"
         }
     ]
 }
@@ -492,7 +499,9 @@ optional arguments:
 Example:
 
 ```
-# Import modified Gemfire Blueprint
+# Import test Blueprint
+> ./bpformation.py blueprint import --file testdeploy.json
+✔  Testdeploy v0.2 imported ID 3526 (1 tasks)
 
 ```
 
