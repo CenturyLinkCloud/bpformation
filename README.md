@@ -415,9 +415,17 @@ Example:
 
 Export existing Blueprints you have access to from your account into an easy to modify and maintain [json](http://json.org/) file.
 This can serve as the basis for extending a Blueprint from someone else, maintaining a Blueprint originally designed from within the CenturyLink 
-Cloud control portal, or 
+Cloud control portal, or managing the lifecycle of a Blueprint as part of a version control system.
 
 ```
+> ./bpformation.py blueprint export -h
+usage: bpformation.py blueprint export [-h] --id ID [--file FILE]
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --id ID      Blueprint ID (note this ID is not globally unique - find this
+               from your primary datacenter
+  --file FILE  Filename target for Blueprint json definition
 ```
 
 Example:
