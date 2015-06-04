@@ -164,6 +164,15 @@ Example:
 
 ```
 # Upload package zip file
+> ./bpformation.py package upload --file test_package_1.zip
+✔  test_package_1.zip successfully uploaded (0 seconds)
+
+# Upload all zip files in a directory
+> ./bpformation.py package upload --file *.zip
+✔  test_package_1.zip successfully uploaded (0 seconds)
+✔  test_package_2.zip successfully uploaded (0 seconds)
+✔  test_package_3.zip successfully uploaded (0 seconds)
+
 ```
 
 ### Package Publish
