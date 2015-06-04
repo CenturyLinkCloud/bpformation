@@ -324,7 +324,7 @@ class Blueprint():
 					"Server.Description": o['description'],
 					"Server.Processor": o['cpu'],
 					"Server.Memory": o['ram'],
-				}.items() + staged_tasks.items()),debug=True)
+				}.items() + staged_tasks.items()))
 		if r.status_code<200 or r.status_code>=300:
 			bpformation.output.Status('ERROR',3,"Error creating blueprint - step 2 add server failure (response %s)" % r.status_code)
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
@@ -351,6 +351,14 @@ class Blueprint():
 		ver_major = int(m.group(1))
 		if len(m.groups(2)):  ver_minor = int(m.group(2).replace(".",""))
 		else:  ver_minor = 0
+
+		# Step 0 - Get UUID if existing
+		if bp['metadata']['id']:
+			r = bpformation.web.CallScrape("GET","/blueprints/browser/details/%s" % bp['metadata']['id'])
+			if r.status_code<200 or r.status_code>=300:
+				bpformation.output.Status('ERROR',3,"Error creating blueprint - step 0 uuid failure (response %s)" % r.status_code)
+				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+			bp['metadata']['uuid'] = re.search('/Blueprints/Browser/Clone.blueprintUUID=([a-zA-Z0-9\-]+)',r.text,re.DOTALL).group(1)
 
 		# Step 1 - Metadata post and create Blueprint shell
 		r = bpformation.web.CallScrape("POST","/blueprints/designer/metadata",allow_redirects=False,payload={
@@ -381,10 +389,12 @@ class Blueprint():
 		bp['tasks'] = new_tasks
 
 		# Step 3 - Publish Blueprint
-		r = bpformation.web.CallScrape("POST","/Blueprints/Designer/Publish/%s" % bp['metadata']['id'],allow_redirects=False,payload={
-					"Publish": "",                          # unknown
-					"DataTemplate.UUID": str(uuid.uuid4()), # throw away value - not sure of purpose
-				})
+		r = bpformation.web.CallScrape("POST","/Blueprints/Designer/review/%s" % bp['metadata']['id'],allow_redirects=False,payload={
+					"Publish": "", # unknown
+					"DataTemplate.UUID": bp['metadata']['uuid'],
+					"TemplateID": bp['metadata']['id'],
+				},debug=True)
+		r = bpformation.web.CallScrape("GET","/Blueprints/Designer/ThankYou/%s" % bp['metadata']['id'],allow_redirects=False)
 
 		# TODO Step 4 - save output?  Assume needed for some kind of update
 
