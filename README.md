@@ -86,12 +86,12 @@ Commands:
 
 ### Authentication
 All commands require authentication which can be accomplished in several ways in increasing order of priority.
-* System configuration file at /usr/local/etc/clc_config (POSIX) or %PROGRAMDATA%\clc\clc.ini (Windows)
-* User specific configuration file at ~/.clc (POSIX) or .\clc.ini (Windows)
+* System configuration file at `/usr/local/etc/bpformation_config` (POSIX) or `%PROGRAMDATA%\bpformation\bpformation.ini` (Windows)
+* User specific configuration file at `~/.bpformation` (POSIX) or `.\bpformation.ini` (Windows)
 * Specify configuration file with --config / -c command line option
-* Define environment variables (V1_API_KEY / V1_API_PASSWD or V2_API_USERNAME / V2_API_PASSWD)
+* Define environment variables (CONTROL_USER / CONTROL_PASSWORD)
 * Pass credentials as command line options
 
-Configuration files follow ini syntax.  Reference the [example.ini](src/example_config.ini) file with all currently accepted f
+Configuration files follow ini syntax.  Reference the [example.ini](src/example_config.ini) file with all currently accepted fields.
 
 
