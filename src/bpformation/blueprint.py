@@ -107,7 +107,7 @@ class Blueprint():
 			elif o.tag=='AddMappedIPAddress':  server['tasks'].append(Blueprint._ParseExportTaskAddMappedIPAddress(o))
 			elif o.tag=='Reboot':  server['tasks'].append(Blueprint._ParseExportTaskReboot(o))
 			elif o.tag=='Properties':  continue
-			else:  print "Unknown server tag: %s" % o.tag
+			else:  bpformation.output.Status('ERROR',3,"Error unknown server tag '%s'" % o.tag)
 
 		return(server)
 
