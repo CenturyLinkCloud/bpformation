@@ -417,6 +417,10 @@ Export existing Blueprints you have access to from your account into an easy to 
 This can serve as the basis for extending a Blueprint from someone else, maintaining a Blueprint originally designed from within the CenturyLink 
 Cloud control portal, or managing the lifecycle of a Blueprint as part of a version control system.
 
+The default naming for these downloaded files is composed of `blueprint name`-`id`-`version`.json.
+
+View an [example blueprint json](#) file for a look at the major sections and their respective roles.
+
 ```
 > ./bpformation.py blueprint export -h
 usage: bpformation.py blueprint export [-h] --id ID [--file FILE]
@@ -431,6 +435,17 @@ optional arguments:
 Example:
 
 ```
+# Export Blueprint using default naming
+> ./bpformation.py blueprint export --id 2668
+✔  Pivotal GemFire v0.1 exported to pivotal_gemfire-2668-0.1.json (1 tasks)
+> ls -l pivotal_gemfire-2668-0.1.json
+-rw-r--r--  1 owner  staff   698B Jun  4 16:09 pivotal_gemfire-2668-0.1.json
+
+# Export Blueprint using custom file naming
+> 
+
+# Export Blueprint to stdout
+> 
 ```
 
 
