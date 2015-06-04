@@ -1,4 +1,4 @@
-# CenturyLink Cloud Blurpint Formation CLI Tool (bp-formation)
+# CenturyLink Cloud Blueprint Formation CLI Tool (bp-formation)
 
 This repository contains a command line interface *CLI* to interact with the *[CenturyLink Cloud](http://www.centurylinkcloud.com)* Blueprints packaging and workflow services,.  
 
@@ -514,7 +514,7 @@ Example:
 
 ### Blueprint Update
 
-Update an existing Blueprint my applying a modified json definition.  Updates may take several minutes to replicate and reach global consistency.
+Update an existing Blueprint by applying a modified json definition.  Updates may take several minutes to replicate and reach global consistency.
 The source json must include the metadata.id and all unique ids/uuids as currently exist in the installed Blueprint or else where will be
 consistency errors and possible Blueprint failure.  Recommendation is to always start with an [export](#blueprintexport) and modify that rather
 than generating an update json from scratch.
