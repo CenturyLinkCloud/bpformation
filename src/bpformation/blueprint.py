@@ -432,11 +432,6 @@ class Blueprint():
 
 
 	@staticmethod
-	def _ExecuteMergeSystemParameters(type,password,group_id,network,dns):
-		pass
-
-
-	@staticmethod
 	def Execute(ids,files,parameters,type,password,group_id,network,dns):
 
 		# Build list of file-based assets to exec
@@ -543,12 +538,16 @@ class Blueprint():
 		# Wait for executing blueprints to complete
 		# TODO - async option
 		sum(requests).WaitUntilComplete()
+		print requests
 		request_errors = [ o.error_requests[0] for o in requests if len(o.error_requests) ]
 		request_success = [ o.success_requests[0] for o in requests if len(o.success_requests) ]
+		print request_success
+		print request_errors
 		if len(request_success):
 			#success_servers = [ o.data['context_val'] for o in request_success ]
 			# TODO - parse request page and pull out list of servers 
 			#bpformation.output.Status('SUCCESS',3,"Execution completed on %s (%s seconds)" % (",".join(success_servers),int(time.time()-start_time)))
+			print "a"
 			bpformation.output.Status('SUCCESS',3,"Execution completed on %s blueprints (%s seconds)" % (len(request_success),int(time.time()-start_time)))
 		for request in request_errors:
 			(req_loc,req_id) = request.id.split("-",1)
@@ -560,6 +559,7 @@ class Blueprint():
 				bpformation.output.Status('ERROR',3,"Execution failed on %s request ID %s (https://control.ctl.io/Blueprints/Queue/RequestDetails/%s?location=%s)" % \
 						(request.data['context_val'],req_id,req_id,req_loc))
 
+		print "end"
 		# TODO - percolate error up so we exit with an error called as CLI or see exception as sdk
 
 
