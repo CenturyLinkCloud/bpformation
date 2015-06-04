@@ -164,11 +164,11 @@ Example:
 
 ```
 # Upload package zip file
-> ./bpformation.py package upload --file test_package_1.zip
+> ./bpformation.py package upload --file /tmp/test_package_1.zip
 ✔  test_package_1.zip successfully uploaded (0 seconds)
 
 # Upload all zip files in a directory
-> ./bpformation.py package upload --file *.zip
+> ./bpformation.py package upload --file /tmp/*.zip
 ✔  test_package_1.zip successfully uploaded (0 seconds)
 ✔  test_package_2.zip successfully uploaded (0 seconds)
 ✔  test_package_3.zip successfully uploaded (0 seconds)
@@ -213,23 +213,51 @@ Example:
 Combine the package [Upload](#packageupload) and [Publish](#packagepublish) steps into one.
 
 ```
+> ./bpformation.py package upload-and-publish -h
+usage: bpformation.py package upload-and-publish [-h] --file [FILE [FILE ...]]
+                                                 --type {Windows,Linux}
+                                                 --visibility
+                                                 {Public,Private,Shared} --os
+                                                 [OS [OS ...]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --file [FILE [FILE ...]]
+                        Files to process
+  --type {Windows,Linux}
+                        Operating system
+  --visibility {Public,Private,Shared}
+                        Package visibility
+  --os [OS [OS ...]]    Operating system list (regex supported)
 ```
 
 Example:
 
 ```
+> ./bpformation.py package upload-and-publish --file /tmp/test_package_1.zip --type Linux --visibility Private --os Ubuntu
+✔  test_package_1.zip successfully uploaded (0 seconds)
+✔  test_package_1.zip publish job submitted
+✔  test_package_1.zip publish job complete (60 seconds)
 ```
 
 ### Package Delete
 
-lorem ipsum 
+Deletes one or more existing packages owned by your account.  Packages are keyed by UUID which can be found either from the [package list](#packagelist) command, inside the manifest file itself if you've still got it, or by viewing the URL from the control portal when viewing package details.
 
 ```
+> ./bpformation.py package delete -h
+usage: bpformation.py package delete [-h] --uuid [UUID [UUID ...]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --uuid [UUID [UUID ...]]
+                        UUID for packages
 ```
 
 Example:
 
 ```
+# Delete Some of those Test Packages
 ```
 
 ### Package Download
