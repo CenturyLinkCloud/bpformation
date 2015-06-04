@@ -413,7 +413,9 @@ Example:
 
 ### Blueprint Export
 
-lorem ipsum 
+Export existing Blueprints you have access to from your account into an easy to modify and maintain [json](http://json.org/) file.
+This can serve as the basis for extending a Blueprint from someone else, maintaining a Blueprint originally designed from within the CenturyLink 
+Cloud control portal, or 
 
 ```
 ```
