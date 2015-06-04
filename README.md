@@ -387,13 +387,28 @@ optional arguments:
 Example:
 
 ```
-# Find my public blueprints
-> 
+# Find Private-Shared blueprints in my account
+> ./bpformation.py blueprint list --filter privateshared
++--------------------------------------+------+---------------+--------------+
+| name                                 | id   | visibility    | date_added   |
++--------------------------------------+------+---------------+--------------+
+| CaaS                                 | 152  | privateshared | Mar 04, 2013 |
+| Exchange 2010 with Domain Controller | 627  | privateshared | Jul 06, 2013 |
+| Linux App Stack Demo                 | 719  | privateshared | Jan 20, 2014 |
+| Public IP Test                       | 2033 | privateshared | Dec 15, 2014 |
+| Small SharePoint Farm                | 585  | privateshared | Jul 06, 2013 |
++--------------------------------------+------+---------------+--------------+
 
 # Find SQL Server blueprints
-> 
+> ./bpformation.py blueprint list --filter sql
++---------------------------------------+------+------------+--------------+
+| name                                  | id   | visibility | date_added   |
++---------------------------------------+------+------------+--------------+
+| Install SQL 2012 RC0 Standard         | 424  | public     | Mar 06, 2012 |
+| Install SQL Server on Existing Server | 47   | public     | Oct 22, 2012 |
+| Install SQL Server on New Server      | 46   | public     | Oct 22, 2012 |
++---------------------------------------+------+------------+--------------+
 ```
-
 
 
 ### Blueprint Export
