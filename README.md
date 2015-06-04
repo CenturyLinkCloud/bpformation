@@ -419,7 +419,7 @@ Cloud control portal, or managing the lifecycle of a Blueprint as part of a vers
 
 The default naming for these downloaded files is composed of `blueprint name`-`id`-`version`.json.
 
-Exports keep all IDs and task sequencing intact to subsequent [imports](#blueprintimport) and [updates)(#blueprintupdate) work as expected.
+Exports keeps all IDs and task sequencing intact to subsequent [imports](#blueprintimport) and [updates)(#blueprintupdate) work as expected.
 An export json contains `metadata`, `tasks`, and a template `execute` section for re-use across other `bpformation` functions.  
 View an [example blueprint json](#) file for a look at the major sections and their respective roles.
 
@@ -515,8 +515,18 @@ Example:
 ### Blueprint Update
 
 Update an existing Blueprint my applying a modified json definition.  Updates may take several minutes to replicate and reach global consistency.
+The source json must include the metadata.id and all unique ids/uuids as currently exist in the installed Blueprint or else where will be
+consistency errors and possible Blueprint failure.  Recommendation is to always start with an [export](#blueprintexport) and modify that rather
+than generating an update json from scratch.
 
 ```
+> ./bpformation.py blueprint update -h
+usage: bpformation.py blueprint update [-h] --file [FILE [FILE ...]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --file [FILE [FILE ...]]
+                        Blueprint definition json files
 ```
 
 Example:
