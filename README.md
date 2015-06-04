@@ -104,11 +104,51 @@ Configuration files follow ini syntax.  Reference the [example.ini](src/example_
 
 ## Packages
 
- * [Packages](#packages) - [List](#packagelist), [Upload](#packageupload), [Publish](#packagepublish), [Upload and Publish](#packageuploadandpublish), [Delete](#packagedelete), [Download](#packagedownload), [Execute](#packageexecute)
+A CenturyLink Cloud Blueprint package is an invoked piece of software, uploaded to the cloud platform, which customizes a server template.  [Learn the difference between templates, blueprints and packages](https://www.centurylinkcloud.com/knowledge-base/blueprints/understanding-the-difference-between-templates-blueprints-and-packages/).
+
+
+### Package List
+
+
+### Package Upload
+
+
+### Package Publish
+
+
+### Package Upload and Publish
+
+
+### Package Delete
+
+
+### Package Download
+
+
+### Package Execute
 
 
 
 ## Blueprints
 
- * [Blueprints](#blueprints) - [List](#blueprintlist), [Export](#blueprintexport), [Import](#blueprintimport), [Update](#blueprintupdate), [Delete](#blueprintdelete), [Execute](#blueprintexecute)
+A CenturyLink Cloud Blueprint package is an invoked piece of software, uploaded to the cloud platform, which customizes a server template.  [Learn the difference between templates, blueprints and packages](https://www.centurylinkcloud.com/knowledge-base/blueprints/understanding-the-difference-between-templates-blueprints-and-packages/)
+
+
+### Blueprint List
+
+
+### Blueprint Export
+
+
+### Blueprint Import
+
+
+### Blueprint Update
+
+
+### Blueprint Delete
+
+
+### Blueprint Execute
+
 
