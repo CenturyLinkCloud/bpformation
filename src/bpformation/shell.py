@@ -76,7 +76,6 @@ class Args:
 		########## Blueprint ###########
 		#
 		# TODO vCur:
-		#  o modify
 		#
 		# TODO vNext:
 		#  o create (interactive ui to build blueprint)

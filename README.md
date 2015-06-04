@@ -104,6 +104,27 @@ Configuration files follow ini syntax.  Reference the [example.ini](src/example_
 
 A CenturyLink Cloud Blueprint package is an invoked piece of software, uploaded to the cloud platform, which customizes a server template.  [Learn the difference between templates, blueprints and packages](https://www.centurylinkcloud.com/knowledge-base/blueprints/understanding-the-difference-between-templates-blueprints-and-packages/).
 
+```
+> ./bpformation.py package -h
+usage: bpformation.py package [-h]
+
+                              {list,upload,publish,upload-and-publish,delete,download,execute}
+                              ...
+
+positional arguments:
+  {list,upload,publish,upload-and-publish,delete,download,execute}
+    list                List package inventory
+    upload              Uploaded package to specified alias
+    publish             Uploaded packages to specified alias
+    upload-and-publish  Uploaded then publish packages to specified alias
+    delete              Delete published package
+    download            Download published package
+    execute             Execute package
+
+optional arguments:
+  -h, --help            show this help message and exit
+```
+
 
 ### Package List
 
@@ -292,17 +313,30 @@ Example:
 ```
 
 
-
 ### Package Execute
 
-lorem ipsum 
+Execute a single package on one or more existing servers.  If any `global` or `deploy`-time parameters are required specify them in `key`=`value` pairs.
 
 ```
+> ./bpformation.py package execute -h
+usage: bpformation.py package execute [-h] --uuid UUID --server
+                                      [SERVER [SERVER ...]]
+                                      [--parameter [PARAMETER [PARAMETER ...]]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --uuid UUID           UUID for package
+  --server [SERVER [SERVER ...]]
+                        Servers targets for package execution
+  --parameter [PARAMETER [PARAMETER ...]]
+                        key=value pairs for package parameters
 ```
 
 Example:
 
 ```
+# Execute package on a few of my servers
+
 ```
 
 
@@ -312,6 +346,25 @@ Example:
 
 A CenturyLink Cloud Blueprint package is an invoked piece of software, uploaded to the cloud platform, which customizes a server template.  [Learn the difference between templates, blueprints and packages](https://www.centurylinkcloud.com/knowledge-base/blueprints/understanding-the-difference-between-templates-blueprints-and-packages/)
 
+One challenge to keep in mind with managing Blueprints using the `bpformation` toolset is that Blueprints don't actually key on a globaly unique ID.  Keep this in mind when searching for the ID associated with a Blueprint - we always use the Blueprints ID associated with your *primary datacenter*.  To make this easier for you we always include the ID when performing an [export](#blueprintexport) allowing you to re-use all identifying information for subsequent `bpformation` invocations.
+
+```
+> ./bpformation.py blueprint -h
+usage: bpformation.py blueprint [-h]
+                                {list,export,import,update,delete,execute} ...
+
+positional arguments:
+  {list,export,import,update,delete,execute}
+    list                List blueprint inventory
+    export              Export blueprint
+    import              Import blueprint from json
+    update              Update existing blueprint from json
+    delete              Delete blueprint
+    execute             Execute blueprint
+
+optional arguments:
+  -h, --help            show this help message and exit
+```
 
 ### Blueprint List
 

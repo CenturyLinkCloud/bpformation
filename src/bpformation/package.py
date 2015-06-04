@@ -182,9 +182,11 @@ class Package():
 		start_time = time.time()
 		for server in servers:
 			bpformation.output.Status('SUCCESS',3,"Execution request submitted for %s" % server)
+			if parameters:  parameters = { p.split("=")[0]: p.split("=",1)[1] for p in parameters }
+			else:  parameters=None
 			requests.append(clc.v2.Server(server,alias=bpformation.web.Alias()).ExecutePackage(
 					package_id=re.sub("[^a-zA-Z0-9]","",uuid).lower(),   # Wants uuid w/o dashes
-					parameters={ p.split("=")[0]: p.split("=",1)[1] for p in parameters },
+					parameters=parameters,
 				))
 
 		requests = sum(requests)
