@@ -442,10 +442,35 @@ Example:
 -rw-r--r--  1 owner  staff   698B Jun  4 16:09 pivotal_gemfire-2668-0.1.json
 
 # Export Blueprint using custom file naming
-> 
+> ./bpformation.py blueprint export --id 2668 --file my_gemfire.json
+✔  Pivotal GemFire v0.1 exported to my_gemfire.json (1 tasks)
 
 # Export Blueprint to stdout
-> 
+> ./bpformation.py blueprint export --id 2668 --file -
+{
+    "execute": {
+        "EMAIL_ADDRESS": "",
+        "EULA": "Accept",
+        "START_LOCATOR_SERVER": "Yes | No"
+    },
+    "metadata": {
+        "description": "Complete Pivotal GemFire setup on an existing server.",
+        "id": "2668",
+        "name": "Pivotal GemFire",
+        "owner": "owner",
+        "version": "0.1",
+        "visibility": "private"
+    },
+    "tasks": [
+        {
+            "id": "46750e18-30df-4730-aee5-7cbb5ebc9ba9",
+            "name": "Install Pivotal Gemfire",
+            "server": "${46750e18-30df-4730-aee5-7cbb5ebc9ba9.TaskServer}",
+            "type": "package",
+            "uuid": "c363adb6-be00-498b-b817-80d15ef65ec2"
+        }
+    ]
+}
 ```
 
 
