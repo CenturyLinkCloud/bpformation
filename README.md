@@ -147,7 +147,7 @@ Example:
 
 ### Package Upload
 
-Upload a Blueprint package into your account.  This call obtains the FTP endpoint used by your account then uploads the package via ftp.
+Upload one or more Blueprint packages into your account.  This call obtains the FTP endpoint used by your account then uploads the package via ftp.
 This can be used both for new packages and for updating the contents of an existing package.  Source file must be a valid  [Blueprint Package](https://www.centurylinkcloud.com/knowledge-base/blueprints/blueprint-package-manifest-builder-wizard/) which is a zip file that contains a valid XML `package.manifest` and optionally any supporting scripts or binaries.
 
 ```
@@ -175,8 +175,18 @@ Example:
 
 ```
 
+
 ### Package Publish
 
+Publish one or more already uploaded packages into your account.  This can be either a new package or can be an update to an existing package.  Note that the package UUID must be globally unique and can never be reused, so if you delete a package and want to re-add it or if you have a dev and prod release of the package they will need distinct UUIDs.
+
+```
+```
+
+Exmaple:
+
+```
+```
 
 ### Package Upload and Publish
 
