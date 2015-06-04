@@ -131,10 +131,32 @@ Example:
 | Security - Install OSSEC Agent for Linux                              | 407a3b17-cf33-4e00-84ba-9c187cdf69d6 | eco.team | Public     | published |
 | Security - Install OSSEC Manager for Linux                            | fec41e23-0f10-4b54-9fe7-5011b1229764 | eco.team | Public     | published |
 +-----------------------------------------------------------------------+--------------------------------------+----------+------------+-----------+
+
+# Find my private test packages - need to clean these up sometime soon
+> ./bpformation.py package list --filter private test
++-------------------+--------------------------------------+--------+------------+-----------+
+| name              | uuid                                 | owner  | visibility | status    |
++-------------------+--------------------------------------+--------+------------+-----------+
+| Test defaults     | 6b67648d-71fe-4501-8d4d-15cd496336da | owner  | Private    | published |
+| Test global       | 7a5c86ce-1140-4d4f-bbd0-5b2859a79451 | owner  | Private    | published |
+| Test parameter    | 75eb2d6c-253b-448c-ada4-a6ad57598576 | owner  | Private    | published |
+| test default2     | fd19358e-f43f-4aaf-8622-2cb222500ffa | owner  | Private    | published |
+| test system parms | 3819ee8d-c276-4d11-9d57-146fd9937a38 | owner  | Private    | published |
++-------------------+--------------------------------------+--------+------------+-----------+
 ```
 
 ### Package Upload
 
+Upload a Blueprint package into your account.  This call obtains the FTP endpoint used by your account then uploads the package via ftp.
+This can be used both for new packages and for updating the contents of an existing package.
+
+```
+```
+
+Example:
+
+```
+```
 
 ### Package Publish
 
