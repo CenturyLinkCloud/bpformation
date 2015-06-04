@@ -43,7 +43,7 @@ The CLI is available as a prepackaged single-file Windows executable and the mos
 ## Usage
 
 ```
-> ./bpformation.py
+> bpformation
 usage: bpformation.py [-h] [--config CONFIG] [--alias ALIAS]
                       [--control-user USER] [--control-password PASS]
                       [--quiet] [--verbose] [--cols [COL [COL ...]]]
@@ -55,7 +55,7 @@ usage: bpformation.py [-h] [--config CONFIG] [--alias ALIAS]
 ### Global Parameters and General Usage
 
 ```
-> ./bpformation.py -h
+> bpformation -h
 usage: bpformation.py [-h] [--config CONFIG] [--alias ALIAS]
                       [--control-user USER] [--control-password PASS]
                       [--quiet] [--verbose] [--cols [COL [COL ...]]]
@@ -105,7 +105,7 @@ Configuration files follow ini syntax.  Reference the [example.ini](src/example_
 A CenturyLink Cloud Blueprint package is an invoked piece of software, uploaded to the cloud platform, which customizes a server template.  [Learn the difference between templates, blueprints and packages](https://www.centurylinkcloud.com/knowledge-base/blueprints/understanding-the-difference-between-templates-blueprints-and-packages/).
 
 ```
-> ./bpformation.py package -h
+> bpformation package -h
 usage: bpformation.py package [-h]
 
                               {list,upload,publish,upload-and-publish,delete,download,execute}
@@ -131,7 +131,7 @@ optional arguments:
 Query all packages visible to your account, optionally filtering by any piece of metadata that's displayed. 
 
 ```
-> ./bpformation.py package list --help
+> bpformation package list --help
 usage: bpformation.py package list [-h] [--filter [FILTER [FILTER ...]]]
 
 optional arguments:
@@ -144,7 +144,7 @@ Example:
 
 ```
 # Show all public packages for Linux tagged with Security
-> ./bpformation.py package list --filter public linux security
+> bpformation package list --filter public linux security
 +-----------------------------------------------------------------------+--------------------------------------+----------+------------+-----------+
 | name                                                                  | uuid                                 | owner    | visibility | status    |
 +-----------------------------------------------------------------------+--------------------------------------+----------+------------+-----------+
@@ -154,7 +154,7 @@ Example:
 +-----------------------------------------------------------------------+--------------------------------------+----------+------------+-----------+
 
 # Find my private test packages - need to clean these up sometime soon
-> ./bpformation.py package list --filter private test
+> bpformation package list --filter private test
 +-------------------+--------------------------------------+--------+------------+-----------+
 | name              | uuid                                 | owner  | visibility | status    |
 +-------------------+--------------------------------------+--------+------------+-----------+
@@ -172,7 +172,7 @@ Upload one or more Blueprint packages into your account.  This call obtains the 
 This can be used both for new packages and for updating the contents of an existing package.  Source file must be a valid  [Blueprint Package](https://www.centurylinkcloud.com/knowledge-base/blueprints/blueprint-package-manifest-builder-wizard/) which is a zip file that contains a valid XML `package.manifest` and optionally any supporting scripts or binaries.
 
 ```
-> ./bpformation.py package upload -h
+> bpformation package upload -h
 usage: bpformation.py package upload [-h] --file [FILE [FILE ...]]
 
 optional arguments:
@@ -185,11 +185,11 @@ Example:
 
 ```
 # Upload package zip file
-> ./bpformation.py package upload --file /tmp/test_package_1.zip
+> bpformation package upload --file /tmp/test_package_1.zip
 ✔  test_package_1.zip successfully uploaded (0 seconds)
 
 # Upload all zip files in a directory
-> ./bpformation.py package upload --file /tmp/*.zip
+> bpformation package upload --file /tmp/*.zip
 ✔  test_package_1.zip successfully uploaded (0 seconds)
 ✔  test_package_2.zip successfully uploaded (0 seconds)
 ✔  test_package_3.zip successfully uploaded (0 seconds)
@@ -203,7 +203,7 @@ Publish one or more already uploaded packages into your account.  This can be ei
 Provide the OS `type` classification (`Linux` or `Windows), one or more regexs of `os`, visibility (Private, Shared, Public), and the name of all `file` already resident on the FTP server.
 
 ```
-> ./bpformation.py package publish --help
+> bpformation package publish --help
 usage: bpformation.py package publish [-h] --file [FILE [FILE ...]] --type
                                       {Windows,Linux} --visibility
                                       {Public,Private,Shared} --os
@@ -224,7 +224,7 @@ Example:
 
 ```
 # Publish already uploaded package
-> ./bpformation.py package publish --file test_package_1.zip --type Linux --visibility Private --os Ubuntu
+> bpformation package publish --file test_package_1.zip --type Linux --visibility Private --os Ubuntu
 ✔  test_package_1.zip publish job submitted
 ✔  test_package_1.zip publish job complete (13 seconds)
 ```
@@ -234,7 +234,7 @@ Example:
 Combine the package [Upload](#packageupload) and [Publish](#packagepublish) steps into one.
 
 ```
-> ./bpformation.py package upload-and-publish -h
+> bpformation package upload-and-publish -h
 usage: bpformation.py package upload-and-publish [-h] --file [FILE [FILE ...]]
                                                  --type {Windows,Linux}
                                                  --visibility
@@ -255,7 +255,7 @@ optional arguments:
 Example:
 
 ```
-> ./bpformation.py package upload-and-publish --file /tmp/test_package_1.zip --type Linux --visibility Private --os Ubuntu
+> bpformation package upload-and-publish --file /tmp/test_package_1.zip --type Linux --visibility Private --os Ubuntu
 ✔  test_package_1.zip successfully uploaded (0 seconds)
 ✔  test_package_1.zip publish job submitted
 ✔  test_package_1.zip publish job complete (60 seconds)
@@ -266,7 +266,7 @@ Example:
 Deletes one or more existing packages owned by your account.  Packages are keyed by UUID which can be found either from the [package list](#packagelist) command, inside the manifest file itself if you've still got it, or by viewing the URL from the control portal when viewing package details.
 
 ```
-> ./bpformation.py package delete -h
+> bpformation package delete -h
 usage: bpformation.py package delete [-h] --uuid [UUID [UUID ...]]
 
 optional arguments:
@@ -279,7 +279,7 @@ Example:
 
 ```
 # Delete Some of those Test Packages
-> ./bpformation.py package delete --uuid 6b67648d-71fe-4501-8d4d-15cd496336da \
+> bpformation package delete --uuid 6b67648d-71fe-4501-8d4d-15cd496336da \
                                          7a5c86ce-1140-4d4f-bbd0-5b2859a79451 \
                                          75eb2d6c-253b-448c-ada4-a6ad57598576 
 ✔  6b67648d-71fe-4501-8d4d-15cd496336da package deleted
@@ -293,7 +293,7 @@ Download a zip file of one or more packages specified by UUID.  The package must
 The downloaded package will be saved in your current directory with the name `uuid`.zip
 
 ```
-> ./bpformation.py package download --help
+> bpformation package download --help
 usage: bpformation.py package download [-h] --uuid [UUID [UUID ...]]
 
 optional arguments:
@@ -306,7 +306,7 @@ Example:
 
 ```
 # Download package
-> ./bpformation.py package download --uuid 3819ee8d-c276-4d11-9d57-146fd9937a38
+> bpformation package download --uuid 3819ee8d-c276-4d11-9d57-146fd9937a38
 ✔  3819ee8d-c276-4d11-9d57-146fd9937a38 package downloaded
 > ls -l 3819ee8d-c276-4d11-9d57-146fd9937a38.zip
 -rw-r--r--  1 user  staff   1.2K Jun  4 15:34 3819ee8d-c276-4d11-9d57-146fd9937a38.zip
@@ -318,7 +318,7 @@ Example:
 Execute a single package on one or more existing servers.  If any `global` or `deploy`-time parameters are required specify them in `key`=`value` pairs.
 
 ```
-> ./bpformation.py package execute -h
+> bpformation package execute -h
 usage: bpformation.py package execute [-h] --uuid UUID --server
                                       [SERVER [SERVER ...]]
                                       [--parameter [PARAMETER [PARAMETER ...]]]
@@ -336,7 +336,7 @@ Example:
 
 ```
 # Execute the Linux Update patching package on a few of my servers
-> ./bpformation.py package execute --uuid 77ab3844-579d-4c8d-8955-c69a94a2ba1a --server CA1KRAPX04 CA1KRAPX05 CA1KRAPX06
+> bpformation package execute --uuid 77ab3844-579d-4c8d-8955-c69a94a2ba1a --server CA1KRAPX04 CA1KRAPX05 CA1KRAPX06
 ✔  Execution request submitted for ca1krapx05
 ✔  Execution request submitted for ca1krapx06
 ✔  Execution request submitted for ca1krapx07
@@ -353,7 +353,7 @@ A CenturyLink Cloud Blueprint package is an invoked piece of software, uploaded 
 One challenge to keep in mind with managing Blueprints using the `bpformation` toolset is that Blueprints don't actually key on a globaly unique ID.  Keep this in mind when searching for the ID associated with a Blueprint - we always use the Blueprints ID associated with your *primary datacenter*.  To make this easier for you we always include the ID when performing an [export](#blueprintexport) allowing you to re-use all identifying information for subsequent `bpformation` invocations.
 
 ```
-> ./bpformation.py blueprint -h
+> bpformation blueprint -h
 usage: bpformation.py blueprint [-h]
                                 {list,export,import,update,delete,execute} ...
 
@@ -375,7 +375,7 @@ optional arguments:
 Query all Blueprints visible to your account, optionally filtering by any piece of metadata that's displayed. 
 
 ```
-> ./bpformation.py blueprint list -h
+> bpformation blueprint list -h
 usage: bpformation.py blueprint list [-h] [--filter [FILTER [FILTER ...]]]
 
 optional arguments:
@@ -388,7 +388,7 @@ Example:
 
 ```
 # Find Private-Shared blueprints in my account
-> ./bpformation.py blueprint list --filter privateshared
+> bpformation blueprint list --filter privateshared
 +--------------------------------------+------+---------------+--------------+
 | name                                 | id   | visibility    | date_added   |
 +--------------------------------------+------+---------------+--------------+
@@ -400,7 +400,7 @@ Example:
 +--------------------------------------+------+---------------+--------------+
 
 # Find SQL Server blueprints
-> ./bpformation.py blueprint list --filter sql
+> bpformation blueprint list --filter sql
 +---------------------------------------+------+------------+--------------+
 | name                                  | id   | visibility | date_added   |
 +---------------------------------------+------+------------+--------------+
@@ -424,7 +424,7 @@ An export json contains `metadata`, `tasks`, and a template `execute` section fo
 View an [example blueprint json](#) file for a look at the major sections and their respective roles.
 
 ```
-> ./bpformation.py blueprint export -h
+> bpformation blueprint export -h
 usage: bpformation.py blueprint export [-h] --id ID [--file FILE]
 
 optional arguments:
@@ -438,17 +438,17 @@ Example:
 
 ```
 # Export Blueprint using default naming
-> ./bpformation.py blueprint export --id 2668
+> bpformation blueprint export --id 2668
 ✔  Pivotal GemFire v0.1 exported to pivotal_gemfire-2668-0.1.json (1 tasks)
 > ls -l pivotal_gemfire-2668-0.1.json
 -rw-r--r--  1 owner  staff   698B Jun  4 16:09 pivotal_gemfire-2668-0.1.json
 
 # Export Blueprint using custom file naming
-> ./bpformation.py blueprint export --id 2668 --file my_gemfire.json
+> bpformation blueprint export --id 2668 --file my_gemfire.json
 ✔  Pivotal GemFire v0.1 exported to my_gemfire.json (1 tasks)
 
 # Export Blueprint to stdout
-> ./bpformation.py blueprint export --id 3526 --file -
+> bpformation blueprint export --id 3526 --file -
 {
     "execute": {
     },
@@ -493,7 +493,7 @@ The `metadata` and `tasks` sections must be populated for a successful import.  
 look at the major sections and their respective roles.
 
 ```
-> ./bpformation.py blueprint import -h
+> bpformation blueprint import -h
 usage: bpformation.py blueprint import [-h] --file [FILE [FILE ...]]
 
 optional arguments:
@@ -506,7 +506,7 @@ Example:
 
 ```
 # Import test Blueprint
-> ./bpformation.py blueprint import --file testdeploy.json
+> bpformation blueprint import --file testdeploy.json
 ✔  Testdeploy v0.2 imported ID 3526 (1 tasks)
 
 ```
@@ -520,7 +520,7 @@ consistency errors and possible Blueprint failure.  Recommendation is to always 
 than generating an update json from scratch.
 
 ```
-> ./bpformation.py blueprint update -h
+> bpformation blueprint update -h
 usage: bpformation.py blueprint update [-h] --file [FILE [FILE ...]]
 
 optional arguments:
@@ -534,7 +534,7 @@ Example:
 ```
 # Update modified test Blueprint
 > perl -p -i -e 's/"version": "[0-9\.]+"/"version": "1.0"/' testdeploy-3526-0.2.json
-> ./bpformation.py blueprint update --file testdeploy-3526-0.2.json
+> bpformation blueprint update --file testdeploy-3526-0.2.json
 ✔  Testdeploy v1.0 updated ID 3526 (1 tasks)
 ```
 
@@ -544,7 +544,7 @@ Example:
 Delete one or more Blueprints owned by your account.  Deletion may take several minute to replicate globally.
 
 ```
-> ./bpformation.py blueprint delete -h
+> bpformation blueprint delete -h
 usage: bpformation.py blueprint delete [-h] --id [ID [ID ...]]
 
 optional arguments:
@@ -556,7 +556,7 @@ Example:
 
 ```
 # Delete single blueprint
-> ./bpformation.py blueprint delete --id 3515
+> bpformation blueprint delete --id 3515
 ✔  Testdeploy update deleted (id 3515)
 ```
 
@@ -580,7 +580,7 @@ Package information can be specified from a number of sources as well, listed be
 * Specifying `key`=`value` pairs from the command line
 
 ```
-> ./bpformation.py blueprint execute -h
+> bpformation blueprint execute -h
 usage: bpformation.py blueprint execute [-h] [--file [FILE [FILE ...]]]
                                         [--id [ID [ID ...]]]
                                         [--parameter [PARAMETER [PARAMETER ...]]]
@@ -611,12 +611,12 @@ Example:
 ```
 # Execute reading parameters from json file - pulls ID from 'metadata' 
 # and parameters from 'execute' sections
->  ./bpformation.py blueprint execute --file testdeploy-3526-0.2.json
+>  bpformation blueprint execute --file testdeploy-3526-0.2.json
 ✔  Execution request submitted for Blueprint ID 3526 (request ca1-26898)
 ✔  Execution completed on 1 blueprints (376 seconds)
 
 # Execute a number of Blueprints.  This time specify only the ID from the command line
-> ./bpformation.py blueprint execute --id 3526 3526 3526
+> bpformation blueprint execute --id 3526 3526 3526
 ✔  Execution request submitted for Blueprint ID 3526 (request ca1-26899)
 ✔  Execution request submitted for Blueprint ID 3526 (request ca1-26900)
 ✔  Execution request submitted for Blueprint ID 3526 (request ca1-26901)
