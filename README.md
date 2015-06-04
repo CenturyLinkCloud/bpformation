@@ -609,6 +609,12 @@ optional arguments:
 Example:
 
 ```
+# Execute reading parameters from json file - pulls ID from 'metadata' 
+# and parameters from 'execute' sections
+> 
+
+# Execute a number of Blueprints.  This time specify only the ID from the command line
+>
 ```
 
 
