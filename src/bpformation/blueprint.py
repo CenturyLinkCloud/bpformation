@@ -294,6 +294,16 @@ class Blueprint():
 				# System - add add'l private IP
 				elif task['type']=='add_ip' and task['uuid']=='9a851f50-c676-4c11-b4c8-a0a7241c1060':
 					staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
+
+				# System - set ttl
+				elif task['type']=='ttl' and task['uuid']=='2d4d37e6-be83-461a-bfd2-b3c2ca327db5':
+					staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
+					staged_tasks['Server.Tasks[%s].Properties[0].Name' % staged_tasks_idx] = 'ActivityType'
+					staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = 'Delete'
+					staged_tasks['Server.Tasks[%s].Properties[1].Name' % staged_tasks_idx] = 'TimeZone'
+					staged_tasks['Server.Tasks[%s].Properties[1].Value' % staged_tasks_idx] = 'UTC'
+					staged_tasks['Server.Tasks[%s].Properties[2].Name' % staged_tasks_idx] = 'ScheduleDate'
+					staged_tasks['Server.Tasks[%s].Properties[2].Value' % staged_tasks_idx] = '2015-06-06T15:35:00Z'
 	
 				# User package
 				elif task['type']=='package':
