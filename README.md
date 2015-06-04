@@ -1,4 +1,4 @@
-# CenturyLink Cloud Blueprint Formation CLI Tool (bp-formation)
+# CenturyLink Cloud Blueprint Formation CLI Tool (bpformation)
 
 This repository contains a command line interface *CLI* to interact with the *[CenturyLink Cloud](http://www.centurylinkcloud.com)* Blueprints packaging and workflow services,.  
 
