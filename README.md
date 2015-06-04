@@ -258,11 +258,17 @@ Example:
 
 ```
 # Delete Some of those Test Packages
+> ./bpformation.py package delete --uuid 6b67648d-71fe-4501-8d4d-15cd496336da \
+                                         7a5c86ce-1140-4d4f-bbd0-5b2859a79451 \
+                                         75eb2d6c-253b-448c-ada4-a6ad57598576 
+✔  6b67648d-71fe-4501-8d4d-15cd496336da package deleted
+✔  7a5c86ce-1140-4d4f-bbd0-5b2859a79451 package deleted
+✔  75eb2d6c-253b-448c-ada4-a6ad57598576 package deleted
 ```
 
 ### Package Download
 
-lorem ipsum 
+Download a zip file of one or more packages specified by UUID.
 
 ```
 ```
