@@ -187,13 +187,12 @@ class Package():
 					parameters={ p.split("=")[0]: p.split("=",1)[1] for p in parameters },
 				))
 
-		sum(requests).WaitUntilComplete()
-		request_errors = [ o.error_requests[0] for o in requests if len(o.error_requests) ]
-		request_success = [ o.success_requests[0] for o in requests if len(o.success_requests) ]
-		if len(request_success):
-			success_servers = [ o.data['context_val'] for o in request_success ]
+		requests = sum(requests)
+		requests.WaitUntilComplete()
+		if len(requests.success_requests):
+			success_servers = [ o.data['context_val'] for o in requests.success_requests ]
 			bpformation.output.Status('SUCCESS',3,"Execution completed on %s (%s seconds)" % (",".join(success_servers),int(time.time()-start_time)))
-		for request in request_errors:
+		for request in requests.error_requests:
 			(req_loc,req_id) = request.id.split("-",1)
 			r = bpformation.web.CallScrape("GET","/Blueprints/Queue/RequestDetails/%s?location=%s" % (req_id,req_loc))
 			if r.status_code<300 and r.status_code>=200:
