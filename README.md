@@ -419,7 +419,7 @@ Cloud control portal, or managing the lifecycle of a Blueprint as part of a vers
 
 The default naming for these downloaded files is composed of `blueprint name`-`id`-`version`.json.
 
-View an [example blueprint json](#) file for a look at the major sections and their respective roles.
+Exports keep all IDs and task sequencing intact to subsequent [imports](#blueprintimport) and [updates)(#blueprintupdate) work as expected.
 
 ```
 > ./bpformation.py blueprint export -h
@@ -477,14 +477,23 @@ Example:
 
 ### Blueprint Import
 
-lorem ipsum 
+View an [example blueprint json](#) file for a look at the major sections and their respective roles.
 
 ```
+> ./bpformation.py blueprint import -h
+usage: bpformation.py blueprint import [-h] --file [FILE [FILE ...]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --file [FILE [FILE ...]]
+                        Blueprint definition json files
 ```
 
 Example:
 
 ```
+# Import modified Gemfire Blueprint
+
 ```
 
 
@@ -499,6 +508,9 @@ lorem ipsum
 Example:
 
 ```
+# Update modified Gemfire Blueprint
+> perl -p -i -e 's/"version": "[0-9\.]+"/"version": "0.2"/' pivotal_gemfire-2668-0.1.json
+> 
 ```
 
 
