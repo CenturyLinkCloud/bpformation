@@ -335,8 +335,12 @@ optional arguments:
 Example:
 
 ```
-# Execute package on a few of my servers
-
+# Execute the Linux Update patching package on a few of my servers
+> ./bpformation.py package execute --uuid 77ab3844-579d-4c8d-8955-c69a94a2ba1a --server CA1KRAPX04 CA1KRAPX05 CA1KRAPX06
+✔  Execution request submitted for CA1KRAPX04
+✔  Execution request submitted for CA1KRAPX05
+✔  Execution request submitted for CA1KRAPX06
+✔  Execution completed on ca1krapx05, ca1krapx06, ca1krapx04 (287 seconds)
 ```
 
 

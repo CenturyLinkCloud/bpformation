@@ -193,7 +193,7 @@ class Package():
 		requests.WaitUntilComplete()
 		if len(requests.success_requests):
 			success_servers = [ o.data['context_val'] for o in requests.success_requests ]
-			bpformation.output.Status('SUCCESS',3,"Execution completed on %s (%s seconds)" % (",".join(success_servers),int(time.time()-start_time)))
+			bpformation.output.Status('SUCCESS',3,"Execution completed on %s (%s seconds)" % (", ".join(success_servers),int(time.time()-start_time)))
 		for request in requests.error_requests:
 			(req_loc,req_id) = request.id.split("-",1)
 			r = bpformation.web.CallScrape("GET","/Blueprints/Queue/RequestDetails/%s?location=%s" % (req_id,req_loc))
