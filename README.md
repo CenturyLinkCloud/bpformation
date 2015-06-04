@@ -506,7 +506,6 @@ Example:
 ```
 
 
-
 ### Blueprint Update
 
 lorem ipsum 
@@ -517,11 +516,11 @@ lorem ipsum
 Example:
 
 ```
-# Update modified Gemfire Blueprint
-> perl -p -i -e 's/"version": "[0-9\.]+"/"version": "0.2"/' pivotal_gemfire-2668-0.1.json
-> 
+# Update modified test Blueprint
+> perl -p -i -e 's/"version": "[0-9\.]+"/"version": "1.0"/' testdeploy-3526-0.2.json
+> ./bpformation.py blueprint update --file testdeploy-3526-0.2.json
+✔  Testdeploy v1.0 updated ID 3526 (1 tasks)
 ```
-
 
 
 ### Blueprint Delete
