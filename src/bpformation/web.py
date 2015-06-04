@@ -105,7 +105,7 @@ class Web():
 
 	# TODO
 	@staticmethod
-	def CallScrape(method,url,payload={},allow_redirects=True,debug=False):
+	def CallScrape(method,url,payload={},headers=None,allow_redirects=True,debug=False):
 		"""Execute screen scrape call
 
 		:param url: URL paths associated with the API call
@@ -118,7 +118,7 @@ class Web():
 		fq_url = "%s%s" % (bpformation.defaults.CONTROL_URL,url)
 
 		#if isinstance(payload, basestring):  headers['content-type'] = "Application/json" # added for server ops with str payload
-		headers = None	# Placeholder for future use
+		#headers = None	# Placeholder for future use
 
 		if method=="GET":
 			r = requests.request(method,fq_url,

@@ -389,11 +389,14 @@ class Blueprint():
 		bp['tasks'] = new_tasks
 
 		# Step 3 - Publish Blueprint
+		#r = bpformation.web.CallScrape("GET","/Blueprints/Designer/Execution/%s" % bp['metadata']['id'],allow_redirects=False)
+		#r = bpformation.web.CallScrape("GET","/Blueprints/Designer/review/%s" % bp['metadata']['id'],allow_redirects=False)
+		# https://control.ctl.io/Blueprints/Designer/review/3519
 		r = bpformation.web.CallScrape("POST","/Blueprints/Designer/review/%s" % bp['metadata']['id'],allow_redirects=False,payload={
 					"Publish": "", # unknown
 					"DataTemplate.UUID": bp['metadata']['uuid'],
 					"TemplateID": bp['metadata']['id'],
-				},debug=True)
+				},debug=True,headers={'Referer': 'https://control.ctl.io/Blueprints/Designer/review/%s' % bp['metadata']['id']})
 		r = bpformation.web.CallScrape("GET","/Blueprints/Designer/ThankYou/%s" % bp['metadata']['id'],allow_redirects=False)
 
 		# TODO Step 4 - save output?  Assume needed for some kind of update
