@@ -544,18 +544,51 @@ Example:
 Delete one or more Blueprints owned by your account.  Deletion may take several minute to replicate globally.
 
 ```
+> ./bpformation.py blueprint delete -h
+usage: bpformation.py blueprint delete [-h] --id [ID [ID ...]]
+
+optional arguments:
+  -h, --help          show this help message and exit
+  --id [ID [ID ...]]  Blueprint ID (note this ID is not globally unique - find this from your primary datacenter
 ```
 
 Example:
 
 ```
+# Delete single blueprint
+> ./bpformation.py blueprint delete --id 3515
+✔  Testdeploy update deleted (id 3515)
 ```
 
 ### Blueprint Execute
 
-lorem ipsum 
+Execute one or more specified blueprints
 
 ```
+> ./bpformation.py blueprint execute -h
+usage: bpformation.py blueprint execute [-h] [--file [FILE [FILE ...]]]
+                                        [--id [ID [ID ...]]]
+                                        [--parameter [PARAMETER [PARAMETER ...]]]
+                                        [--type {Standard,HyperScale}]
+                                        [--password PASSWORD]
+                                        [--group-id GROUP_ID]
+                                        [--network NETWORK] [--dns DNS]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --file [FILE [FILE ...]]
+                        Blueprint definition json files with "execute"
+                        populated
+  --id [ID [ID ...]]    Blueprint ID (note this ID is not globally unique -
+                        find this from your primary datacenter
+  --parameter [PARAMETER [PARAMETER ...]]
+                        key=value pairs for package parameters (overrides "file")
+  --type {Standard,HyperScale}
+                        Server hardware type
+  --password PASSWORD   Server deploy password
+  --group-id GROUP_ID   Server deploy group ID
+  --network NETWORK     Server deploy network
+  --dns DNS             Server DNS
 ```
 
 Example:
