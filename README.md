@@ -268,14 +268,22 @@ Example:
 
 ### Package Download
 
-Download a zip file of one or more packages specified by UUID.
+Download a zip file of one or more packages specified by UUID.  The package must be visible to your account but need not be owned by you.
 
 ```
+> ./bpformation.py package download --help
+usage: bpformation.py package download [-h] --uuid [UUID [UUID ...]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --uuid [UUID [UUID ...]]
+                        UUID for packages
 ```
 
 Example:
 
 ```
+# Download package
 ```
 
 
