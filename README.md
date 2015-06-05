@@ -15,8 +15,10 @@ This repository contains a command line interface *CLI* to interact with the *[C
 ## Installing
 
 ### Via Python's pip
+
 Cross-platform installation is available via pypi.  Requires *Python 2.7* - this is not currently compatible with Python 3.
 If you have pip already installed the following command will get you running:
+
 ```
 > pip install bpformation
 ```
@@ -24,21 +26,85 @@ If you have pip already installed the following command will get you running:
 This should automatically install the following dependencies used by the CLI: prettytable, clint, argparse, requests, [clc-sdk](https://github.com/CenturyLinkCloud/clc-python-sdk)
 
 If you do not have pip (the Python package manager) installed a quickstart install of this prereq on Linux/Mac is:
+
 ```
 > curl https://bootstrap.pypa.io/get-pip.py | sudo python
 ```
 
+You're on your own if some of the dependencies fail.  Follow one of our quickstarts below if possible.
+
+### Red Hat / CentOS Quickstart
+
+Test matrix:
+* Successfully install on RHEL/CentS 7
+
+  ```
+  # Install pre-reqs
+  > yum -y install python-pip
+  
+  ## Install bpformation
+  > pip install bpformation
+   ```
+
+* Successfully installed on RHEL/CentOS 6.
+
+  ```
+  # Install pre-reqs
+  > yum -y install gcc python-devel libxslt-devel
+  
+  # Install pip
+  > curl https://bootstrap.pypa.io/get-pip.py | sudo python
+  
+  ## Install bpformation
+  > pip install bpformation
+  ```
+
+* RHEL/CentOS 5 requires upgraded Python to 2.7 from source.
+
+### Ubuntu / Debian Quickstart
+
+Test matrix:
+* Successfully installed on Ubuntu 12 and 14
+
+  ```
+  # Install pre-reqs
+  > apt-get -y update
+  > apt-get -y install python-pip python-lxml
+  
+  # Install bpformation
+  > pip install bpformation
+  ```
+
+### Mac Quickstart
+
+Not yet validated, steps should be:
+
+```
+# Install brew if not yet available
+> ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)”
+> brew doctor
+
+# Install lxml pre-req libraries
+> brew install libxml2
+> brew install libxslt
+
+# Install bpformation
+> pip install bpformation
+```
+
 ### Windows pre-packaged executable
-The CLI is available as a prepackaged single-file Windows executable and the most recent compiled version is always available [here](https://github.com/CenturyLinkCloud/bp-foration/raw/master/src/dist/bpformation.exe).
+The CLI is available as a prepackaged single-file Windows executable and the most recent compiled version is always available [here](https://github.com/CenturyLinkCloud/bpformation/raw/master/src/dist/bpformation.exe).
 
 
 ## Examples
 
 ### Publish, Upload, and Test Blueprint Package on an Existing  Server
 
+**coming soon**
 
 ### Replicate a Public Blueprint, Customize, Republish, then Deploy
 
+**coming soon**
 
 ## Usage
 
