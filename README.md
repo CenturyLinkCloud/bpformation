@@ -36,7 +36,7 @@ You're on your own if some of the dependencies fail.  Follow one of our quicksta
 ### Red Hat / CentOS Quickstart
 
 Test matrix:
-* Successfully install on RHEL/CentS 7
+* Successfully install on RHEL/CentS 7:
 
   ```
   # Install pre-reqs
@@ -46,7 +46,7 @@ Test matrix:
   > pip install bpformation
    ```
 
-* Successfully installed on RHEL/CentOS 6.
+* Successfully installed on RHEL/CentOS 6:
 
   ```
   # Install pre-reqs
@@ -64,7 +64,7 @@ Test matrix:
 ### Ubuntu / Debian Quickstart
 
 Test matrix:
-* Successfully installed on Ubuntu 12 and 14
+* Successfully installed on Ubuntu 12 and 14:
 
   ```
   # Install pre-reqs
@@ -93,6 +93,7 @@ Not yet validated, steps should be:
 ```
 
 ### Windows pre-packaged executable
+
 The CLI is available as a prepackaged single-file Windows executable and the most recent compiled version is always available [here](https://github.com/CenturyLinkCloud/bpformation/raw/master/src/dist/bpformation.exe).
 
 
@@ -162,11 +163,13 @@ All commands require authentication which can be accomplished in several ways in
 * Define environment variables (CONTROL_USER / CONTROL_PASSWORD)
 * Pass credentials as command line options
 
-Configuration files follow ini syntax.  Reference the [example.ini](src/example_config.ini) file with all currently accepted fields.
+Configuration files follow ini syntax.  Reference the [example.ini](examples/example_config.ini) file with all currently accepted fields.
 
 
 
 ## Packages
+
+![package vs. blueprint](assets/package_vs_blueprint.png)
 
 A CenturyLink Cloud Blueprint package is an invoked piece of software, uploaded to the cloud platform, which customizes a server template.  [Learn the difference between templates, blueprints and packages](https://www.centurylinkcloud.com/knowledge-base/blueprints/understanding-the-difference-between-templates-blueprints-and-packages/).
 
@@ -237,6 +240,8 @@ Example:
 Upload one or more Blueprint packages into your account.  This call obtains the FTP endpoint used by your account then uploads the package via ftp.
 This can be used both for new packages and for updating the contents of an existing package.  Source file must be a valid  [Blueprint Package](https://www.centurylinkcloud.com/knowledge-base/blueprints/blueprint-package-manifest-builder-wizard/) which is a zip file that contains a valid XML `package.manifest` and optionally any supporting scripts or binaries.
 
+*Warning* If executing this from within CenturyLink Cloud on a server in your primary datacenter the command will fail!  FTP access from your primary datacenter to your primary datacenter is not currently permitted.  Execute this from an external workstation or a server setup from another CenturyLink Cloud datacenter.
+
 ```
 > bpformation package upload -h
 usage: bpformation.py package upload [-h] --file [FILE [FILE ...]]
@@ -266,14 +271,15 @@ Example:
 ### Package Publish
 
 Publish one or more already uploaded packages into your account.  This can be either a new package or can be an update to an existing package.  Note that the package UUID must be globally unique and can never be reused, so if you delete a package and want to re-add it or if you have a dev and prod release of the package they will need distinct UUIDs.
-Provide the OS `type` classification (`Linux` or `Windows), one or more regexs of `os`, visibility (Private, Shared, Public), and the name of all `file` already resident on the FTP server.
+
+Provide the OS `type` classification (`Linux` or `Windows), one or more regexs of `os`, visibility (Private, Shared, Public), and the name of all `file` already resident on the FTP server.  OS os the actual name of the Operating System in scope within CenturyLink Cloud.  For example, to capture all versions of CentOS specify `--os centos`.
 
 ```
 > bpformation package publish --help
-usage: bpformation.py package publish [-h] --file [FILE [FILE ...]] --type
-                                      {Windows,Linux} --visibility
-                                      {Public,Private,Shared} --os
-                                      [OS [OS ...]]
+usage: bpformation.py package publish [-h] --file [FILE [FILE ...]] 
+                                      --type {Windows,Linux} 
+									  --visibility {Public,Private,Shared} 
+									  --os [OS [OS ...]]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -346,8 +352,8 @@ Example:
 ```
 # Delete Some of those Test Packages
 > bpformation package delete --uuid 6b67648d-71fe-4501-8d4d-15cd496336da \
-                                         7a5c86ce-1140-4d4f-bbd0-5b2859a79451 \
-                                         75eb2d6c-253b-448c-ada4-a6ad57598576 
+                                    7a5c86ce-1140-4d4f-bbd0-5b2859a79451 \
+                                    75eb2d6c-253b-448c-ada4-a6ad57598576 
 ✔  6b67648d-71fe-4501-8d4d-15cd496336da package deleted
 ✔  7a5c86ce-1140-4d4f-bbd0-5b2859a79451 package deleted
 ✔  75eb2d6c-253b-448c-ada4-a6ad57598576 package deleted
@@ -355,7 +361,7 @@ Example:
 
 ### Package Download
 
-Download a zip file of one or more packages specified by UUID.  The package must be visible to your account but need not be owned by you.
+Download one or more package zip files specified by UUID.  The package must be visible to your account but need not be owned by you.
 The downloaded package will be saved in your current directory with the name `uuid`.zip
 
 ```
@@ -413,6 +419,8 @@ Example:
 
 
 ## Blueprints
+
+![package vs. blueprint](assets/package_vs_blueprint.png)
 
 A CenturyLink Cloud Blueprint package is an invoked piece of software, uploaded to the cloud platform, which customizes a server template.  [Learn the difference between templates, blueprints and packages](https://www.centurylinkcloud.com/knowledge-base/blueprints/understanding-the-difference-between-templates-blueprints-and-packages/)
 
@@ -487,7 +495,7 @@ The default naming for these downloaded files is composed of `blueprint name`-`i
 
 Exports keeps all IDs and task sequencing intact to subsequent [imports](#blueprintimport) and [updates)(#blueprintupdate) work as expected.
 An export json contains `metadata`, `tasks`, and a template `execute` section for re-use across other `bpformation` functions.  
-View an [example blueprint json](#) file for a look at the major sections and their respective roles.
+View an [example blueprint json](examples/blueprint.json) file for a look at the major sections and their respective roles.
 
 ```
 > bpformation blueprint export -h
@@ -517,27 +525,44 @@ Example:
 > bpformation blueprint export --id 3526 --file -
 {
     "execute": {
+        "apache_server_port": "80",
+        "apache_server_ssl_port": "443",
+        "base_user_name": "",
+        "plaintext_password": "",
+        "username": ""
     },
     "metadata": {
-        "description": "x",
-        "name": "Testdeploy",
-        "owner": "owner@ctl.io",
-        "version": "0.2",
+        "description": "lorem ipsum...",
+        "id": "0",
+        "name": "Install ownCloud on Linux",
+        "owner": "CenturyLink Cloud Ecosystem",
+        "version": "1.7",
         "visibility": "private"
     },
     "tasks": [
         {
             "cpu": "1",
-            "description": "x",
-            "id": "1adcbabb-fa80-4385-a83c-43ebd05d5e42",
-            "name": "X",
-            "ram": "1",
+            "description": "ownCloud",
+            "id": "5fe72fba-aa16-4846-9d76-ec2d375a11f6",
+            "name": "OWNC",
+            "ram": "4",
             "tasks": [
                 {
-                    "id": "c189a7fc-2e9c-4fed-a59b-2d68fa77bdae",
+                    "id": "7e5825a4-6198-4ab5-9de0-a70fbb6d8485",
                     "name": "Linux Update",
                     "type": "package",
                     "uuid": "77ab3844-579d-4c8d-8955-c69a94a2ba1a"
+                },
+                {
+                    "id": "8cf20685-2c44-4050-93af-c0ef659a3629",
+                    "name": "Install ownCloud on Linux",
+                    "properties": {
+                        "mysql_database_name": "mydb",
+                        "mysql_database_username": "mysql",
+                        "mysql_port": "3306"
+                    },
+                    "type": "package",
+                    "uuid": "bf6bdfba-593d-443c-b490-399276d9b8b6"
                 }
             ],
             "template": "CENTOS-6-64-TEMPLATE",
@@ -555,7 +580,7 @@ Example:
 Import a new Blueprint into CenturyLink Cloud.  Source must be a json file but can come from another exported Blueprint (we strip
 all unique IDs if they exist) or from a hand-crafted definition.  
 
-The `metadata` and `tasks` sections must be populated for a successful import.  View an [example blueprint json](#) file for a 
+The `metadata` and `tasks` sections must be populated for a successful import.  View an [example blueprint json](examples/blueprint.json) file for a 
 look at the major sections and their respective roles.
 
 ```
@@ -607,7 +632,7 @@ Example:
 
 ### Blueprint Delete
 
-Delete one or more Blueprints owned by your account.  Deletion may take several minute to replicate globally.
+Delete one or more Blueprints owned by your account.  Deletion may take several minutes to replicate globally.
 
 ```
 > bpformation blueprint delete -h
@@ -637,7 +662,7 @@ using defaults defined in a number of locations.
 System information (server type, password, group ID, network, DNS) can be specified from a number of sources,
 listed below with increasing priority (last item takese precendence over the first item):
 
-* bpformation config file (See [example.ini](src/example_config.ini)) and reference the [authentication](#authentication) section which also makes use of this file and details locations where it may be found
+* bpformation config file (See [example.ini](examples/example_config.ini)) and reference the [authentication](#authentication) section which also makes use of this file and details locations where it may be found
 * Definition within the json file
 * Definition from the command line
 
