@@ -81,7 +81,6 @@ Not yet validated, steps should be:
 
 ```
 # Install brew if not yet available
-> xcode-select --install
 > ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)”
 > brew doctor
 
