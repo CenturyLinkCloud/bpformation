@@ -93,7 +93,7 @@ Not yet validated, steps should be:
 ```
 
 ### Windows pre-packaged executable
-The CLI is available as a prepackaged single-file Windows executable and the most recent compiled version is always available [here](https://github.com/CenturyLinkCloud/bp-foration/raw/master/src/dist/bpformation.exe).
+The CLI is available as a prepackaged single-file Windows executable and the most recent compiled version is always available [here](https://github.com/CenturyLinkCloud/bpformation/raw/master/src/dist/bpformation.exe).
 
 
 ## Examples
