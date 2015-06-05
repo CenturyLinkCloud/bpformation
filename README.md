@@ -107,6 +107,20 @@ The CLI is available as a prepackaged single-file Windows executable and the mos
 
 **coming soon**
 
+### Managed Blueprint Lifecycle
+
+Consistently manage your blueprint by recording all changes using version control and get a holistic view of your blueprint for troubleshooting.
+
+```
+```
+
+### Customize Existing Public Blueprint
+
+
+```
+```
+
+
 ## Usage
 
 ```
