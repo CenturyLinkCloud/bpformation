@@ -15,6 +15,7 @@ This repository contains a command line interface *CLI* to interact with the *[C
 ## Installing
 
 ### Via Python's pip
+
 Cross-platform installation is available via pypi.  Requires *Python 2.7* - this is not currently compatible with Python 3.
 If you have pip already installed the following command will get you running:
 ```
@@ -27,6 +28,41 @@ If you do not have pip (the Python package manager) installed a quickstart insta
 ```
 > curl https://bootstrap.pypa.io/get-pip.py | sudo python
 ```
+
+### Red Hat / CentOS Quickstart
+
+Test matrix:
+* Successfully installed on RHEL/CentOS 6.
+* RHEL/CentOS 5 requires upgraded Python to 2.7
+
+```
+# Install pre-reqs
+> yum -y install gcc python-devel libxslt-devel
+
+# Install pip
+> curl https://bootstrap.pypa.io/get-pip.py | sudo python
+
+## Install bpformation
+> pip install bpformation
+
+```
+
+### Ubuntu / Debian Quickstart
+
+Test matrix:
+* Successfully installed on RHEL/CentOS 6.
+* RHEL/CentOS 5 requires upgraded Python to 2.7
+
+```
+# Install pre-reqs
+> apt-get -y update
+> apt-get -y install python-pip python-lxml
+
+## Install bpformation
+> pip install bpformation
+
+```
+
 
 ### Windows pre-packaged executable
 The CLI is available as a prepackaged single-file Windows executable and the most recent compiled version is always available [here](https://github.com/CenturyLinkCloud/bp-foration/raw/master/src/dist/bpformation.exe).

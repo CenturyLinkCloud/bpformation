@@ -14,7 +14,10 @@ import bpformation
 # TODO vNext:
 #
 
-requests.packages.urllib3.disable_warnings()
+try:
+	requests.packages.urllib3.disable_warnings()
+except:
+	pass
 
 class API():
 	pass

@@ -1,6 +1,6 @@
 """CLI console script entry point."""
 
-import bformation
+import bpformation
 
 
 def main():
