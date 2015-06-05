@@ -20,7 +20,7 @@ class Args:
 
 
 	def ParseArgs(self):
-		parser = argparse.ArgumentParser(description="CLI tool for interacting with CenturyLink Blueprints Package and Workflow Services.  http://www.CenturyLinkCloud.com")
+		parser = argparse.ArgumentParser(description="CLI tool for interacting with CenturyLink Blueprints Package and Workflow Services.  http://www.CenturyLinkCloud.com (v%s)" % bpformation.__version__)
 		parser_sp1 = parser.add_subparsers(title='Commands',dest='command')
 
 		########## Package ###########
@@ -42,6 +42,10 @@ class Args:
 		## Upload
 		parser_package_upload = parser_sp2.add_parser('upload', help='Uploaded package to specified alias')
 		parser_package_upload.add_argument('--file', nargs='*', metavar="FILE", required=True, help='Files to upload')
+
+		## List OS
+		parser_package_listos = parser_sp2.add_parser('list-os', help='List known operating systems')
+		parser_package_listos.add_argument('--type', required=True, choices=['Windows','Linux'], help='Operating system')
 
 		## Publish
 		parser_package_publish = parser_sp2.add_parser('publish', help='Uploaded packages to specified alias')
@@ -193,6 +197,7 @@ class ExecCommand():
 
 	def Package(self):
 		if bpformation.args.GetArgs().sub_command == 'upload':  self.PackageUpload()
+		elif bpformation.args.GetArgs().sub_command == 'list-os':  self.PackageListOS()
 		elif bpformation.args.GetArgs().sub_command == 'publish':  self.PackagePublish()
 		elif bpformation.args.GetArgs().sub_command == 'upload-and-publish':  self.PackageUploadAndPublish()
 		elif bpformation.args.GetArgs().sub_command == 'delete':  self.PackageDelete()
@@ -238,6 +243,10 @@ class ExecCommand():
 
 	def PackageList(self):
 		self.Exec('bpformation.package.List', {'filters': bpformation.args.args.filter }, cols=['name','uuid','owner','visibility','status'])
+
+
+	def PackageListOS(self):
+		self.Exec('bpformation.package.ListOS', {'type': bpformation.args.args.type }, cols=['Name','ID'])
 
 
 	def PackageExecute(self):

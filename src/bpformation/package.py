@@ -80,12 +80,23 @@ class Package():
 
 		oss_retain = {}
 		for os_regex in os_regexs:  
+			if re.match("rhel",os_regex.lower()):  os_regex = "RedHat"
+			print os_regex
 			for os in oss:  
 				if re.search(os_regex,os['Name']):  oss_retain[os['ID']] = True
 
 		return(oss_retain.keys())
 
 	
+	@staticmethod
+	def ListOS(type):
+		try:
+			return(bpformation.web.CallScrape("POST","/blueprints/packages/GetOSList", {'osType': type}).json()['Result'])
+		except:
+			bpformation.output.Status('ERROR',3,"Unable to retrieve OS listi")
+			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+
+
 	@staticmethod
 	def Publish(files,type,visibility,os):
 		task_queue = []

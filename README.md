@@ -7,7 +7,7 @@ This repository contains a command line interface *CLI* to interact with the *[C
 * [Installing](#installing)
 * [Examples](#examples)
 * [Usage](#usage)
- * [Packages](#packages) - [List](#packagelist), [Upload](#packageupload), [Publish](#packagepublish), [Upload and Publish](#packageuploadandpublish), [Delete](#packagedelete), [Download](#packagedownload), [Execute](#packageexecute)
+ * [Packages](#packages) - [List](#packagelist), [List OS](#packagelistos), [Upload](#packageupload), [Publish](#packagepublish), [Upload and Publish](#packageuploadandpublish), [Delete](#packagedelete), [Download](#packagedownload), [Execute](#packageexecute)
  * [Blueprints](#blueprints) - [List](#blueprintlist), [Export](#blueprintexport), [Import](#blueprintimport), [Update](#blueprintupdate), [Delete](#blueprintdelete), [Execute](#blueprintexecute)
 * Python SDK (documentation coming soon)
 
@@ -318,6 +318,44 @@ Example:
 
 ```
 
+### Package List OS
+
+List all operating systems for a given type (Linux or Windows).  Use this to tune your `os` regex during a [Package Publish](#packagepublish).
+
+```
+> bpformation package list-os --help
+usage: bpformation.py package list-os [-h] --type {Windows,Linux}
+
+optional arguments:
+  -h, --help            show this help message and exit
+    --type {Windows,Linux}
+	                        Operating system
+```
+
+Example:
+
+```
+> bpformation package list-os --type Windows
++-----------------------------------+----+
+| Name                              | ID |
++-----------------------------------+----+
+| Windows 2003 32-bit               | 2  |
+| Windows 2003 64-bit               | 3  |
+| Windows 2003 Enterprise 32-bit    | 15 |
+| Windows 2003 Enterprise 64-bit    | 16 |
+| Windows 2008 32-bit               | 4  |
+| Windows 2008 64-bit               | 5  |
+| Windows 2008 Datacenter 64-bit    | 26 |
+| Windows 2008 Enterprise 32-bit    | 17 |
+| Windows 2008 Enterprise 64-bit    | 18 |
+| Windows 2008 R2 Datacenter 64-bit | 45 |
+| Windows 2008 R2 Enterprise 64-bit | 44 |
+| Windows 2008 R2 Standard 64-bit   | 43 |
+| Windows 2012 64-bit               | 24 |
+| Windows 2012 Datacenter 64-bit    | 27 |
+| Windows 2012R2 Datacenter 64-bit  | 28 |
++-----------------------------------+----+
+```
 
 ### Package Publish
 

@@ -1,15 +1,23 @@
 
+VERSION = "0.7"
+
 #
 # python setup.py sdist
 # python setup.py bdist_dumb
 # python setup.py bdist_rpm
 #
 
+import subprocess
 from setuptools import setup, find_packages
 
+# Apply version
+subprocess.Popen(["/usr/bin/perl","-p","-i","-e","s/^__version__.*/__version__ = \"%s\"/" % VERSION,"bpformation/__init__.py"]).wait()
+
+
+# Setup
 setup(
 	name = "bpformation",
-	version = "0.6",
+	version = VERSION,
 	packages = find_packages("."),
 
 	install_requires = ['prettytable','clint','argparse','requests','lxml','clc-sdk'],
