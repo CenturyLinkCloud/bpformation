@@ -99,14 +99,6 @@ The CLI is available as a prepackaged single-file Windows executable and the mos
 
 ## Examples
 
-### Publish, Upload, and Test Blueprint Package on an Existing  Server
-
-**coming soon**
-
-### Replicate a Public Blueprint, Customize, Republish, then Deploy
-
-**coming soon**
-
 ### Managed Blueprint Lifecycle
 
 Consistently manage your blueprint by recording all changes using version control and get a holistic view of your blueprint for troubleshooting.
@@ -157,7 +149,13 @@ specific needs.
     ]
 }
 
+# Create our new Blueprint using this as a model
+> bpformation blueprint import --file pivotal_greenplum_-_4_node_large_cluster-2533-1.4.json
 ```
+
+### Publish, Upload, and Test Blueprint Package on an Existing  Server
+
+**coming soon**
 
 
 ## Usage
