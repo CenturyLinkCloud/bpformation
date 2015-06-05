@@ -657,7 +657,7 @@ Execute one or more specified blueprints.  This command can be made complex by c
 (server sizing, network details, etc.) and the package parameter information or it can be streamlined
 using defaults defined in a number of locations.
 
-*Take this this can only deploy Blueprints in your primary datacenter*.
+*Take note this can only deploy Blueprints in your primary datacenter*.
 
 System information (server type, password, group ID, network, DNS) can be specified from a number of sources,
 listed below with increasing priority (last item takese precendence over the first item):
