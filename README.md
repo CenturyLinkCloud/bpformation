@@ -81,6 +81,7 @@ Not yet validated, steps should be:
 
 ```
 # Install brew if not yet available
+> xcode-select --install
 > ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)”
 > brew doctor
 
@@ -89,7 +90,7 @@ Not yet validated, steps should be:
 > brew install libxslt
 
 # Install bpformation
-> pip install bpformation
+> STATIC_DEPS=true pip install bpformation
 ```
 
 ### Windows pre-packaged executable
@@ -223,6 +224,8 @@ Configuration files follow ini syntax.  Reference the [example.ini](examples/exa
 ![package vs. blueprint](assets/package_vs_blueprint.png)
 
 A CenturyLink Cloud Blueprint package is an invoked piece of software, uploaded to the cloud platform, which customizes a server template.  [Learn the difference between templates, blueprints and packages](https://www.centurylinkcloud.com/knowledge-base/blueprints/understanding-the-difference-between-templates-blueprints-and-packages/).
+
+Note that CenturyLink Cloud has a distinction between *Software* and *Scripts* packages.  This distinction will eventually be retired and the final resting place for all packages will align with the Script category.  That being said *this tool works exclusively with Script Packages* and will have no visibility into Software packages.
 
 ```
 > bpformation package -h
