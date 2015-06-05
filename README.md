@@ -130,6 +130,33 @@ Sometimes partner or community provided blueprints are close to your needs but n
 specific needs.
 
 ```
+# Locate target Pivotal Greenplum Blueprint
+> bpformation.py blueprint list --filter greenplum public
++------------------------------------------+------+------------+--------------+
+| name                                     | id   | visibility | date_added   |
++------------------------------------------+------+------------+--------------+
+| Pivotal Greenplum - 4 node large cluster | 2533 | public     | Mar 05, 2015 |
+| Pivotal Greenplum - 4 node small cluster | 2531 | public     | Mar 05, 2015 |
++------------------------------------------+------+------------+--------------+
+
+# Export 
+> bpformation.py blueprint export --id 2533
+✔  Pivotal Greenplum - 4 node large cluster v1.4 exported to pivotal_greenplum_-_4_node_large_cluster-2533-1.4.json (5 tasks)
+
+# Modify json to increase the server size (showing a portion of the json file)
+{
+    "execute": { <..... snip .....> },
+    "metadata": { <..... snip .....> },
+    "tasks": [
+		<..... snip .....>
+        {
+            "cpu": "8",
+            "ram": "64",
+        },
+		<..... snip .....>
+    ]
+}
+
 ```
 
 
