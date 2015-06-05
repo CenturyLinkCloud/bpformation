@@ -110,12 +110,24 @@ The CLI is available as a prepackaged single-file Windows executable and the mos
 ### Managed Blueprint Lifecycle
 
 Consistently manage your blueprint by recording all changes using version control and get a holistic view of your blueprint for troubleshooting.
+The authoritative definition for your blueprint now resides in a json file.
 
 ```
+# If you've already got a blueprint, export it first
+> bpformation blueprint export --id 1234 --file foobar.json
+
+# Make and record changes using standard text editors and version control
+> vi foobar.json
+> git commit -m 'version 1.3 updates, change server sizing' foobar.json
+
+# Apply changes on demand
+> bpformation blueprint update --file foobar.json
 ```
 
 ### Customize Existing Public Blueprint
 
+Sometimes partner or community provided blueprints are close to your needs but not perfect.  Start with one of these and adapt it for your
+specific needs.
 
 ```
 ```
