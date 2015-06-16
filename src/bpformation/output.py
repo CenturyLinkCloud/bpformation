@@ -21,6 +21,8 @@ import bpformation
 #    return("%d:%02d:%02d" % (hrs,mins,secs))
 
 
+status_log = []
+
 def Table(data_arr,keys,opts={}):
 	if type(data_arr) != list:  data_arr = [data_arr]
 
@@ -111,16 +113,29 @@ def Json(data_arr,keys,opts={}):
 	return(new_data_arr)
 
 
-def Status(status,level,message):
-	if bpformation.args.GetArgs().quiet<level:
-		if os.name=='posix':
-			success_mark = '✔ '
-			error_mark = '✖  '
-		else:
-			success_mark = '/'
-			error_mark = 'x '
+def StatusLog(clear=True):
+	global status_log
+	t = status_log
+	if clear:  status_log = []
+	return(t)
 
-		if status == 'SUCCESS':  puts("%s %s" % (colored.green(success_mark),message.encode('utf-8')))
-		elif status == 'ERROR' and level<3:  puts("%s%s" % (colored.red(error_mark),message.encode('utf-8')))
-		elif status == 'ERROR':  puts("%s" % (colored.red(error_mark+message.encode('utf-8'))))
+
+def Status(status,level,message):
+	global status_log
+	status_log.append({"status": status, "level": level, "message": message})
+
+	try:
+		if bpformation.args.GetArgs().quiet<level:
+			if os.name=='posix':
+				success_mark = '✔ '
+				error_mark = '✖  '
+			else:
+				success_mark = '/'
+				error_mark = 'x '
+	
+			if status == 'SUCCESS':  puts("%s %s" % (colored.green(success_mark),message.encode('utf-8')))
+			elif status == 'ERROR' and level<3:  puts("%s%s" % (colored.red(error_mark),message.encode('utf-8')))
+			elif status == 'ERROR':  puts("%s" % (colored.red(error_mark+message.encode('utf-8'))))
+	except:
+		pass
 

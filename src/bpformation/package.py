@@ -81,7 +81,6 @@ class Package():
 		oss_retain = {}
 		for os_regex in os_regexs:  
 			if re.match("rhel",os_regex.lower()):  os_regex = "RedHat"
-			print os_regex
 			for os in oss:  
 				if re.search(os_regex,os['Name']):  oss_retain[os['ID']] = True
 

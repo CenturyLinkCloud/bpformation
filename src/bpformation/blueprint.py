@@ -125,6 +125,7 @@ class Blueprint():
 					# Catch only our exceptions
 					pass
 		else:  
+			# Not currently supported: Reboot outside of build server
 			print "Unknown: %s" % root.tag
 			raise(Exception("Unknown tag %s" % root.tag))
 
@@ -455,6 +456,10 @@ class Blueprint():
 
 	@staticmethod
 	def Execute(ids,files,parameters,type,password,group_id,network,dns):
+		"""
+
+		parameters - dict of key/value pairs or a list of key=value pairs
+		"""
 
 		# Build list of file-based assets to exec
 		bps = []
@@ -488,14 +493,16 @@ class Blueprint():
 			# Apply defaults from config file - don't overwrite existing items.  Only covers system items
 			for key in ('type','password','group_id','network','dns'):
 				if key in bp['execute']:  continue
-				if bpformation.config.has_option('blueprint_execute',key):  bp['execute'][key] = bpformation.config.get('blueprint_execute',key)
+				if bpformation.config and bpformation.config.has_option('blueprint_execute',key):  bp['execute'][key] = bpformation.config.get('blueprint_execute',key)
 
 			# Apply system-level command line args
 			for key in ('type','password','group_id','network','dns'):
 				if key in vars() and vars()[key] is not None:  bp['execute'][key] = vars()[key]
 
 			# Apply parameter command line args
-			if parameters is not None and len(parameters):
+			if parameters is not None and isinstance(parameters,dict):
+				for key,value in parameters.items():  bp['execute'][key] = value
+			elif parameters is not None and len(parameters):
 				for parameter in parameters:
 					(key,value) = parameter.split("=",1)
 					bp['execute'][key] = value
@@ -574,6 +581,8 @@ class Blueprint():
 			else:
 				bpformation.output.Status('ERROR',3,"Execution failed on %s request ID %s (https://control.ctl.io/Blueprints/Queue/RequestDetails/%s?location=%s)" % \
 						(request.data['context_val'],req_id,req_id,req_loc))
+
+		if requests.error_requests:  raise(bpformation.BPFormationFatalExeption("Error executing blueprint"))
 
 		# TODO - percolate error up so we exit with an error called as CLI or see exception as sdk
 
