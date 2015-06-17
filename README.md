@@ -775,6 +775,8 @@ Package information can be specified from a number of sources as well, listed be
 * Definition within the json file
 * Specifying `key`=`value` pairs from the command line
 
+Non-global package parameters, wherever they are specified, must be prepended with the unique package instance ID.  This information is best gathered by running a [Bluerpint Export](#blueprintexport) and using those fully qualified parameter names.  We also recommend using a Global parameter scope where possible.
+
 ```
 > bpformation blueprint execute -h
 usage: bpformation.py blueprint execute [-h] [--file [FILE [FILE ...]]]

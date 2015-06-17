@@ -168,13 +168,12 @@ class Blueprint():
 				pass
 
 		# Populate Blueprint execute stub with script-specific vals
-		global_bp_values = None
 		for o in t.findall("UI/Group"):  
 			# system params - we don't replicate
 			if o.get("Name") == "Build Server":  continue
 
 			elif o.get("Name") == "Global Blueprint Values":  
-				for param in global_bp_values.findall("Parameter"):  
+				for param in o.findall("Parameter"):  
 					if param.get("Default"):  default = param.get("Default")
 					elif param.get("Type") in ("Option","MultiSelect"):
 						default = " | ".join([ opt.get("Value") for opt in param.findall("Option") ])
@@ -183,7 +182,12 @@ class Blueprint():
 
 			# Assume all other els are groups containing local package-specific variables
 			else:
-				pass
+				for param in o.findall("Parameter"):  
+					if param.get("Default"):  default = param.get("Default")
+					elif param.get("Type") in ("Option","MultiSelect"):
+						default = " | ".join([ opt.get("Value") for opt in param.findall("Option") ])
+					else:  default = ''
+					bp['execute'][param.get("Variable")] = default
 
 		# Output
 		if file=="-":  
