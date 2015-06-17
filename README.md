@@ -542,11 +542,15 @@ Query all Blueprints visible to your account, optionally filtering by any piece 
 ```
 > bpformation blueprint list -h
 usage: bpformation.py blueprint list [-h] [--filter [FILTER [FILTER ...]]]
+                                     [--account [ACCOUNT [ACCOUNT ...]]]
 
 optional arguments:
   -h, --help            show this help message and exit
   --filter [FILTER [FILTER ...]]
-                        Regex filter Results by name, author, status, visibility (and)
+                        Regex filter Results by name, author, status,
+                        visibility (and)
+  --account [ACCOUNT [ACCOUNT ...]]
+                        One or more account alias authors to filter
 ```
 
 Example:
@@ -573,6 +577,16 @@ Example:
 | Install SQL Server on Existing Server | 47   | public     | Oct 22, 2012 |
 | Install SQL Server on New Server      | 46   | public     | Oct 22, 2012 |
 +---------------------------------------+------+------------+--------------+
+
+# Restrict search to spefic account
+> bpformation blueprint list --account KRAP
++---------------------------------------------------+------+------------+--------------+
+| name                                              | id   | visibility | date_added   |
++---------------------------------------------------+------+------------+--------------+
+| Testdeploy                                        | 3526 | private    | Jun 04, 2015 |
+| Testdeploy-2                                      | 3519 | private    | Jun 04, 2015 |
++---------------------------------------------------+------+------------+--------------+
+
 ```
 
 

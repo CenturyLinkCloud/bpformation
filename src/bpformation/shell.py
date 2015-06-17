@@ -92,6 +92,7 @@ class Args:
 		## List
 		parser_blueprint_list = parser_sp2.add_parser('list', help='List blueprint inventory')
 		parser_blueprint_list.add_argument('--filter', nargs='*', required=False, help='Regex filter Results by name, author, status, visibility (and)')
+		parser_blueprint_list.add_argument('--account', nargs='*', required=False, help='One or more account alias authors to filter')
 
 		## Export
 		parser_blueprint_export = parser_sp2.add_parser('export', help='Export blueprint')
@@ -255,7 +256,8 @@ class ExecCommand():
 
 
 	def BlueprintList(self):
-		self.Exec('bpformation.blueprint.List', {'filters': bpformation.args.args.filter }, cols=['name','id','visibility','date_added'])
+		self.Exec('bpformation.blueprint.List', 
+		          {'filters': bpformation.args.args.filter, 'accounts': bpformation.args.args.account }, cols=['name','id','visibility','date_added'])
 
 
 	def BlueprintExport(self):

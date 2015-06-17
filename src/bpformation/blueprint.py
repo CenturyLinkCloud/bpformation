@@ -170,16 +170,17 @@ class Blueprint():
 		# Populate Blueprint execute stub with script-specific vals
 		global_bp_values = None
 		for o in t.findall("UI/Group"):  
-			if o.get("Name") == "Global Blueprint Values":  
+			if o.get("Name") == "Build Server":  continue
+			elif o.get("Name") == "Global Blueprint Values":  
 				global_bp_values =  o
-				break
-		if global_bp_values is not None:
-			for o in global_bp_values.findall("Parameter"):  
-				if o.get("Default"):  default = o.get("Default")
-				elif o.get("Type") in ("Option","MultiSelect"):
-					default = " | ".join([ opt.get("Value") for opt in o.findall("Option") ])
-				else:  default = ''
-				bp['execute'][o.get("Variable")] = default
+				for param in global_bp_values.findall("Parameter"):  
+					if param.get("Default"):  default = param.get("Default")
+					elif param.get("Type") in ("Option","MultiSelect"):
+						default = " | ".join([ opt.get("Value") for opt in param.findall("Option") ])
+					else:  default = ''
+					bp['execute'][param.get("Variable")] = default
+			elif o.get("Name") == "Build Server":  
+				pass
 
 		# Output
 		if file=="-":  
@@ -191,16 +192,19 @@ class Blueprint():
 				fh.write(json.dumps(bp,sort_keys=True,indent=4,separators=(',', ': ')))
 
 
-	# Available, but not returning:
+	# Available, but we aren't returning:
 	#  o Price information
 	#  o Environment size details (server count, memory, CPU, etc.)
 	#  o Blueprint description
 	@staticmethod
-	def List(filters):
-		# TODO - much of this is available with a json response as part of group execute package
-		r = bpformation.web.CallScrape("POST","/blueprints/browser/LoadTemplates",payload={
+	def List(filters,accounts=None):
+		if accounts is None:  accounts = ""
+		else:  accounts = ",".join(accounts)
+
+		r = bpformation.web.CallScrape("POST","/blueprints/browser/filter",payload={
 					'Search-PageSize': 1000,
 					'Search-PageNumber': 1,
+					'AccountAlias': accounts,
 				}).text
 
 		blueprints = []
