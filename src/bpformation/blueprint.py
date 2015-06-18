@@ -618,6 +618,7 @@ class Blueprint():
 					(req_loc,req_id) = request.id.split("-",1)
 					r = bpformation.web.CallScrape("GET","/Blueprints/Queue/RequestDetails/%s?location=%s" % (req_id,req_loc))
 					if r.status_code<300 and r.status_code>=200:
+						# TODO - if multiople bps this will overwrite>  Need to merge
 						results['servers'] = re.findall('<a href="/manage#/.+?/server/(.+?)">',r.text,re.DOTALL)
 						bpformation.output.Status('SUCCESS',3,"The following server(s) were created: %s" % (", ".join(results['servers'])))
 			except:
