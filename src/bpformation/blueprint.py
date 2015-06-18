@@ -164,10 +164,17 @@ class Blueprint():
 			try:
 				bp['tasks'] += Blueprint._ExportProcessRoot(o)
 			except:
-					# Catch only our exceptions
+				# Catch only our exceptions
 				pass
 
+		# Populate server name/id dict
+		servers = {}
+		for o in t.xpath("//Parameter"):
+			if o.get("Type") == "ServerAlias":
+				servers[o.get("Default")] = o.get("Variable").replace(".Alias","")
+
 		# Populate Blueprint execute stub with script-specific vals
+		server_names = {}
 		for o in t.findall("UI/Group"):  
 			# system params - we don't replicate
 			if o.get("Name") == "Build Server":  continue
@@ -186,6 +193,8 @@ class Blueprint():
 					if param.get("Default"):  default = param.get("Default")
 					elif param.get("Type") in ("Option","MultiSelect"):
 						default = " | ".join([ opt.get("Value") for opt in param.findall("Option") ])
+					elif re.search("\.TaskServer$",param.get("Variable")):
+						default = " | ".join([ o for o in servers.keys() ])
 					else:  default = ''
 					bp['execute'][param.get("Variable")] = default
 
@@ -501,6 +510,20 @@ class Blueprint():
 		#   o command line args
 		new_bps = []
 		for bp in bps:
+			# Refresh latest blueprint xml
+			r = bpformation.web.CallScrape("GET","/Blueprints/Designer/BlueprintXml/%s" % bp['id'])
+			if r.status_code<200 or r.status_code>=300:
+				bpformation.output.Status('ERROR',3,"Error retrieving data (http response %s)" % r.status_code)
+				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
+	
+			t = etree.XML(r.text)
+
+			# Populate server name/id dict
+			servers = {}
+			for o in t.xpath("//Parameter"):
+				if o.get("Type") == "ServerAlias":
+					servers[o.get("Default")] = o.get("Variable").replace(".Alias","")
+
 			# Apply defaults from config file - don't overwrite existing items.  Only covers system items
 			for key in ('type','password','group_id','network','dns'):
 				if key in bp['execute']:  continue
@@ -517,6 +540,12 @@ class Blueprint():
 				for parameter in parameters:
 					(key,value) = parameter.split("=",1)
 					bp['execute'][key] = value
+
+			# If deploy-time server selection map to server.id
+			for key,value in bp['execute'].items():
+				# TODO - add and to except if explicit ID already provided
+				if re.search("\.TaskServer$",key):
+					bp['execute'][key] = [ "${%s.ServerName}" % id for alias,id in servers.items() if alias == value ][0]
 
 			# Hardcoded default DNS - this is dumb that we ask for it
 			if 'dns' not in bp['execute'] or not len(bp['execute']['dns']):
