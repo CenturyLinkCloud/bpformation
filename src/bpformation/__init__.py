@@ -24,7 +24,7 @@ ALIAS = False
 FTP_ENDPOINT = False
 
 
-__version__ = "0.9"
+__version__ = "0.11"
 
 args = False
 config = False

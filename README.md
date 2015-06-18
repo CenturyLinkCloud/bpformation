@@ -821,4 +821,18 @@ Example:
 ✔  Execution completed on 3 blueprints (459 seconds)
 ```
 
+#### Troubleshooting Execute Errors
+
+* An error message like the following indicates the Blueprint is not yet fully and successfully published. 
+  Publishing can take up to 15 minutes.  If the error persists then open an issue with details about your
+  Blueprint.
+
+  ```
+  ✖  Execution failed on ca1-28311: GroupID is required
+  [Error] HardwareType is required
+  [Error] Password is required
+  [Error] PrimaryDNS is required
+  ✖  Exiting due to error: Error executing blueprint
+  ```
+
 

@@ -593,7 +593,10 @@ class Blueprint():
 				bpformation.output.Status('ERROR',3,"Execution failed on %s request ID %s (https://control.ctl.io/Blueprints/Queue/RequestDetails/%s?location=%s)" % \
 						(request.data['context_val'],req_id,req_id,req_loc))
 
-		if requests.error_requests:  raise(bpformation.BPFormationFatalExeption("Error executing blueprint"))
+		if requests.error_requests:
+			e = bpformation.BPFormationFatalExeption("Error executing blueprint")
+			e.error_requests = requests.error_requests
+			raise(e)
 
 		# TODO - percolate error up so we exit with an error called as CLI or see exception as sdk
 
