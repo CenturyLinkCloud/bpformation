@@ -812,6 +812,7 @@ Example:
 >  bpformation blueprint execute --file testdeploy-3526-0.2.json
 ✔  Execution request submitted for Blueprint ID 3526 (request ca1-26898)
 ✔  Execution completed on 1 blueprints (376 seconds)
+✔  The following server(s) were created: ca1krapmastr48, ca1krapsmastr48, ca1krapnode875
 
 # Execute a number of Blueprints.  This time specify only the ID from the command line
 > bpformation blueprint execute --id 3526 3526 3526

@@ -297,7 +297,7 @@ class ExecCommand():
 			#	r = bpformation.output.RequestBlueprintProgress(r['RequestID'],self._GetLocation(),self._GetAlias(),bpformation.args.args.quiet)
 			#	cols = ['Server']
 
-			if r and len(cols):
+			if r and cols and len(cols):
 				if not isinstance(r, list):  r = [r]
 				if not supress_output and bpformation.args.args.format == 'json':  print bpformation.output.Json(r,cols)
 				elif not supress_output and bpformation.args.args.format == 'table':  print bpformation.output.Table(r,cols)
