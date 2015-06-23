@@ -54,18 +54,18 @@ class Web():
 
 	@staticmethod
 	def _DebugRequest(request,response):
-		print('{}\n{}\n{}\n\n{}\n'.format(
+		print "\n".join([
 			'-----------REQUEST-----------',
 			request.method + ' ' + request.url,
-			'\n'.join('{}: {}'.format(k, v) for k, v in request.headers.items()),
+			"\n".join([ '%s: %s' % (k, v) for k, v in request.headers.items()]),
 			request.body,
-		))
+		])
 
-		print('{}\n{}\n\n{}'.format(
+		print "\n".join([
 			'-----------RESPONSE-----------',
 			'status: ' + str(response.status_code),
 			response.text
-		))
+		])
 
 
 	@staticmethod
@@ -125,19 +125,19 @@ class Web():
 								 headers=headers,
 						  		 allow_redirects=allow_redirects,
 								 cookies=bpformation._CONTROL_COOKIES,
-			                     params=payload, 
+								 params=payload, 
 								 verify=Web._ResourcePath('bpformation/cacert.pem'))
 		else:
 			r = requests.request(method,fq_url,
 								 headers=headers,
 						  		 allow_redirects=allow_redirects,
 								 cookies=bpformation._CONTROL_COOKIES,
-			                     data=payload, 
+								 data=payload, 
 								 verify=Web._ResourcePath('bpformation/cacert.pem'))
 
 		if debug:  
 			Web._DebugRequest(request=requests.Request(method,fq_url,data=payload,headers=headers).prepare(),
-			                  response=r)
+							  response=r)
 
 		return(r)
 

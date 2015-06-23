@@ -1,15 +1,76 @@
 # CenturyLink Cloud Blueprint Formation CLI Tool (bpformation)
 
-This repository contains a command line interface *CLI* to interact with the *[CenturyLink Cloud](http://www.centurylinkcloud.com)* Blueprints packaging and workflow services,.  
+This repository contains a command line interface *CLI* to interact with the *[CenturyLink Cloud](http://www.centurylinkcloud.com)* Blueprints packaging and workflow services.  Query, change, add, and execute CenturyLink Cloud automation using a cross-platform CLI and definitions defined in common json files.
 
 ## Contents
 
-* [Installing](#installing)
 * [Examples](#examples)
+* [Installing](#installing)
 * [Usage](#usage)
  * [Packages](#packages) - [List](#packagelist), [List OS](#packagelistos), [Upload](#packageupload), [Publish](#packagepublish), [Upload and Publish](#packageuploadandpublish), [Delete](#packagedelete), [Download](#packagedownload), [Execute](#packageexecute)
  * [Blueprints](#blueprints) - [List](#blueprintlist), [Export](#blueprintexport), [Import](#blueprintimport), [Update](#blueprintupdate), [Delete](#blueprintdelete), [Execute](#blueprintexecute)
 * Python SDK (documentation coming soon)
+
+
+## Examples
+
+### Managed Blueprint Lifecycle
+
+Consistently manage your blueprint by recording all changes using version control and get a holistic view of your blueprint for troubleshooting.
+The authoritative definition for your blueprint now resides in a json file.
+
+```
+# If you've already got a blueprint, export it first
+> bpformation blueprint export --id 1234 --file foobar.json
+
+# Make and record changes using standard text editors and version control
+> vi foobar.json
+> git commit -m 'version 1.3 updates, change server sizing' foobar.json
+
+# Apply changes on demand
+> bpformation blueprint update --file foobar.json
+```
+
+### Customize Existing Public Blueprint
+
+Sometimes partner or community provided blueprints are close to your needs but not perfect.  Start with one of these and adapt it for your
+specific needs.
+
+```
+# Locate target Pivotal Greenplum Blueprint
+> bpformation.py blueprint list --filter greenplum public
++------------------------------------------+------+------------+--------------+
+| name                                     | id   | visibility | date_added   |
++------------------------------------------+------+------------+--------------+
+| Pivotal Greenplum - 4 node large cluster | 2533 | public     | Mar 05, 2015 |
+| Pivotal Greenplum - 4 node small cluster | 2531 | public     | Mar 05, 2015 |
++------------------------------------------+------+------------+--------------+
+
+# Export 
+> bpformation.py blueprint export --id 2533
+✔  Pivotal Greenplum - 4 node large cluster v1.4 exported to pivotal_greenplum_-_4_node_large_cluster-2533-1.4.json (5 tasks)
+
+# Modify json to increase the server size (showing a portion of the json file)
+{
+    "execute": { <..... snip .....> },
+    "metadata": { <..... snip .....> },
+    "tasks": [
+		<..... snip .....>
+        {
+            "cpu": "8",
+            "ram": "64",
+        },
+		<..... snip .....>
+    ]
+}
+
+# Create our new Blueprint using this as a model
+> bpformation blueprint import --file pivotal_greenplum_-_4_node_large_cluster-2533-1.4.json
+```
+
+### Publish, Upload, and Test Blueprint Package on an Existing  Server
+
+**coming soon**
 
 
 ## Installing
@@ -96,66 +157,6 @@ Not yet validated, steps should be:
 
 The CLI is available as a prepackaged single-file Windows executable and the most recent compiled version is always available [here](https://github.com/CenturyLinkCloud/bpformation/raw/master/src/dist/bpformation.exe).
 
-
-## Examples
-
-### Managed Blueprint Lifecycle
-
-Consistently manage your blueprint by recording all changes using version control and get a holistic view of your blueprint for troubleshooting.
-The authoritative definition for your blueprint now resides in a json file.
-
-```
-# If you've already got a blueprint, export it first
-> bpformation blueprint export --id 1234 --file foobar.json
-
-# Make and record changes using standard text editors and version control
-> vi foobar.json
-> git commit -m 'version 1.3 updates, change server sizing' foobar.json
-
-# Apply changes on demand
-> bpformation blueprint update --file foobar.json
-```
-
-### Customize Existing Public Blueprint
-
-Sometimes partner or community provided blueprints are close to your needs but not perfect.  Start with one of these and adapt it for your
-specific needs.
-
-```
-# Locate target Pivotal Greenplum Blueprint
-> bpformation.py blueprint list --filter greenplum public
-+------------------------------------------+------+------------+--------------+
-| name                                     | id   | visibility | date_added   |
-+------------------------------------------+------+------------+--------------+
-| Pivotal Greenplum - 4 node large cluster | 2533 | public     | Mar 05, 2015 |
-| Pivotal Greenplum - 4 node small cluster | 2531 | public     | Mar 05, 2015 |
-+------------------------------------------+------+------------+--------------+
-
-# Export 
-> bpformation.py blueprint export --id 2533
-✔  Pivotal Greenplum - 4 node large cluster v1.4 exported to pivotal_greenplum_-_4_node_large_cluster-2533-1.4.json (5 tasks)
-
-# Modify json to increase the server size (showing a portion of the json file)
-{
-    "execute": { <..... snip .....> },
-    "metadata": { <..... snip .....> },
-    "tasks": [
-		<..... snip .....>
-        {
-            "cpu": "8",
-            "ram": "64",
-        },
-		<..... snip .....>
-    ]
-}
-
-# Create our new Blueprint using this as a model
-> bpformation blueprint import --file pivotal_greenplum_-_4_node_large_cluster-2533-1.4.json
-```
-
-### Publish, Upload, and Test Blueprint Package on an Existing  Server
-
-**coming soon**
 
 
 ## Usage
