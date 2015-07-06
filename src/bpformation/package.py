@@ -141,12 +141,22 @@ class Package():
 			r = requests.get("%s/Blueprints/Packages/Download?uuid=%s" % (bpformation.defaults.CONTROL_URL,uuid), 
 			                 cookies=bpformation._CONTROL_COOKIES,
 							 stream=True)
-			with open("%s.zip" % uuid, 'wb') as f:
-				for chunk in r.iter_content(chunk_size=1024):
-					if chunk: # filter out keep-alive new chunks
-						f.write(chunk)
-						f.flush()
-			bpformation.output.Status('SUCCESS',3,"%s package downloaded" % uuid)
+			try:
+				with open("%s.zip" % uuid, 'wb') as f:
+					for chunk in r.iter_content(chunk_size=1024):
+						if re.search("You do not have permissions to download this package\.",chunk):
+							raise(Exception("Insufficient permissions to download"))
+						elif chunk: # filter out keep-alive new chunks
+							f.write(chunk)
+							f.flush()
+				bpformation.output.Status('SUCCESS',3,"%s package downloaded" % uuid)
+			except:
+				bpformation.output.Status('ERROR',3,"Insufficient permissions to download %s" % uuid)
+				try:
+					os.remove("%s.zip")
+				except:
+					pass
+
 
 	
 	@staticmethod
