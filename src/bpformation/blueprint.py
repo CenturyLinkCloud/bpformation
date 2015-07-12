@@ -276,8 +276,8 @@ class Blueprint():
 				bpformation.output.Status('ERROR',3,"Blueprint json server definition missing '%s'" % key)
 				raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 		if 'id' not in o:  o['id'] = 0	# New servers don't start with an ID
-		if len(o['name'])==0 or len(o['name'])>5:
-			bpformation.output.Status('ERROR',3,"Blueprint json server name must be between 0 and five characters" % key)
+		if len(o['name'])==0 or len(o['name'])>6:
+			bpformation.output.Status('ERROR',3,"Blueprint json server name must be between 0 and six characters")
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 		if not re.match("^\d+$",o['cpu']) or int(o['cpu'])==0 or int(o['cpu'])>16:
 			bpformation.output.Status('ERROR',3,"Blueprint json server cpu must be between 1 and 16" % key)
@@ -530,6 +530,7 @@ class Blueprint():
 		bp['tasks'] = new_tasks
 
 		# Step 3 - Publish Blueprint
+		print "b"
 		r = bpformation.web.CallScrape("POST","/Blueprints/Designer/review/%s" % bp['metadata']['id'],allow_redirects=False,payload={
 					"Publish": "", # unknown
 					"DataTemplate.UUID": bp['metadata']['uuid'],
@@ -538,6 +539,7 @@ class Blueprint():
 
 		# TODO Step 4 - save output?  Assume needed for some kind of update
 
+		print "c"
 		if bp['metadata']['visibility'].lower()=="public":  
 				bpformation.output.Status('SUCCESS',3,"CenturyLink approval needed for Public publishing.  Email ecosystem@CenturyLinkCloud.com for approval")
 
