@@ -7,42 +7,21 @@
         "username": ""
     },
     "metadata": {
-        "description": "ownCloud is a personal productivity powerhouse. It gives you universal access to all your files, contacts, calendars and bookmarks across all of your devices. Unlike many of the shared repository services out there, with ownCloud, you have your own, private repo. However, just like the public repo companies, with ownCloud you can share your files with friends and co-workers. If you need it, ownCloud even integrates with other storage providers. Best of all, ownCloud is open source and free!",
+        "description": "ownCloud is a personal productivity powerhouse....",
         "id": "0",
         "name": "Install ownCloud on Linux",
-        "owner": "CenturyLink Cloud Ecosystem",
         "version": "1.7",
         "visibility": "private"
     },
     "tasks": [
         {
-            "cpu": "1",
-            "description": "ownCloud",
-            "id": "5fe72fba-aa16-4846-9d76-ec2d375a11f6",
-            "name": "OWNC",
-            "ram": "4",
+            "cpu": "1", "ram": "4", "template": "CENTOS-6-64-TEMPLATE",
             "tasks": [
-                {
-                    "id": "7e5825a4-6198-4ab5-9de0-a70fbb6d8485",
-                    "name": "Linux Update",
-                    "type": "package",
-                    "uuid": "77ab3844-579d-4c8d-8955-c69a94a2ba1a"
-                },
-                {
-                    "id": "8cf20685-2c44-4050-93af-c0ef659a3629",
-                    "name": "Install ownCloud on Linux",
-                    "properties": {
-                        "mysql_database_name": "mydb",
-                        "mysql_database_username": "mysql",
-                        "mysql_port": "3306"
-                    },
-                    "type": "package",
-                    "uuid": "bf6bdfba-593d-443c-b490-399276d9b8b6"
+                { "name": "Linux Update", "type": "package", },
+                { "name": "Install ownCloud on Linux", "type": "package",
+                  "properties": { "mysql_database_name": "mydb", "mysql_port": "3306" },
                 }
             ],
-            "template": "CENTOS-6-64-TEMPLATE",
-            "type": "server",
-            "uuid": "cb9762b3-61a6-4cfb-af97-96bf7dbfc359"
         }
     ]
 }
