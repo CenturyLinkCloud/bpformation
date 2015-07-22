@@ -173,11 +173,13 @@ class Args:
 	def MergeEnvironment(self):
 		if 'CONTROL_USER' in os.environ:  bpformation.CONTROL_USER = os.environ['CONTROL_USER']
 		if 'CONTROL_PASSWORD' in os.environ:  bpformation.CONTROL_PASSWORD = os.environ['CONTROL_PASSWORD']
+		if 'ALIAS' in os.environ:  bpformation.ALIAS = os.environ['ALIAS']
 
 
 	def MergeCommands(self):
 		if self.args.control_user:  bpformation.CONTROL_USER = self.args.control_user
 		if self.args.control_password:  bpformation.CONTROL_PASSWORD = self.args.control_password
+		if self.args.alias:  bpformation.ALIAS = self.args.alias
 
 
 

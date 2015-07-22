@@ -161,7 +161,7 @@ class Package():
 	
 	@staticmethod
 	def List(filters):
-		# TODO - Query json v2 endpoint - https://control.ctl.io/api/tunnel/v2/packages/krap
+		# TODO - Query json v2 endpoint - https://control.ctl.io/api/tunnel/v2/packages/$alias
 		r = bpformation.web.CallScrape("GET","/Blueprints/packages/Library").text
 		table = re.search('id="PackageLibrary">.*?<table class="table">.*?<tbody>(.*)</tbody>',r,re.DOTALL).group(1)
 

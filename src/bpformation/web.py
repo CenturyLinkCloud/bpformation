@@ -86,16 +86,21 @@ class Web():
 			#bpformation/ALIAS = r.json()['accountAlias']
 			bpformation.output.Status('SUCCESS',1,'Logged into control portal')
 		elif r.status_code == 400:
-			print "x"
 			raise(Exception("Invalid V2 API login.  %s" % (r.json()['message'])))
 		else:
 			raise(Exception("Error logging into V2 API.  Response code %s. message %s" % (r.status_code,r.json()['message'])))
 
 
-	# TODO
+	@staticmethod
+	def _SetAliasScrape(alias):
+		Web.CallScrape("POST","/Impersonation/Account",{'impersonatedAccount': alias},allow_redirects=False)
+		bpformation._ALIAS = alias
+		bpformation.output.Status('SUCCESS',1,'Alias set to %s' % bpformation._ALIAS)
+
+
 	@staticmethod
 	def Alias(alias=None):
-		# TODO if alias is not None then set it
+		if alias:  Web._SetAliasScrape(alias)
 		if bpformation._ALIAS == False:
 			bpformation._ALIAS = re.search("<title>\s+Account\s+([^\s]+)\s*</title>",Web.CallScrape("GET","/Organization/account/details").text).group(1)
 			bpformation.output.Status('SUCCESS',1,'Alias set to %s' % bpformation._ALIAS)
@@ -103,7 +108,6 @@ class Web():
 		return(bpformation._ALIAS)
 
 
-	# TODO
 	@staticmethod
 	def CallScrape(method,url,payload={},headers=None,allow_redirects=True,debug=False):
 		"""Execute screen scrape call
@@ -113,7 +117,9 @@ class Web():
 
 		:returns: decoded API json result
 		"""
-		if not bpformation._CONTROL_COOKIES:  Web._LoginScrape()
+		if not bpformation._CONTROL_COOKIES:  
+			Web._LoginScrape()
+			if bpformation.ALIAS:  Web.Alias(bpformation.ALIAS)
 
 		fq_url = "%s%s" % (bpformation.defaults.CONTROL_URL,url)
 
