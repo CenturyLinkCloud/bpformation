@@ -530,7 +530,6 @@ class Blueprint():
 		bp['tasks'] = new_tasks
 
 		# Step 3 - Publish Blueprint
-		print "b"
 		r = bpformation.web.CallScrape("POST","/Blueprints/Designer/review/%s" % bp['metadata']['id'],allow_redirects=False,payload={
 					"Publish": "", # unknown
 					"DataTemplate.UUID": bp['metadata']['uuid'],
