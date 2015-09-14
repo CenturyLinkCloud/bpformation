@@ -539,7 +539,6 @@ class Blueprint():
 
 		# TODO Step 4 - save output?  Assume needed for some kind of update
 
-		print "c"
 		if bp['metadata']['visibility'].lower()=="public":  
 				bpformation.output.Status('SUCCESS',3,"CenturyLink approval needed for Public publishing.  Email ecosystem@CenturyLinkCloud.com for approval")
 
@@ -548,13 +547,13 @@ class Blueprint():
 
 	@staticmethod
 	def Import(files):
+		bp_ids = []
 		for file in files:
 			if not os.path.isfile(file):
 				bpformation.output.Status('ERROR',3,"Blueprint json file '%s' not found" % file)
 
 			# Load json
-			with open(file) as fh:
-				bp = json.load(fh)
+			with open(file) as fh:  bp = json.load(fh)
 
 			# Strip unique IDs from assets that will be duplicated
 			bp['metadata']['id'] = 0
@@ -566,6 +565,9 @@ class Blueprint():
 			bp = Blueprint._PostBlueprint(bp)
 			bpformation.output.Status('SUCCESS',3,"%s v%s imported ID %s (%s tasks)" % (bp['metadata']['name'],bp['metadata']['version'],bp['metadata']['id'],len(bp['tasks'])))
 			#bpformation.output.Status('SUCCESS',3,"Blueprint created with ID %s (https://control.ctl.io/blueprints/browser/details/%s)" % (blueprint_id,blueprint_id))
+			bp_ids.append(bp['metadata']['id'])
+
+		return(bp_ids)
 
 
 	@staticmethod
