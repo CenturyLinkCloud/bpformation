@@ -148,3 +148,29 @@ class Web():
 		return(r)
 
 
+	@staticmethod
+	def BearerToken():
+		"""Return bearer token associated with the current session
+
+		:returns: bearer token
+		"""
+		if not bpformation._CONTROL_COOKIES:  
+			Web._LoginScrape()
+
+		# Ping - validate if we need to login
+		try:
+			r = bpformation.web.CallScrape("GET","/")
+			if not re.search("<title> Control Portal Dashboard </title>",r.text):
+				raise(bpformation.BPFormationLoginException)
+		except requests.exceptions.ConnectionError:
+			raise
+			raise(bpformation.BPFormationLoginException)
+		
+		# Extract token
+		m = re.search("""shell.user.set\(\{"token":"(.+?)","userName":"(.+?)"\}\);""",r.text)
+		username = m.group(2)
+		token = m.group(1)
+
+		return(token)
+
+

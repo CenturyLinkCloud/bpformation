@@ -10,6 +10,7 @@ This repository contains a command line interface *CLI* to interact with the *[C
  * [Packages](#packages) - [List](#packagelist), [List OS](#packagelistos), [Upload](#packageupload), [Publish](#packagepublish), [Upload and Publish](#packageuploadandpublish), [Delete](#packagedelete), [Download](#packagedownload), [Execute](#packageexecute)
  * [Blueprints](#blueprints) - [List](#blueprintlist), [Export](#blueprintexport), [Import](#blueprintimport), [Update](#blueprintupdate), [Delete](#blueprintdelete), [Execute](#blueprintexecute)
 * Python SDK (documentation coming soon)
+ * [Advanced](#sdkadvanced)
 
 
 ## Examples
@@ -836,5 +837,24 @@ Example:
   [Error] PrimaryDNS is required
   ✖  Exiting due to error: Error executing blueprint
   ```
+
+
+# Python SDK
+
+## SDK Advanced
+
+### bpformation.web.BearerToken 
+
+```python
+bpformation.web.BearerToken()
+```
+
+Returns the bearer token associated with the current session.
+
+```python
+> bpformation.web.BearerToken()
+u'xxxxxxx'
+```
+
 
 
