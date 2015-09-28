@@ -24,7 +24,7 @@ ALIAS = False
 FTP_ENDPOINT = False
 
 
-__version__ = "0.20"
+__version__ = "0.21"
 
 args = False
 config = False
@@ -35,6 +35,7 @@ _ALIAS = False
 _LOGINS = 0
 _CONTROL_COOKIES = False
 _BLUEPRINT_FTP_URL = False
+_bearer_token = False
 
 class BPFormationExeption(Exception):
 	pass

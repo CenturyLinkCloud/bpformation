@@ -154,6 +154,8 @@ class Web():
 
 		:returns: bearer token
 		"""
+		if bpformation._bearer_token:  return(bpformation._bearer_token)
+
 		if not bpformation._CONTROL_COOKIES:  
 			Web._LoginScrape()
 
