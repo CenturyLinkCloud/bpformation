@@ -294,7 +294,7 @@ class Blueprint():
 			for task in o['tasks']:
 				# TODO system tasks - scheduled task, delete snapshot, revert snapshot
 				# System - add disk
-				if task['type']=='disk' and task['uuid']=='22460210-b682-4138-93fd-1a95c5e4e039':
+				if task['type']=='disk' and task['uuid'] in ('22460210-b682-4138-93fd-1a95c5e4e039','9a851f50-c676-4c11-b4c8-a0a7241c1060'):
 					staged_tasks['Server.Tasks[%s].ID' % staged_tasks_idx] = task['uuid']
 					staged_tasks['Server.Tasks[%s].Properties[0].Name' % staged_tasks_idx] = 'GB'
 					staged_tasks['Server.Tasks[%s].Properties[0].Value' % staged_tasks_idx] = task['gb']
