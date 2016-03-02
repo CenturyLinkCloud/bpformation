@@ -74,11 +74,17 @@ class Web():
 		if not bpformation.CONTROL_USER or not bpformation.CONTROL_PASSWORD:
 			bpformation.output.Status('ERROR',3,'Control username and password not provided')
 			raise(bpformation.BPFormationLoginException)
-			
+
+		r = requests.get("https://control.ctl.io/auth/Login")
+		m = re.search("""__RequestVerificationToken.*?value=\"(.*?)\"""", r.text)
+		verificationToken = m.group(1)
+		bpformation._CONTROL_COOKIES = r.cookies
+
 		r = requests.post("https://control.ctl.io/auth/Login", 
 						  allow_redirects=False,
+						  cookies=bpformation._CONTROL_COOKIES,
 						  verify=Web._ResourcePath('bpformation/cacert.pem'),
-						  data={"UserName": bpformation.CONTROL_USER, "Password": bpformation.CONTROL_PASSWORD})
+                          data={"UserName": bpformation.CONTROL_USER, "Password": bpformation.CONTROL_PASSWORD, "__RequestVerificationToken": verificationToken})
 		bpformation._CONTROL_COOKIES = r.cookies
 
 		if r.status_code>=200 and r.status_code<400:
