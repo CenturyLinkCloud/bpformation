@@ -84,7 +84,7 @@ class Web():
 						  allow_redirects=False,
 						  cookies=bpformation._CONTROL_COOKIES,
 						  verify=Web._ResourcePath('bpformation/cacert.pem'),
-                          data={"UserName": bpformation.CONTROL_USER, "Password": bpformation.CONTROL_PASSWORD, "__RequestVerificationToken": verificationToken})
+						  data={"UserName": bpformation.CONTROL_USER, "Password": bpformation.CONTROL_PASSWORD, "__RequestVerificationToken": verificationToken})
 		bpformation._CONTROL_COOKIES = r.cookies
 
 		if r.status_code>=200 and r.status_code<400:
