@@ -230,7 +230,7 @@ class Blueprint():
 								   'date_added': re.search('<em>(.+?)</em>',blueprint_html).group(1),
 								   'description': re.search('<div class="blueprint-desc">\s*<div><strong>(.+?)</strong>',blueprint_html).group(1),
 								   'visibility': re.search('<div class="right-col"><strong>(.+?)</strong></div>',blueprint_html).group(1),
-						           'id': re.search('<a href="/blueprints/browser/details/(\d+)">',blueprint_html).group(1) })
+						           'id': re.search('<a href="/Blueprints/Browser/Details/(\d+)">',blueprint_html).group(1) })
 				
 			except:
 				pass
