@@ -30,7 +30,6 @@ class Blueprint():
 	visibility_stoi = { 'public': 1, 'private': 2, 'shared': 3}
 	limited_printable_chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~  "
 
-
 	@staticmethod
 	def Delete(ids):
 		for id in ids:
@@ -145,10 +144,10 @@ class Blueprint():
 			bpformation.output.Status('ERROR',3,"Error retrieving data (http response %s)" % r.status_code)
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
 		bp['metadata'] = {
-				'name': re.search('<h1 id="body-title" class="left">\s*(.+?)\s*<small>',r.text,re.DOTALL).group(1),
+				'name': re.search('<div class="content-header">.*?<h1>.*?\s*(.*?)\s*<small>',r.text,re.DOTALL).group(1),
 				'owner': re.search('<small>by (.+?)</small>',r.text).group(1),
-				'version': re.search('<dt>version</dt>\s*<dd>\s*(.+?)\s*</dd>',r.text,re.DOTALL).group(1),
-				'visibility': re.search('<dt>visibility</dt>\s*<dd>\s*(.+?)\s*-',r.text,re.DOTALL).group(1),
+				'version': re.search('<dt.*?version</dt>.*?<dd.*?>\s*(.+?)\s*</dd>',r.text,re.DOTALL).group(1),
+				'visibility': re.search('<dt.*visibility</dt>.*?<dd.*?>\s*(.+?)\s*-',r.text,re.DOTALL).group(1),
 				'description': re.search('<div class="blueprint-price">.*?<p>\s*(.+?)\s*</p>',r.text,re.DOTALL).group(1),
 				'id': id,
 			}
