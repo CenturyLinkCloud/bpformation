@@ -36,7 +36,7 @@ class Blueprint():
 			# Lookup package uuid given id
 			r = bpformation.web.CallScrape("GET","/blueprints/browser/details/%s" % id)
 			try:
-				name = re.search('<h1 id="body-title" class="left">\s*(.+?)\s*<small>',r.text,re.DOTALL).group(1)
+				name = re.search('<div class="content-header">\s*?<h1>\s*(.+?)\s*<small>',r.text,re.DOTALL).group(1)
 				bp_uuid = re.search("/Blueprints/Designer/MetaData/(.+?)\"",r.text).group(1)
 			except:
 				bpformation.output.Status('ERROR',3,"Unable to location Blueprint %s (status code %s)" % (id,r.status_code))
@@ -143,14 +143,23 @@ class Blueprint():
 		if r.status_code<200 or r.status_code>=300:
 			bpformation.output.Status('ERROR',3,"Error retrieving data (http response %s)" % r.status_code)
 			raise(bpformation.BPFormationFatalExeption("Fatal Error"))
-		bp['metadata'] = {
-				'name': re.search('<div class="content-header">.*?<h1>.*?\s*(.*?)\s*<small>',r.text,re.DOTALL).group(1),
-				'owner': re.search('<small>by (.+?)</small>',r.text).group(1),
-				'version': re.search('<dt.*?version</dt>.*?<dd.*?>\s*(.+?)\s*</dd>',r.text,re.DOTALL).group(1),
-				'visibility': re.search('<dt.*visibility</dt>.*?<dd.*?>\s*(.+?)\s*-',r.text,re.DOTALL).group(1),
-				'description': re.search('<div class="blueprint-price">.*?<p>\s*(.+?)\s*</p>',r.text,re.DOTALL).group(1),
-				'id': id,
-			}
+
+		def extract():
+			fields = dict(name='<div class="content-header">\s*?<h1>\s*(.+?)\s*<small>',
+						  owner='<div class="content-header">\s*?<h1>.*?<small>by\s*(.+?)</small>',
+						  version='<dt.*?>version</dt>\s*<dd.*?>(.+?)</dd>',
+						  visibility='<dt.*?>visibility</dt>\s*<dd.*?>\s*(.+?)\s*</dd>',
+						  description='<div class="blueprint-price">.*?<p>\s*(.+?)\s*</p>')
+			for k, regex in fields.items():
+				matches = re.search(regex, r.text, re.DOTALL)
+				if matches:
+					fields[k] = matches.group(1)
+				else:
+					raise Exception, "html scaping failed for blueprint %s. field: %s" % (id, k)
+			fields['id'] = id
+			return fields
+
+		bp['metadata'] = extract()
 
 		# Blueprint definition
 		r = bpformation.web.CallScrape("GET","/Blueprints/Designer/BlueprintXml/%s" % id)
