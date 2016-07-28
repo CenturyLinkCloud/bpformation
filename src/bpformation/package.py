@@ -106,8 +106,11 @@ class Package():
 									                "OS": type,
 									                "Permissions": Package.visibility_stoi[visibility],
 									                "OS_Version": Package._PackageOSAtoI(type,os)})
+			#with open('output.html', 'w') as fout: fout.write(r.text)
 			if r.status_code>=200 and r.status_code<400:
-				m = re.search("<a href=\"/Blueprints/Queue/RequestDetails/(\d+)\?location=(.+)\"",r.text)
+				m = re.search('href="/Blueprints/Queue/RequestDetails/(\d+)\?location=(.+)"', r.text)
+				if not m:
+					raise Exception, "scraping error. failed to find publish-package-job-id"
 				task_queue.append({'id': int(m.group(1)), 'location': m.group(2), 'description': file, 'date_added': time.time()})
 				bpformation.output.Status('SUCCESS',3,"%s publish job submitted" % file)
 			elif re.search("Unable to publish software package. .*A new UUID is required",r.text):
@@ -157,25 +160,29 @@ class Package():
 				except:
 					pass
 
-
 	
 	@staticmethod
 	def List(filters):
+		from xml.etree import ElementTree as ET
 		# TODO - Query json v2 endpoint - https://control.ctl.io/api/tunnel/v2/packages/$alias
 		r = bpformation.web.CallScrape("GET","/Blueprints/packages/Library").text
-		table = re.search('id="PackageLibrary">.*?<table class="table">.*?<tbody>(.*)</tbody>',r,re.DOTALL).group(1)
-
+		start = r.find("PackageLibrary")
+		p1, p2 = (r.find("<table", start), (r.find("</table>", start) + len("</table>")))
+		table = r[p1:p2]
+		et = ET.XML(table.encode('utf-8'))
+		headers = [th.text for th in et.findall('thead/tr/th')]
 		packages = []
-		for package_html in filter(lambda x: x in Package.limited_printable_chars, table).split("</tr>"):
-			#m = re.search('<td>\s*(.+?)\s*<input id="package_UUID".*?value="(.+?)".*?<td>(.*?)</td>.*?<td>.*(.+?)</td>i.*</i>(.*?)</td>.*<td>.*\s(.+?)\s*</td>',package_html,re.DOTALL)
-			cols = package_html.split("<td>")
+		for row in et.findall('tbody/tr'):
 			try:
-				packages.append({'name': re.search('\s*(.+?)\s*<input',cols[1],re.DOTALL).group(1),
-				                 'uuid': re.search('<input id="package_UUID" name="package.UUID" type="hidden" value="(.*?)"\s*/>',cols[1],re.DOTALL).group(1),
-						         'owner': re.search('(.*?)</td>',cols[2]).group(1),
-						         'status': re.search('</i>(.+?)</td>',cols[3]).group(1),
-						         'visibility': re.search('\s*(.+?)\s*</td>',cols[4]).group(1) })
-				
+				raw = ET.tostring(row)
+				vals = []
+				for td in row.findall('td'):
+					s = ''.join([x.strip() for x in td.itertext()])
+					vals.append(s)
+				d = dict(zip(headers, vals))
+				d['owner'] = d['author'] # alias columnn
+				d['uuid'] = re.search('<input id="package_UUID" name="package.UUID" type="hidden" value="(.*?)"\s*/>',raw,re.DOTALL).group(1)
+				packages.append(d)
 			except:
 				pass
 			#print m.group(0)
