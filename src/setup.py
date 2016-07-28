@@ -1,5 +1,5 @@
 
-VERSION = "0.25"
+VERSION = "0.26"
 
 #
 # python setup.py sdist
